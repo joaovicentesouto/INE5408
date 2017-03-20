@@ -2,7 +2,8 @@
  * test_array_stack.cpp
  */
 
-#include "gtest/gtest.h"
+//#include "gtest/gtest.h"
+#include "/Users/joaovicentesouto/code/google/googletest/googletest/include/gtest/gtest.h"
 #include "array_stack.h"
 
 #include <stdexcept>

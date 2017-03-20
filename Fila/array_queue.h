@@ -1,4 +1,5 @@
 //!  Copyright [2017] <João Vicente Souto>
+
 #ifndef STRUCTURES_ARRAY_QUEUE_H
 #define STRUCTURES_ARRAY_QUEUE_H
 
@@ -10,9 +11,9 @@ namespace structures {
     template<typename T>
 
     //! Classe Fila
-    /*! Implementação de uma fila, um dos tipos de estruturas de dados vistos durante o sementre.
-     *  Possui o comportamento de uma fila normal, onde o primeiro que entre é o primeiro a sair.
-     *  DETALHAR MELHOR
+    /*! Implementação de uma fila, um dos tipos de estruturas de dados vistos
+     *  durante o sementre. A fila possui o comportamento de uma fila normal,
+     *  onde o primeiro que entre é o primeiro a sair.
      *  \author João Vicente Souto.
      *  \since 17/03/17
      *  \version 1.0
@@ -39,7 +40,7 @@ namespace structures {
     };
 
     //! Construtor padrão
-    /*! Sem parâmentros, a fila é inicializada com valores padrões.
+    /*! Sem parâmetros, a fila é inicializada com valores padrões.
      *  \sa ArrayStack(std::size_t max)
      */
     template<typename T>
@@ -49,8 +50,8 @@ namespace structures {
         size = -1;
     }
 
-    //! Construtor passando o tamanho da fila
-    /*! Usando parametro max o usuário pode criar uma fila de qualquer tamanho.
+    //! Construtor passando o tamanho da fila.
+    /*! Usando parâmetro max o usuário pode criar uma fila de qualquer tamanho.
      *  \param max um size_t contendo o tamanho da fila que deve ser criada.
      *  \sa ArrayStack()
      */
@@ -71,27 +72,27 @@ namespace structures {
 
     //! Inserção de um novo dado na fila.
     /*! Sempre será colocado no final da fila, caso não esteja vazia.
-     *  \param data un novo dado que será inserido na fila.
+     *  \param data um novo dado que será inserido na fila.
      *  \sa dequeue(), back(), clear()
      */
     template<typename T>
     void ArrayQueue<T>::enqueue(const T& data) {
-        if (full()) {
+        if (full())
             throw std::out_of_range("Fila cheia!");
-        } else {
+        else
             contents[++size_] = data;
-        }
     }
 
     //! Remoção de um dado da fila.
-    /*! Sempre será removido o primeiro dado da fila, caso não esteja vazia.
+    /*! Sempre será removido o primeiro dado da fila, caso não esteja vazia,
+     *  e em seguida os dados são reorganizados uma posição a frente da atual.
      *  \sa enqueue(), back(), clear()
      */
     template<typename T>
     T ArrayQueue<T>::dequeue() {
-        if (empty()) {
+        if (empty())
             throw std::out_of_range("Fila vazia!");
-        } else {
+        else {
             T tmp = contents[0];
             for (int i = 0; i < static_cast<int>(size_); i++)
                 contents[i] = contents[i+1];
@@ -101,17 +102,16 @@ namespace structures {
     }
 
     //! Referencia o dado no final da fila.
-    /*! Passa a referência do dado que esta no final da fila para uso externo.
-     *  \return um dado para ser referenciado.
+    /*! Retorna o dado que esta no final da fila para uso externo, caso exista.
+     *  \return T7 um dado que será referenciado.
      *  \sa enqueue(), dequeue(), clear()
      */
     template<typename T>
     T& ArrayQueue<T>::back() {
-        if (empty()) {
+        if (empty())
             throw std::out_of_range("Fila vazia!");
-        } else {
+        else
             return contents[size_];
-        }
     }
 
     //! Esvazia a fila.
@@ -124,13 +124,14 @@ namespace structures {
     }
 
     //! Quantidade de dados na fila.
-    /*! Retorna o tamanho da fila convertido para size_t.
+    /*! Retorna o tamanho da fila somando-se 1 porque a lógica do tamanho da
+     *  fila inicia em -1.
      *  \return um size_t referente ao tamanho da fila.
      *  \sa max_size()
      */
     template<typename T>
     std::size_t ArrayQueue<T>::size() {
-        return size_;
+        return size_+1;
     }
 
     //! Maior tamanho possível.
@@ -163,6 +164,6 @@ namespace structures {
         return size_ == max_size_-1;
     }
 
-}
+}  // namespace structures
 
 #endif

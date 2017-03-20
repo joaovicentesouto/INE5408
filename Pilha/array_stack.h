@@ -1,4 +1,5 @@
 //!  Copyright [2017] <João Vicente Souto>
+
 #ifndef STRUCTURES_ARRAY_STACK_H
 #define STRUCTURES_ARRAY_STACK_H
 
@@ -10,10 +11,10 @@ namespace structures {
     template<typename T>
 
     //! Classe Pilha
-    /*! Implementação de uma pilha, um dos tipos de estruturas de dados vistos durante o sementre.
-     *  Possui o comportamento de uma pilha de pratos, na qual todas as formas de acesso e modificação
-     *  se dão pelo dado que está no topo da pilha.
-     *  DETALHAR MELHOR
+    /*! Implementação de uma pilha, um dos tipos de estruturas de dados vistos
+     *  durante o sementre. Possui o comportamento de uma pilha de pratos, na
+     *  qual todas as formas de acesso e modificação se dão pelo dado que está
+     *  no topo da pilha.
      *  \author João Vicente Souto.
      *  \since 17/03/17
      *  \version 1.0
@@ -40,7 +41,7 @@ namespace structures {
     };
 
     //! Construtor padrão
-    /*! Sem parâmentros, a pilha é inicializada com valores padrões.
+    /*! Sem parâmetros, a pilha é inicializada com valores padrões.
      *  \sa ArrayStack(std::size_t max)
      */
     template<typename T>
@@ -50,8 +51,8 @@ namespace structures {
         top_ = -1;
     }
 
-    //! Construtor passando o tamanho da pilha
-    /*! Usando parametro max o usuário pode criar uma pilha de qualquer tamanho.
+    //! Construtor passando o tamanho da pilha.
+    /*! Usando parâmetro max o usuário pode criar uma pilha de qualquer tamanho.
      *  \param max um size_t contendo o tamanho da pilha que deve ser criada.
      *  \sa ArrayStack()
      */
@@ -68,9 +69,6 @@ namespace structures {
     template<typename T>
     ArrayStack<T>::~ArrayStack() {
         delete contents;
-        // delete top_;
-        // delete max_size_;
-        // delete DEFAULT_SIZE;
     }
 
     //! Inserção de um novo dado na pilha.
@@ -81,13 +79,10 @@ namespace structures {
      */
     template<typename T>
     void ArrayStack<T>::push(const T& data) {
-        !full() ?
-        contents[++top_] = data : throw std::out_of_range("Pilha cheia!");
-        /* if (full()) {
-         throw std::out_of_range("Pilha cheia!");
-         } else {
-         contents[++top_] = data;
-         }*/
+        if (full())
+            throw std::out_of_range("Pilha cheia!");
+        else
+            contents[++top_] = data;
     }
 
     //! Remoção de um dado da pilha.
@@ -96,25 +91,24 @@ namespace structures {
      */
     template<typename T>
     T ArrayStack<T>::pop() {
-        if (empty()) {
+        if (empty())
             throw std::out_of_range("Pilha vazia!");
-        } else {
+        else
             return contents[top_--];
-        }
     }
 
     //! Referencia o dado no topo da pilha.
-    /*! Passa a referência do dado que esta no topo da pilha para uso externo.
-     *  \return um dado para ser referenciado.
+    /*! Retorna o dado do topo da pilha que será referenciado para uso externo,
+     *  caso exista.
+     *  \return T& um dado para ser referenciado.
      *  \sa push(), pop(), clear()
      */
     template<typename T>
     T& ArrayStack<T>::top() {
-        if (empty()) {
+        if (empty())
             throw std::out_of_range("Pilha vazia!");
-        } else {
+        else
             return contents[top_];
-        }
     }
 
     //! Esvazia a pilha.
@@ -127,18 +121,19 @@ namespace structures {
     }
 
     //! Quantidade de dados na pilha.
-    /*! Retorna o índice do topo convertido para size_t.
-     *  \return um size_t referente ao tamanho da pilha.
+    /*! Retorna o tamanho da pilha convertido para size_t, seguindo a lógica
+     *  do índice+1 considerando que o índice inicial em -1.
+     *  \return size_t referente ao tamanho da pilha.
      *  \sa max_size()
      */
     template<typename T>
     std::size_t ArrayStack<T>::size() {
-        return (std::size_t) top_;
+        return (std::size_t) (top_+1);
     }
 
     //! Maior tamanho possível.
     /*! Retorna o maior tamanho possível armazenado na variavel max_size_.
-     *  \return um size_t referente ao max_size_.
+     *  \return size_t referente ao max_size_.
      *  \sa size()
      */
     template<typename T>
@@ -148,7 +143,7 @@ namespace structures {
 
     //! Pilha vazia
     /*! Testa se a pilha está vazia.
-     *  \return um booleano.
+     *  \return valor booleano.
      *  \sa full()
      */
     template<typename T>
@@ -158,12 +153,12 @@ namespace structures {
 
     //! Pilha cheia
     /*! Testa se a pilha está cheia.
-     *  \return um booleano.
+     *  \return valor booleano.
      *  \sa empty()
      */
     template<typename T>
     bool ArrayStack<T>::full() {
-        return top_ == static_cast<int>(max_size_-1);
+        return top_+1 == static_cast<int>(max_size_);
     }
 
 }  // namespace structures
