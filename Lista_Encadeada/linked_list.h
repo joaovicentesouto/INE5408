@@ -204,14 +204,18 @@ void LinkedList<T>::insert(const T& data, std::size_t index) {
     if (index > size_)
         throw std::out_of_range("Posição não existe!");
 
+    Node* fresh = new Node(data);
+    if (fresh == nullptr)
+        throw std::out_of_range("Full list!");
+
     if (index == 0) {
-      Node* tmp = head;
-      head = new Node(data, tmp);
-      // head->next(tmp);
-      // head = novo;
+      fresh->next(head);
+      head = fresh;
     } else {
       Node* last = last_of_index(index);
-      last->next(new Node(data, last->next()));
+      Node* next = last->next();
+      fresh->next(next);
+      last->next(fresh);
     }
     size_++;
 }
@@ -249,6 +253,24 @@ void LinkedList<T>::insert(const T& data, Node* last) {
 template<typename T>
 void LinkedList<T>::insert_sorted(const T& data) {
     if (empty()) {
+      push_front(data);
+    } else {
+      Node* current = head;
+      std::size_t posicao = size();
+      /*while (current->next() != nullptr && data > current->data()) {
+        current = current->next();
+        posicao++;
+      }*/
+      for (auto i = 0u; i < size(); ++i) {
+        if (!(data > current->data())) {
+          posicao = i;
+          break;
+        }
+        current = current->next();
+      }
+      insert(data, posicao);
+    }
+    /* if (empty()) {
         push_front(data);
     } else {
         Node* actual = head;
@@ -259,13 +281,13 @@ void LinkedList<T>::insert_sorted(const T& data) {
           actual = actual->next();
         } while (actual != nullptr && data > last->data());
 
-        /*while (actual->next() != nullptr && data > actual->data()) {
+        while (actual->next() != nullptr && data > actual->data()) {
             printf("ac=%p , last=%p\n", actual, last);
             last = actual;
             printf("last=%p\n", last);
             actual = actual->next();
             printf("ac=%p\n", actual);
-        }*/
+        }
         if (last == head) {
           if (data > last->data())
             insert(data, last);
@@ -274,7 +296,7 @@ void LinkedList<T>::insert_sorted(const T& data) {
         } else {
           insert(data, last);
         }
-    }
+    } */
 }
 
 //! Referencia o dado na posição da lista.
@@ -425,10 +447,10 @@ template<typename T>
 void LinkedList<T>::desenha_arvore() const {
   if (size() > 1) {
     auto current = head;
-    do {
+    for (auto i = 0u; i < size()-1u; ++i) {
       printf("%d -> ", current->data());
       current = current->next();
-    } while (current->next() != nullptr);
+    }
     printf("%d -> %p ....... t%lu\n", current->data(), current->next(), size());
   } else {
     if (size() == 1)
