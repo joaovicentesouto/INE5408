@@ -117,7 +117,7 @@ class LinkedList {
     //! Comt
     /*! Comt
      */
-    Node* last_of_index(std::size_t index) {  // último nodo da lista
+    Node* before_index(std::size_t index) {  // último nodo da lista
         auto it = head;
         for (auto i = 1u; i < index; ++i) {
             it = it->next();
@@ -212,7 +212,7 @@ void LinkedList<T>::insert(const T& data, std::size_t index) {
       fresh->next(head);
       head = fresh;
     } else {
-      Node* last = last_of_index(index);
+      Node* last = before_index(index);
       Node* next = last->next();
       fresh->next(next);
       last->next(fresh);
@@ -313,7 +313,7 @@ T& LinkedList<T>::at(std::size_t index) {
     if (index >= size())
       throw std::out_of_range("Invalid index!");
 
-    Node* current = index == 0? head : last_of_index(index)->next();
+    Node* current = index == 0? head : before_index(index)->next();
     return current->data();
 }
 
@@ -329,17 +329,22 @@ T& LinkedList<T>::at(std::size_t index) {
  */
 template<typename T>
 T LinkedList<T>::pop(std::size_t index) {
-    if (index >= size_)
-        throw std::out_of_range("Posição não existe!");
     if (empty())
         throw std::out_of_range("Empty list");
+    if (index >= size())
+        throw std::out_of_range("Invalid index!");
 
-    Node* current = index == 0? head : last_of_index(index)->next();
-    Node* temp = size() <= 1? head : current->next();
-    T& data = temp->data();
+    Node* before_out = before_index(index);
+    Node* out = size() <= 1 || index == 0? head : before_out->next();
+    T& data = out->data();
 
-    current->next(temp->next());
-    delete temp;
+    if (out == head) {
+        data = out->data();
+        head = out->next();
+    } else {
+        before_out->next(out->next());
+    }
+    delete out;
     size_--;
 
     return data;
@@ -355,9 +360,11 @@ T LinkedList<T>::pop(std::size_t index) {
  */
 template<typename T>
 T LinkedList<T>::pop_back() {
-    if (empty())
-        throw std::out_of_range("Empty list");
-    return pop(size()-1u);
+    try {
+        return pop(size()-1u);
+    } catch(std::out_of_range error) {
+        throw error;
+    }
 }
 
 //! Coleta o dado do início da lista.
@@ -370,11 +377,12 @@ T LinkedList<T>::pop_back() {
  */
 template<typename T>
 T LinkedList<T>::pop_front() {
-    try {
+    return pop(0u);
+    /*try {
         return pop(0u);
     } catch(std::out_of_range error) {
         throw error;
-    }
+    }*/
 }
 
 //! Remoção de um dado da lista.
