@@ -27,60 +27,86 @@ namespace structures {
 template<typename T>
 class LinkedList {
  public:
-    LinkedList() // construtor padrão
-    ~LinkedList() // destrutor
-    void clear() // limpar lista
-    void push_back(const T& data) // inserir no fim
-    void push_front(const T& data) // inserir no início
-    void insert(const T& data, std::size_t index)  // inserir na posição
-    void insert(const T& data, Node *element)  // inserir na posicao polimorfico para inserir em ordem
-    void insert_sorted(const T& data) // inserir em ordem
-    T& at(std::size_t index) // acessar um elemento na posição index
-    T pop(std::size_t index) // retirar da posição
-    T pop_back() // retirar do fim
-    T pop_front() // retirar do início
-    void remove(const T& data) // remover específico
-    bool empty() const // lista vazia
-    bool contains(const T& data) const // contém
-    std::size_t find(const T& data) const // posição do dado
-    std::size_t size() const // tamanho da lista
+    LinkedList();  // construtor padrão
+    ~LinkedList();  //  destrutor
+    void clear();  //  limpar lista
+    void push_back(const T& data);  // inserir no fim
+    void push_front(const T& data);  // inserir no início
+    void insert(const T& data, std::size_t index);  // inserir na posição
+    void insert(const T& data, Node* last);  // inserir na posicao polimorfico
+    void insert_sorted(const T& data);  // inserir em ordem
+    T& at(std::size_t index);  // acessar um elemento na posição index
+    T pop(std::size_t index);  // retirar da posição
+    T pop_back();  // retirar do fim
+    T pop_front();  // retirar do início
+    void remove(const T& data);  // remover específico
+    bool empty() const;  // lista vazia
+    bool contains(const T& data) const;  // contém
+    std::size_t find(const T& data) const;  // posição do dado
+    std::size_t size() const;  // tamanho da lista
+
  private:
-    class Node { // Elemento
+    class Node {  // Elemento
      public:
+        //! Comt
+        /*! Comt
+         */
         Node(const T& data):
-            data_{data}
+        data_{data}
         {}
 
+        //! Comt
+        /*! Comt
+         */
         Node(const T& data, Node* next):
-            data_{data},
-            next_{next}
+        data_{data},
+        next_{next}
         {}
 
-        T& data() { // getter: dado
+        //! Comt
+        /*! Comt
+         */
+        T& data() {  // getter: dado
             return data_;
         }
 
-        const T& data() const { // getter const: dado
+        //! Comt
+        /*! Comt
+         */
+        const T& data() const {  // getter const: dado
             return data_;
         }
 
-        Node* next() { // getter: próximo
+        //! Comt
+        /*! Comt
+         */
+        Node* next() {  // getter: próximo
             return next_;
         }
 
-        const Node* next() const { // getter const: próximo
+        //! Comt
+        /*! Comt
+         */
+        const Node* next() const {  // getter const: próximo
             return next_;
         }
 
-        void next(Node* node) { // setter: próximo
+        //! Comt
+        /*! Comt
+         */
+        void next(Node* node) {  // setter: próximo
             next_ = node;
         }
+
      private:
-        T data_;
-        Node* next_{nullptr};
+        T data_;  // data_
+        Node* next_{nullptr};  // next_
     };
 
-    Node* end() { // último nodo da lista
+    //! Comt
+    /*! Comt
+     */
+    Node* end() {  // último nodo da lista
         auto it = head;
         for (auto i = 1u; i < size(); ++i) {
             it = it->next();
@@ -88,15 +114,26 @@ class LinkedList {
         return it;
     }
 
-    Node* head{nullptr};
-    std::size_t size_{0u};
+    //! Comt
+    /*! Comt
+     */
+    Node* current(std::size_t index) {  // Node de qualquer posição
+        auto it = head;
+        for (auto i = 1u; i < index; ++i) {
+            it = it->next();
+        }
+        return it;
+    }
+
+    Node* head{nullptr};  // head
+    std::size_t size_{0u};  // size_
 };
 
 //! Construtor padrão
 /*! Sem parâmetros, a lista já contém os valores inicializados já na definição.
  */
 template<typename T>
-LinkedList<T>::LinkedList() {}
+LinkedList<T>::LinkedList() : head{nullptr}, size_{0u} {}
 
 //! Destrutor
 /*! Método para desalocar a memória utilizada pela lista.
@@ -109,9 +146,9 @@ LinkedList<T>::~LinkedList() {}
  */
 template<typename T>
 void LinkedList<T>::clear() {
-  while (!empty()) {
-    pop_front();
-  }
+    while (!empty()) {
+        pop_front();
+    }
 }
 
 //! Inserção no fim da lista.
@@ -123,10 +160,11 @@ void LinkedList<T>::clear() {
  */
 template<typename T>
 void LinkedList<T>::push_back(const T& data) {
-  try
-    insert(&data, size())
-  catch(std::out_of_range error)
-    return error;
+    try {
+        insert(&data, size_);
+    } catch(std::out_of_range error) {
+        throw error;
+    }
 }
 
 //! Inserção no começo da lista.
@@ -138,10 +176,10 @@ void LinkedList<T>::push_back(const T& data) {
  */
 template<typename T>
 void LinkedList<T>::push_front(const T& data) {
-  try
-    insert(&data, 0);
-  catch(std::out_of_range error)
-    return error;
+    try
+        insert(&data, 0);
+    catch(std::out_of_range error)
+        throw error;
 }
 
 //! Inserção em qualquer lugar da lista.
@@ -159,19 +197,19 @@ void LinkedList<T>::push_front(const T& data) {
  */
 template<typename T>
 void LinkedList<T>::insert(const T& data, std::size_t index) {
-  if (index > size_)
-    throw std::out_of_range("Posição não existe!");
+    if (index > size_)
+        throw std::out_of_range("Posição não existe!");
 
-  Node* current = at(index);
-
-  // Pensar melhor
-  if(current != nullptr) // Lista nao vazia
-    if(index != 0) // Em qualquer posicao
-      current->next(new Node(data, current.next()));
-    else // No começo
-      head = new Node(data, head);
-  else // Lista vazia
-    head = new Node(data);
+    auto current = current(index);
+    // Pensar melhor
+    if(current != nullptr) {  // Lista nao vazia
+        if(index == 0)  // Em qualquer posicao
+            head = new Node(&data, head);
+        else  // No começo
+            current->next(new Node(&data, current->next()));
+    } else {  // Lista vazia
+        head = new Node(&data);
+    }
 }
 
 //! Inserção em qualquer lugar da lista recebendo um ponteiro de um Node.
@@ -190,7 +228,7 @@ void LinkedList<T>::insert(const T& data, std::size_t index) {
  */
 template<typename T>
 void LinkedList<T>::insert(const T& data, Node* last) {
-  last->next(new node(data, last.next()));
+    last->next(new node(&data, last.next()));
 }
 
 //! Inserção ordenada na lista.
@@ -205,21 +243,23 @@ void LinkedList<T>::insert(const T& data, Node* last) {
  */
 template<typename T>
 void LinkedList<T>::insert_sorted(const T& data) {
-  if (empty()) {
-    push_front(&data);
-  } else {
-    Node* actual = head;
-    Node* last = nullptr;
-    std::size_t position = 1;
-    while(actual->next() != nullptr && data > actual->data()) {
-      last = actual;
-      actual = actual->next();
+    if (empty()) {
+        push_front(&data);
+    } else {
+        auto actual = head;
+        auto last = nullptr;
+        std::size_t position = 1;
+
+        while(actual->next() != nullptr && data > actual->data()) {
+            last = actual;
+            actual = actual->next();
+        }
+
+        if (actual->next() == nullptr)
+            insert(&data, actual);
+        else
+            insert(&data, last);
     }
-    if (actual->next() == nullptr)
-      insert(&data, actual);
-    else
-      insert(&data, last);
-  }
 }
 
 //! Referencia o dado na posição da lista.
@@ -233,10 +273,8 @@ void LinkedList<T>::insert_sorted(const T& data) {
  */
 template<typename T>
 T& LinkedList<T>::at(std::size_t index) {
-  Node* current = head;
-  for(auto i = 0u; i < index; ++i)
-    current = current->next();
-  return current;
+    Node* current = current(index);
+    return &(current->data());
 }
 
 //! Coleta o dado de uma posição específica da lista.
@@ -251,20 +289,19 @@ T& LinkedList<T>::at(std::size_t index) {
  */
 template<typename T>
 T LinkedList<T>::pop(std::size_t index) {
-  if (index >= size_)
-    throw std::out_of_range("Posição não existe!");
+    if (index >= size_)
+        throw std::out_of_range("Posição não existe!");
+    if(empty())
+        throw std::out_of_range("Empty list");
 
-  if(empty())
-    throw std::out_of_range("Empty list");
+    Node* current = current(index);
+    Node* temp = current->next();
+    T& data = temp->data();
 
-  Node* current = at(index);
-  Node* tmp = current->next();
-  T& data = tmp->data();
+    current->next(temp->next());
+    delete temp;
 
-  current->next(tmp->next());
-  delete tmp;
-
-  return data;
+    return data;
 }
 
 //! Coleta o dado do final da lista
@@ -277,10 +314,9 @@ T LinkedList<T>::pop(std::size_t index) {
  */
 template<typename T>
 T LinkedList<T>::pop_back() {
-  try
-    return pop(size_-1u);
-  catch(std::out_of_range error)
-    return error;
+    if(empty())
+        throw std::out_of_range("Empty list");
+    return pop(size()-1u);
 }
 
 //! Coleta o dado do início da lista.
@@ -293,10 +329,10 @@ T LinkedList<T>::pop_back() {
  */
 template<typename T>
 T LinkedList<T>::pop_front() {
-  try
-    return pop(0u);
-  catch(std::out_of_range error)
-    return error;
+    try
+        return pop(0u);
+    catch(std::out_of_range error)
+        return error;
 }
 
 //! Remoção de um dado da lista.
@@ -310,7 +346,7 @@ T LinkedList<T>::pop_front() {
  */
 template<typename T>
 void LinkedList<T>::remove(const T& data) {
-  pop(find(&data));
+    pop(find(&data));
 }
 
 //! lista vazia
@@ -319,7 +355,7 @@ void LinkedList<T>::remove(const T& data) {
  */
 template<typename T>
 bool LinkedList<T>::empty() const {
-  return size_ == 0u;
+    return size() == 0u;
 }
 
 //! Contém um dado
@@ -329,7 +365,7 @@ bool LinkedList<T>::empty() const {
  */
 template<typename T>
 bool LinkedList<T>::contains(const T& data) const {
-  return find(data) != size_;
+    return find(data) != size();
 }
 
 //! lista vazia
@@ -339,15 +375,15 @@ bool LinkedList<T>::contains(const T& data) const {
  */
 template<typename T>
 std::size_t LinkedList<T>::find(const T& data) const {
-  std::size_t index = 0u;
-  Node* current = head;
-  while (index < size_) {
-    if (current->data() == data)
-      break;
-    current = current->next();
-    index++;
-  }
-  return index;
+    std::size_t index = 0u;
+    Node* current = head;
+    while (index < size()) {
+        if (current->data() == data)
+            break;
+        current = current->next();
+        index++;
+    }
+    return index;
 }
 
 //! Tamanho da lista.
@@ -357,7 +393,7 @@ std::size_t LinkedList<T>::find(const T& data) const {
  */
 template<typename T>
 std::size_t LinkedList<T>::size() const {
-  return size_;
+    return size_;
 }
 
 } // namespace structures
