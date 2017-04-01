@@ -47,6 +47,7 @@ int main() {
   }catch(std::out_of_range error) {
     printf("%s\n", error.what());
   }
+  //list.clear();
 
   return 0;
 }
