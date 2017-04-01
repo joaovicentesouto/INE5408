@@ -43,6 +43,7 @@ class LinkedList {
     bool contains(const T& data) const;  // contém
     std::size_t find(const T& data) const;  // posição do dado
     std::size_t size() const;  // tamanho da lista
+    void desenha_arvore() const;
 
  private:
     class Node {  // Elemento
@@ -106,13 +107,17 @@ class LinkedList {
     /*! Comt
      */
     Node* end() {  // último nodo da lista
-        return attr(size());
+        auto it = head;
+        for (auto i = 1u; i < size(); ++i) {
+            it = it->next();
+        }
+        return it;
     }
 
     //! Comt
     /*! Comt
      */
-    Node* attr(std::size_t index) {  // último nodo da lista
+    Node* last_of_index(std::size_t index) {  // último nodo da lista
         auto it = head;
         for (auto i = 1u; i < index; ++i) {
             it = it->next();
@@ -130,7 +135,7 @@ class LinkedList {
 /*! Sem parâmetros, a lista já contém os valores inicializados já na definição.
  */
 template<typename T>
-LinkedList<T>::LinkedList() : head{nullptr}, size_{0u} {}
+LinkedList<T>::LinkedList() {}
 
 //! Destrutor
 /*! Método para desalocar a memória utilizada pela lista.
@@ -158,7 +163,7 @@ void LinkedList<T>::clear() {
 template<typename T>
 void LinkedList<T>::push_back(const T& data) {
     try {
-        insert(data, size_);
+        insert(data, size());
     } catch(std::out_of_range error) {
         throw error;
     }
@@ -199,15 +204,14 @@ void LinkedList<T>::insert(const T& data, std::size_t index) {
     if (index > size_)
         throw std::out_of_range("Posição não existe!");
 
-    Node* current = attr(index);
-    // Pensar melhor
-    if (current != nullptr) {  // Lista nao vazia
-        if (index == 0)  // Em qualquer posicao
-            head = new Node(data, head);
-        else  // No começo
-            current->next(new Node(data, current->next()));
-    } else {  // Lista vazia
-        head = new Node(data);
+    if (index == 0) {
+      Node* tmp = head;
+      head = new Node(data, tmp);
+      // head->next(tmp);
+      // head = novo;
+    } else {
+      Node* last = last_of_index(index);
+      last->next(new Node(data, last->next()));
     }
     size_++;
 }
@@ -229,6 +233,7 @@ void LinkedList<T>::insert(const T& data, std::size_t index) {
 template<typename T>
 void LinkedList<T>::insert(const T& data, Node* last) {
     last->next(new Node(data, last->next()));
+    size_++;
 }
 
 //! Inserção ordenada na lista.
@@ -246,18 +251,29 @@ void LinkedList<T>::insert_sorted(const T& data) {
     if (empty()) {
         push_front(data);
     } else {
-        auto actual = head;
-        auto last = head;
+        Node* actual = head;
+        Node* last = head;
 
-        while (actual->next() != nullptr && data > actual->data()) {
+        do {
+          last = actual;
+          actual = actual->next();
+        } while (actual != nullptr && data > last->data());
+
+        /*while (actual->next() != nullptr && data > actual->data()) {
+            printf("ac=%p , last=%p\n", actual, last);
             last = actual;
+            printf("last=%p\n", last);
             actual = actual->next();
-        }
-
-        if (actual->next() == nullptr)
-            insert(data, actual);
-        else
+            printf("ac=%p\n", actual);
+        }*/
+        if (last == head) {
+          if (data > last->data())
             insert(data, last);
+          else
+            push_front(data);
+        } else {
+          insert(data, last);
+        }
     }
 }
 
@@ -272,7 +288,10 @@ void LinkedList<T>::insert_sorted(const T& data) {
  */
 template<typename T>
 T& LinkedList<T>::at(std::size_t index) {
-    Node* current = attr(index);
+    if (index >= size())
+      throw std::out_of_range("Invalid index!");
+
+    Node* current = index == 0? head : last_of_index(index)->next();
     return current->data();
 }
 
@@ -293,12 +312,13 @@ T LinkedList<T>::pop(std::size_t index) {
     if (empty())
         throw std::out_of_range("Empty list");
 
-    Node* current = attr(index);
-    Node* temp = current->next();
+    Node* current = index == 0? head : last_of_index(index)->next();
+    Node* temp = size() <= 1? head : current->next();
     T& data = temp->data();
 
     current->next(temp->next());
     delete temp;
+    size_--;
 
     return data;
 }
@@ -394,6 +414,26 @@ std::size_t LinkedList<T>::find(const T& data) const {
 template<typename T>
 std::size_t LinkedList<T>::size() const {
     return size_;
+}
+
+//! Tamanho da lista.
+/*! Retorna o tamanho (size_) da lista.
+ *  \return size_t o tamanho da lista.
+ *  \sa max_size()
+ */
+template<typename T>
+void LinkedList<T>::desenha_arvore() const {
+  if (size() > 1) {
+    auto current = head;
+    do {
+      printf("%d -> ", current->data());
+      current = current->next();
+    } while (current->next() != nullptr);
+    printf("%d -> %p ....... t%lu\n", current->data(), current->next(), size());
+  } else {
+    if (size() == 1)
+        printf("valor=%d e ac=%p e po=%p\n", head->data(), head, head->next());
+  }
 }
 
 }  // namespace structures
