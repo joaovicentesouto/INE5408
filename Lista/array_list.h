@@ -69,8 +69,8 @@ ArrayList<T>::ArrayList() {
 }
 
 //! Construtor passando o tamanho da lista.
-/*! Usando parâmetro max_size o usuário pode criar uma fila de qualquer tamanho.
- *  \param max_size um size_t contendo o tamanho da fila que deve ser criada.
+/*! Usando parâmetro max_size o usuário pode criar uma lista de qualquer tamanho.
+ *  \param max_size um size_t contendo o tamanho da lista que deve ser criada.
  *  \sa ArrayStack()
  */
 template<typename T>
@@ -88,7 +88,7 @@ ArrayList<T>::~ArrayList() {
     delete[] contents;
 }
 
-//! Esvazia a fila.
+//! Esvazia a lista.
 /*! Atualiza o tamanho da lista para 0, indicando que a lista está vazia sem
  *  precisar remover os dados da mesma.
  */
@@ -98,10 +98,10 @@ void ArrayList<T>::clear() {
 }
 
 //! Inserção no fim da lista.
-/*! Sempre será colocado no final da fila, caso não esteja vazia.
+/*! Sempre será colocado no final da lista, caso não esteja vazia.
  *  Possíveis erros:
  *   - Se a lista estiver cheia.
- *  \param data um dado T que será inserido na fila.
+ *  \param data um dado T que será inserido na lista.
  *  \sa push_front(), insert(), insert_sorted()
  */
 template<typename T>
@@ -112,10 +112,10 @@ void ArrayList<T>::push_back(const T& data) {
 }
 
 //! Inserção no começo da lista.
-/*! Sempre será colocado no início da fila.
+/*! Sempre será colocado no início da lista.
  *  Possíveis erros:
  *   - Se a lista estiver cheia.
- *  \param data um dado T que será inserido na fila.
+ *  \param data um dado T que será inserido na lista.
  *  \sa push_back(), insert(), insert_sorted()
  */
 template<typename T>
@@ -130,7 +130,7 @@ void ArrayList<T>::push_front(const T& data) {
  *  Possíveis erros:
  *   - Se o índice não existir.
  *   - Se a lista estiver cheia.
- *  \param data um dado T que será inserido na fila.
+ *  \param data um dado T que será inserido na lista.
  *  \param index um size_t indicando a posição que será inserido o dado.
  *  \sa push_back(), push_front(), insert_sorted()
  */
@@ -154,7 +154,7 @@ void ArrayList<T>::insert(const T& data, std::size_t index) {
  *  for utilizar a lista e este método.
  *  Possíveis erros:
  *   - Se a lista estiver cheia.
- *  \param data um dado T que será inserido na fila.
+ *  \param data um dado T que será inserido na lista.
  *  \sa push_back(), push_front(), insert()
  */
 template<typename T>
@@ -193,7 +193,7 @@ T ArrayList<T>::pop(std::size_t index) {
 }
 
 //! Coleta o dado do final da lista
-/*! Sempre será retirado no início da fila.
+/*! Sempre será retirado no final da lista.
  *  Reuso do método pop().
  *  Possíveis erros:
  *   - Se a lista estiver vazia.
@@ -208,7 +208,7 @@ T ArrayList<T>::pop_back() {
 }
 
 //! Coleta o dado do início da lista.
-/*! Sempre será retirado o primeiro dado da fila, caso não esteja vazia.
+/*! Sempre será retirado o primeiro dado da lista, caso não esteja vazia.
  *  Reuso do método pop().
  *  Possíveis erros:
  *   - Se a lista estiver vazia.
@@ -242,8 +242,8 @@ void ArrayList<T>::remove(const T& data) {
     pop(index);
 }
 
-//! Fila cheia
-/*! Testa se a fila está cheia.
+//! lista cheia
+/*! Testa se a lista está cheia.
  *  \return um booleano.
  *  \sa empty()
  */
@@ -252,8 +252,8 @@ bool ArrayList<T>::full() const {
     return size_ == max_size_;
 }
 
-//! Fila vazia
-/*! Testa se a fila está vazia.
+//! lista vazia
+/*! Testa se a lista está vazia.
  *  \return um booleano.
  *  \sa full()
  */
@@ -272,8 +272,8 @@ bool ArrayList<T>::contains(const T& data) const {
     return find(data) != size_;
 }
 
-//! Fila vazia
-/*! Testa se a fila está vazia.
+//! lista vazia
+/*! Testa se a lista está vazia.
  *  \return um booleano.
  *  \sa find()
  */
@@ -289,7 +289,7 @@ std::size_t ArrayList<T>::find(const T& data) const {
 }
 
 //! Tamanho da lista.
-/*! Retorna o tamanho (size_) da fila.
+/*! Retorna o tamanho (size_) da lista.
  *  \return size_t referente ao tamanho da lista.
  *  \sa max_size()
  */
@@ -308,8 +308,8 @@ std::size_t ArrayList<T>::max_size() const {
     return max_size_;
 }
 
-//! Referencia o dado no final da fila.
-/*! Retorna o dado que esta no final da fila para uso externo, caso exista.
+//! Referencia o dado na posição da lista.
+/*! Retorna o dado que esta na posição da lista para uso externo, caso exista.
  *  Possíveis erros:
  *   - Se o índice não existir.
  *   - Se a lista estiver vazia.
@@ -325,8 +325,8 @@ T& ArrayList<T>::at(std::size_t index) {
     return contents[index];
 }
 
-//! Referencia o dado no final da fila.
-/*! Retorna o dado que esta no final da fila para uso externo, caso exista.
+//! Referencia o dado na posição da lista.
+/*! Retorna o dado que esta na posição da lista para uso externo, caso exista.
  *  Possíveis erros:
  *   - Se o índice não existir.
  *   - Se a lista estiver vazia.
@@ -342,8 +342,8 @@ T& ArrayList<T>::operator[](std::size_t index) {
     return contents[index];
 }
 
-//! Referencia o dado no final da fila.
-/*! Retorna o dado que esta no final da fila para uso externo, caso exista.
+//! Referencia o dado na posição da lista.
+/*! Retorna o dado que esta na posição da lista para uso externo, caso exista.
  *  Possíveis erros:
  *   - Se o índice não existir.
  *   - Se a lista estiver vazia.
@@ -359,8 +359,8 @@ const T& ArrayList<T>::at(std::size_t index) const {
     return contents[index];
 }
 
-//! Referencia o dado no final da fila.
-/*! Retorna o dado que esta no final da fila para uso externo, caso exista.
+//! Referencia o dado na posição da lista.
+/*! Retorna o dado que esta na posição da lista para uso externo, caso exista.
  *  Possíveis erros:
  *   - Se o índice não existir.
  *   - Se a lista estiver vazia.
