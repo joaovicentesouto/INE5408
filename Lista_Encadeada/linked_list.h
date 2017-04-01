@@ -33,7 +33,6 @@ class LinkedList {
     void push_back(const T& data);  // inserir no fim
     void push_front(const T& data);  // inserir no início
     void insert(const T& data, std::size_t index);  // inserir na posição
-    void insert(const T& data, Node* last);  // inserir na posicao polimorfico
     void insert_sorted(const T& data);  // inserir em ordem
     T& at(std::size_t index);  // acessar um elemento na posição index
     T pop(std::size_t index);  // retirar da posição
@@ -51,14 +50,14 @@ class LinkedList {
         //! Comt
         /*! Comt
          */
-        Node(const T& data):
+        explicit Node(const T& data):
         data_{data}
         {}
 
         //! Comt
         /*! Comt
          */
-        Node(const T& data, Node* next):
+        explicit Node(const T& data, Node* next):
         data_{data},
         next_{next}
         {}
@@ -107,23 +106,21 @@ class LinkedList {
     /*! Comt
      */
     Node* end() {  // último nodo da lista
-        auto it = head;
-        for (auto i = 1u; i < size(); ++i) {
-            it = it->next();
-        }
-        return it;
+        return attr(size());
     }
 
     //! Comt
     /*! Comt
      */
-    Node* current(std::size_t index) {  // Node de qualquer posição
+    Node* attr(std::size_t index) {  // último nodo da lista
         auto it = head;
         for (auto i = 1u; i < index; ++i) {
             it = it->next();
         }
         return it;
     }
+
+    void insert(const T& data, Node* last);  // inserir na posicao polimorfico
 
     Node* head{nullptr};  // head
     std::size_t size_{0u};  // size_
@@ -161,7 +158,7 @@ void LinkedList<T>::clear() {
 template<typename T>
 void LinkedList<T>::push_back(const T& data) {
     try {
-        insert(&data, size_);
+        insert(data, size_);
     } catch(std::out_of_range error) {
         throw error;
     }
@@ -176,10 +173,12 @@ void LinkedList<T>::push_back(const T& data) {
  */
 template<typename T>
 void LinkedList<T>::push_front(const T& data) {
-    try
-        insert(&data, 0);
-    catch(std::out_of_range error)
+    try {
+        std::size_t i = 0u;
+        insert(data, i);
+    } catch(std::out_of_range error) {
         throw error;
+    }
 }
 
 //! Inserção em qualquer lugar da lista.
@@ -200,16 +199,17 @@ void LinkedList<T>::insert(const T& data, std::size_t index) {
     if (index > size_)
         throw std::out_of_range("Posição não existe!");
 
-    auto current = current(index);
+    Node* current = attr(index);
     // Pensar melhor
-    if(current != nullptr) {  // Lista nao vazia
-        if(index == 0)  // Em qualquer posicao
-            head = new Node(&data, head);
+    if (current != nullptr) {  // Lista nao vazia
+        if (index == 0)  // Em qualquer posicao
+            head = new Node(data, head);
         else  // No começo
-            current->next(new Node(&data, current->next()));
+            current->next(new Node(data, current->next()));
     } else {  // Lista vazia
-        head = new Node(&data);
+        head = new Node(data);
     }
+    size_++;
 }
 
 //! Inserção em qualquer lugar da lista recebendo um ponteiro de um Node.
@@ -228,7 +228,7 @@ void LinkedList<T>::insert(const T& data, std::size_t index) {
  */
 template<typename T>
 void LinkedList<T>::insert(const T& data, Node* last) {
-    last->next(new node(&data, last.next()));
+    last->next(new Node(data, last->next()));
 }
 
 //! Inserção ordenada na lista.
@@ -244,21 +244,20 @@ void LinkedList<T>::insert(const T& data, Node* last) {
 template<typename T>
 void LinkedList<T>::insert_sorted(const T& data) {
     if (empty()) {
-        push_front(&data);
+        push_front(data);
     } else {
         auto actual = head;
-        auto last = nullptr;
-        std::size_t position = 1;
+        auto last = head;
 
-        while(actual->next() != nullptr && data > actual->data()) {
+        while (actual->next() != nullptr && data > actual->data()) {
             last = actual;
             actual = actual->next();
         }
 
         if (actual->next() == nullptr)
-            insert(&data, actual);
+            insert(data, actual);
         else
-            insert(&data, last);
+            insert(data, last);
     }
 }
 
@@ -273,8 +272,8 @@ void LinkedList<T>::insert_sorted(const T& data) {
  */
 template<typename T>
 T& LinkedList<T>::at(std::size_t index) {
-    Node* current = current(index);
-    return &(current->data());
+    Node* current = attr(index);
+    return current->data();
 }
 
 //! Coleta o dado de uma posição específica da lista.
@@ -291,10 +290,10 @@ template<typename T>
 T LinkedList<T>::pop(std::size_t index) {
     if (index >= size_)
         throw std::out_of_range("Posição não existe!");
-    if(empty())
+    if (empty())
         throw std::out_of_range("Empty list");
 
-    Node* current = current(index);
+    Node* current = attr(index);
     Node* temp = current->next();
     T& data = temp->data();
 
@@ -314,7 +313,7 @@ T LinkedList<T>::pop(std::size_t index) {
  */
 template<typename T>
 T LinkedList<T>::pop_back() {
-    if(empty())
+    if (empty())
         throw std::out_of_range("Empty list");
     return pop(size()-1u);
 }
@@ -329,10 +328,11 @@ T LinkedList<T>::pop_back() {
  */
 template<typename T>
 T LinkedList<T>::pop_front() {
-    try
+    try {
         return pop(0u);
-    catch(std::out_of_range error)
-        return error;
+    } catch(std::out_of_range error) {
+        throw error;
+    }
 }
 
 //! Remoção de um dado da lista.
@@ -346,7 +346,7 @@ T LinkedList<T>::pop_front() {
  */
 template<typename T>
 void LinkedList<T>::remove(const T& data) {
-    pop(find(&data));
+    pop(find(data));
 }
 
 //! lista vazia
@@ -396,6 +396,6 @@ std::size_t LinkedList<T>::size() const {
     return size_;
 }
 
-} // namespace structures
+}  // namespace structures
 
 #endif
