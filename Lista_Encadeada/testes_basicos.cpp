@@ -1,3 +1,4 @@
+//#include "linked_list_curta.h"
 #include "linked_list.h"
 #include <stdlib.h>
 
@@ -5,49 +6,21 @@ int main() {
 
   structures::LinkedList<int> list{};
 
-  /*for (auto i = 0; i < 10; ++i) {
-      list.push_back(i);
-      printf("i=%d = %d\n", i, list.at(i));
-  }
   for (auto i = 9; i >= 0; --i) {
-      //ASSERT_EQ(i, list.pop_back());
-      printf("i=%d = %d\n", i, list.pop_back());
+      list.insert_sorted(i);
   }
-  //ASSERT_TRUE(list.empty());
-
-  printf("tamanho = %lu\n", list.size());
-  list.desenha_arvore();*/    //popback
-
-  /*for (auto i = 9; i >= 0; --i) {
-      list.push_front(i);
-  }
-  list.desenha_arvore();
+  list.draw_connection();
   for (auto i = 0; i < 10; ++i) {
-      printf("i=%d = %d\n", i, list.pop_front());
+      list.pop_back();
+      list.draw_connection();
   }
-  printf("VAZIO = %d\n", list.empty());*/  //  pop_front
+  list.clear();
 
-  for (auto i = 0; i < 10; ++i) {
-      list.push_back(i);
-  }
-  list.desenha_arvore();
-
-  //ASSERT_EQ(5, list.pop(5));
-  printf("5 = %d\n", list.pop(5));
-
-  //ASSERT_EQ(6, list.pop(5));
-  printf("6 = %d\n", list.pop(5));
-
-  //ASSERT_EQ(8u, list.size());
-  printf("tam 8 = %lu\n", list.size());
-
-  //ASSERT_THROW(list.pop(8), std::out_of_range);
-  try {
-    list.pop(8);
-  }catch(std::out_of_range error) {
-    printf("%s\n", error.what());
-  }
-  //list.clear();
+  list.insert_sorted(10);
+  list.insert_sorted(-10);
+  list.insert_sorted(42);
+  list.insert_sorted(0);
+  list.draw_connection();
 
   return 0;
 }

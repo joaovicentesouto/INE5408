@@ -43,7 +43,7 @@ class LinkedList {
     bool contains(const T& data) const;  // contém
     std::size_t find(const T& data) const;  // posição do dado
     std::size_t size() const;  // tamanho da lista
-    void desenha_arvore() const;
+    void draw_connection() const;
 
  private:
     class Node {  // Elemento
@@ -141,7 +141,9 @@ LinkedList<T>::LinkedList() {}
 /*! Método para desalocar a memória utilizada pela lista.
  */
 template<typename T>
-LinkedList<T>::~LinkedList() {}
+LinkedList<T>::~LinkedList() {
+  clear();
+}
 
 //! Esvazia a lista.
 /*! Retira todos os Nodes e atualiza o tamanho para 0.
@@ -312,7 +314,7 @@ T LinkedList<T>::pop(std::size_t index) {
 
     Node* before_out = before_index(index);
     Node* out = before_out->next();
-    T& data = out->data();
+    T data = out->data();
     Node* next = out->next();
     before_out->next(next);
     size_--;
@@ -351,7 +353,7 @@ T LinkedList<T>::pop_front() {
       throw std::out_of_range("Empty list!");
 
     auto out = head;
-    T& data = out->data();
+    T data = out->data();
     head = out->next();
     size_--;
     delete out;
@@ -425,7 +427,7 @@ std::size_t LinkedList<T>::size() const {
  *  \sa max_size()
  */
 template<typename T>
-void LinkedList<T>::desenha_arvore() const {
+void LinkedList<T>::draw_connection() const {
   if (size() > 1) {
     auto current = head;
     for (auto i = 0u; i < size()-1u; ++i) {
@@ -435,7 +437,9 @@ void LinkedList<T>::desenha_arvore() const {
     printf("%d -> %p ....... t%lu\n", current->data(), current->next(), size());
   } else {
     if (size() == 1)
-        printf("valor=%d e ac=%p e po=%p\n", head->data(), head, head->next());
+        printf("%d -> %p ....... t%lu\n", head->data(), head->next(), size());
+    else
+        printf("%p  ....... t%lu\n", head, size());
   }
 }
 
