@@ -450,12 +450,12 @@ void LinkedList<T>::draw_connection() const {
             printf("%d -> ", current->data());
             current = current->next();
         }
-        printf("%d -> %p ....... t%lu\n", current->data(), current->next(), size());
+        printf("%d -> %p ... t%lu\n", current->data(), current->next(), size());
     } else {
         if (size() == 1)
-            printf("%d -> %p ....... t%lu\n", head->data(), head->next(), size());
+            printf("%d -> %p ... t%lu\n", head->data(), head->next(), size());
         else
-            printf("%p  ....... t%lu\n", head, size());
+            printf("%p ... t%lu\n", head, size());
     }
 }
 

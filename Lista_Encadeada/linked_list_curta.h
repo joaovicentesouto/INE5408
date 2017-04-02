@@ -93,7 +93,7 @@ class LinkedList {
      *  \sa push_back(), push_front(), insert_sorted()
      */
     void insert(const T& data, std::size_t index) {
-        if (index > size_+1u)
+        if (index > size_)
             throw std::out_of_range("Invalid index!");
 
         if (index == 0) {
@@ -172,7 +172,7 @@ class LinkedList {
      *  \sa pop_back(), pop_front(), remove()
      */
     T pop(std::size_t index) {
-        if (index > size_-1u)
+        if (index >= size_)
             throw std::out_of_range("Invalid index!");
 
         if (index == 0) {
@@ -183,7 +183,7 @@ class LinkedList {
                 last = last->next();
 
             Node* out = last->next();
-            T& data = out->data();
+            T data = out->data();
             last->next(out->next());
             size_--;
             delete out;
@@ -220,7 +220,7 @@ class LinkedList {
             throw std::out_of_range("Empty list!");
 
         Node* out = head;
-        T& data = out->data();
+        T data = out->data();
         head = out->next();
         size_--;
         delete out;
@@ -269,7 +269,7 @@ class LinkedList {
             throw std::out_of_range("Empty list!");
 
         auto current = head;
-        for (auto i = 1u; i < size_; ++i) {
+        for (auto i = 0u; i < size_; ++i) {
             if (data == current->data())
                 return i;
             current = current->next();
@@ -295,12 +295,13 @@ class LinkedList {
                 printf("%d -> ", current->data());
                 current = current->next();
             }
-            printf("%d -> %p ....... t%lu\n", current->data(), current->next(), size());
+            printf("%d -> %p\n", current->data(), current->next());
+            printf(" - t%lu\n", size());
         } else {
             if (size() == 1)
-                printf("%d -> %p ....... t%lu\n", head->data(), head->next(), size());
+                printf("%d -> %p - t%lu\n", head->data(), head->next(), size());
             else
-                printf("%p  ....... t%lu\n", head, size());
+                printf("%p -- t%lu\n", head, size());
         }
     }
 
