@@ -48,51 +48,64 @@ class LinkedList {
  private:
     class Node {  // Elemento
      public:
-        //! Comt
-        /*! Comt
+        //! Construtor usando apenas o dado.
+        /*! Construtor usando apenas o dado recebido para a criação.
+         *  \param data dado T armazenado pelo node.
+         *  \sa Node(const T& data, Node* next)
          */
         explicit Node(const T& data):
         data_{data}
         {}
 
-        //! Comt
-        /*! Comt
+        //! Construtor de um node completo.
+        /*! Construtor de um node com dado e o ponteiro ao próximo node.
+         *  \param data dado T armazenado pelo node.
+         *  \sa Node(const T& data)
          */
         explicit Node(const T& data, Node* next):
         data_{data},
         next_{next}
         {}
 
-        //! Comt
-        /*! Comt
+        //! Getter do dado
+        /*! Retorna o dado armazenado.
+         *  \sa data() const
+         *  \return T& referência do dado armazenado.
          */
-        T& data() {  // getter: dado
+        T& data() {
             return data_;
         }
 
-        //! Comt
-        /*! Comt
+        //! Getter constante do dado
+        /*! Retorna o dado armazenado.
+         *  \sa data() const
+         *  \return T& referência do dado armazenado.
          */
-        const T& data() const {  // getter const: dado
+        const T& data() const {
             return data_;
         }
 
-        //! Comt
-        /*! Comt
+        //! Getter do próximo node.
+        /*! Retorna o próximo node.
+         *  \sa next() const, next(Node* node)
+         *  \return Node* Próximo node.
          */
         Node* next() {  // getter: próximo
             return next_;
         }
 
-        //! Comt
-        /*! Comt
+        //! Getter constante do próximo node.
+        /*! Retorna o próximo node.
+         *  \sa next(), next(Node* node)
+         *  \return Node* Próximo node.
          */
         const Node* next() const {  // getter const: próximo
             return next_;
         }
 
-        //! Comt
-        /*! Comt
+        //! Setter o próximo node.
+        /*! Altera o próximo node.
+         *  \sa next(), next() const
          */
         void next(Node* node) {  // setter: próximo
             next_ = node;
@@ -103,8 +116,10 @@ class LinkedList {
         Node* next_{nullptr};  // next_
     };
 
-    //! Comt
-    /*! Comt
+    //! Passa pelos nodes até o último.
+    /*! Retorna o último node.
+     *  \sa before_index()
+     *  \return Node* Último node.
      */
     Node* end() {  // último nodo da lista
         auto it = head;
@@ -114,8 +129,10 @@ class LinkedList {
         return it;
     }
 
-    //! Comt
-    /*! Comt
+    //! Passa pelos nodes até o anterior ao índice procurado.
+    /*! Retorna o node anterior ao que se procura.
+     *  \sa end()
+     *  \return Node* O node anterior ao índice.
      */
     Node* before_index(std::size_t index) {  // último nodo da lista
         auto it = head;
@@ -142,24 +159,23 @@ LinkedList<T>::LinkedList() {}
  */
 template<typename T>
 LinkedList<T>::~LinkedList() {
-  clear();
+    clear();
 }
 
 //! Esvazia a lista.
-/*! Retira todos os Nodes e atualiza o tamanho para 0.
+/*! Retira todos os Nodes.
  */
 template<typename T>
 void LinkedList<T>::clear() {
-    while (!empty()) {
+    while (!empty())
         pop_front();
-    }
 }
 
 //! Inserção no fim da lista.
 /*! Sempre será colocado no final da lista, caso não esteja vazia.
  *  Possíveis erros:
  *   - Se a lista estiver cheia.
- *  \param data um dado T que será inserido na fila.
+ *  \param data Dado T que será inserido na fila.
  *  \sa push_front(), insert(), insert_sorted()
  */
 template<typename T>
@@ -175,7 +191,7 @@ void LinkedList<T>::push_back(const T& data) {
 /*! Sempre será colocado no início da fila.
  *  Possíveis erros:
  *   - Se a lista estiver cheia.
- *  \param data um dado T que será inserido na fila.
+ *  \param data Dado T que será inserido na fila.
  *  \sa push_back(), insert(), insert_sorted()
  */
 template<typename T>
@@ -197,8 +213,8 @@ void LinkedList<T>::push_front(const T& data) {
  *  Possíveis erros:
  *   - Se o índice não existir.
  *   - Se a lista estiver cheia.
- *  \param data um dado T que será inserido na fila.
- *  \param index um size_t indicando a posição que será inserido o dado.
+ *  \param data Dado T que será inserido na fila.
+ *  \param index Size_t indicando a posição que será inserido o dado.
  *  \sa push_back(), push_front(), insert_sorted()
  */
 template<typename T>
@@ -206,18 +222,18 @@ void LinkedList<T>::insert(const T& data, std::size_t index) {
     if (index > size_)
         throw std::out_of_range("Posição não existe!");
 
-    Node* fresh = new Node(data);
-    if (fresh == nullptr)
+    Node* new_node = new Node(data);
+    if (new_node == nullptr)
         throw std::out_of_range("Full list!");
 
     if (index == 0) {
-      fresh->next(head);
-      head = fresh;
+        new_node->next(head);
+        head = new_node;
     } else {
-      Node* last = before_index(index);
-      Node* next = last->next();
-      fresh->next(next);
-      last->next(fresh);
+        Node* last = before_index(index);
+        Node* next = last->next();
+        new_node->next(next);
+        last->next(new_node);
     }
     size_++;
 }
@@ -232,17 +248,18 @@ void LinkedList<T>::insert(const T& data, std::size_t index) {
  *  Possíveis erros:
  *   - Se o índice não existir.
  *   - Se a lista estiver cheia.
- *  \param data um dado T que será inserido na fila.
- *  \param index um size_t indicando a posição que será inserido o dado.
+ *  \param data Dado T que será inserido na fila.
+ *  \param index Size_t indicando a posição que será inserido o dado.
  *  \sa push_back(), push_front(), insert_sorted()
  */
 template<typename T>
 void LinkedList<T>::insert(const T& data, Node* last) {
-    Node* fresh = new Node(data);
-    if (fresh == nullptr)
-      throw std::out_of_range("Full list!");
-    fresh->next(last->next());
-    last->next(fresh);
+    Node* new_node = new Node(data);
+    if (new_node == nullptr)
+        throw std::out_of_range("Full list!");
+
+    new_node->next(last->next());
+    last->next(new_node);
     size_++;
 }
 
@@ -252,25 +269,25 @@ void LinkedList<T>::insert(const T& data, Node* last) {
  *  for utilizar a lista e este método.
  *  Possíveis erros:
  *   - Se a lista estiver cheia.
- *  \param data um dado T que será inserido na fila.
- *  \param Node* um ponteiro do elemento para inserir no próximo.
+ *  \param data Dado T que será inserido na fila.
+ *  \param Node* Ponteiro do elemento para inserir no próximo.
  *  \sa push_back(), push_front(), insert()
  */
 template<typename T>
 void LinkedList<T>::insert_sorted(const T& data) {
     if (empty()) {
-      push_front(data);
+        push_front(data);
     } else {
-      Node* current = head;
-      std::size_t posicao = size();
-      for (auto i = 0u; i < size(); ++i) {
-        if (!(data > current->data())) {
-          posicao = i;
-          break;
+        Node* current = head;
+        std::size_t position = size();
+        for (auto i = 0u; i < size(); ++i) {
+            if (!(data > current->data())) {
+                position = i;
+                break;
+            }
+            current = current->next();
         }
-        current = current->next();
-      }
-      insert(data, posicao);
+        insert(data, position);
     }
 }
 
@@ -280,13 +297,13 @@ void LinkedList<T>::insert_sorted(const T& data) {
  *  Possíveis erros:
  *   - Se o índice não existir.
  *   - Se a lista estiver vazia.
- *  \return T& um dado que será referenciado.
- *  \sa operator[](), at() const, operator[]() const
+ *  \param index Size_t índice do node.
+ *  \return T& Dado que será referenciado.
  */
 template<typename T>
 T& LinkedList<T>::at(std::size_t index) {
     if (index >= size())
-      throw std::out_of_range("Invalid index!");
+        throw std::out_of_range("Invalid index or empty list!");
 
     Node* current = index == 0? head : before_index(index)->next();
     return current->data();
@@ -298,7 +315,7 @@ T& LinkedList<T>::at(std::size_t index) {
  *  Possíveis erros:
  *   - Se o índice não existir.
  *   - Se a lista estiver vazia.
- *  \param index um size_t sendo a posição do dado a ser retirado.
+ *  \param index Size_t sendo a posição do dado a ser retirado.
  *  \return T dado genérico retirado da lista.
  *  \sa pop_back(), pop_front(), remove()
  */
@@ -310,7 +327,7 @@ T LinkedList<T>::pop(std::size_t index) {
         throw std::out_of_range("Invalid index!");
 
     if (index == 0)
-      return pop_front();
+        return pop_front();
 
     Node* before_out = before_index(index);
     Node* out = before_out->next();
@@ -350,7 +367,7 @@ T LinkedList<T>::pop_back() {
 template<typename T>
 T LinkedList<T>::pop_front() {
     if (empty())
-      throw std::out_of_range("Empty list!");
+        throw std::out_of_range("Empty list!");
 
     auto out = head;
     T data = out->data();
@@ -362,12 +379,12 @@ T LinkedList<T>::pop_front() {
 
 //! Remoção de um dado da lista.
 /*! Busca o índice do dado e remove ele da lista.
- *  Reuso do método pop();
+ *  Reuso do método pop() e find();
  *  Possíveis erros:
  *   - Se a lista estiver vazia.
  *   - O dado não foi encontrado.
- *  \param data um dado T que será removido da lista.
- *  \sa pop(), pop_back(), pop_front()
+ *  \param data Dado T que será removido da lista.
+ *  \sa pop(), pop_back(), pop_front(), find()
  */
 template<typename T>
 void LinkedList<T>::remove(const T& data) {
@@ -385,6 +402,7 @@ bool LinkedList<T>::empty() const {
 
 //! Contém um dado
 /*! Testa se um dado está na lista.
+ *  \param data T& Dado que se deseja testar a sua existência.
  *  \return um booleano.
  *  \sa find()
  */
@@ -393,10 +411,11 @@ bool LinkedList<T>::contains(const T& data) const {
     return find(data) != size();
 }
 
-//! lista vazia
-/*! Testa se a lista está vazia.
+//! Procura dado.
+/*! Procura o índice do dado, caso não achar retorna o tamanho da lista.
+ *  \param data T& Dado que se deseja procurar.
  *  \return um booleano.
- *  \sa find()
+ *  \sa contains()
  */
 template<typename T>
 std::size_t LinkedList<T>::find(const T& data) const {
@@ -414,33 +433,30 @@ std::size_t LinkedList<T>::find(const T& data) const {
 //! Tamanho da lista.
 /*! Retorna o tamanho (size_) da lista.
  *  \return size_t o tamanho da lista.
- *  \sa max_size()
  */
 template<typename T>
 std::size_t LinkedList<T>::size() const {
     return size_;
 }
 
-//! Tamanho da lista.
-/*! Retorna o tamanho (size_) da lista.
- *  \return size_t o tamanho da lista.
- *  \sa max_size()
+//! Desenha as conexões dos nodes.
+/*! Só pra ver mesmo.
  */
 template<typename T>
 void LinkedList<T>::draw_connection() const {
-  if (size() > 1) {
-    auto current = head;
-    for (auto i = 0u; i < size()-1u; ++i) {
-      printf("%d -> ", current->data());
-      current = current->next();
+    if (size() > 1) {
+        auto current = head;
+        for (auto i = 0u; i < size()-1u; ++i) {
+            printf("%d -> ", current->data());
+            current = current->next();
+        }
+        printf("%d -> %p ....... t%lu\n", current->data(), current->next(), size());
+    } else {
+        if (size() == 1)
+            printf("%d -> %p ....... t%lu\n", head->data(), head->next(), size());
+        else
+            printf("%p  ....... t%lu\n", head, size());
     }
-    printf("%d -> %p ....... t%lu\n", current->data(), current->next(), size());
-  } else {
-    if (size() == 1)
-        printf("%d -> %p ....... t%lu\n", head->data(), head->next(), size());
-    else
-        printf("%p  ....... t%lu\n", head, size());
-  }
 }
 
 }  // namespace structures
