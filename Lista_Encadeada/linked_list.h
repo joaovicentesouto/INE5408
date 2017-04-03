@@ -279,15 +279,17 @@ void LinkedList<T>::insert_sorted(const T& data) {
         push_front(data);
     } else {
         Node* current = head;
+        Node* last = head;
         std::size_t position = size();
         for (auto i = 0u; i < size(); ++i) {
             if (!(data > current->data())) {
                 position = i;
                 break;
             }
+            last = current;
             current = current->next();
         }
-        insert(data, position);
+        position == 0? push_front(data) : insert(data, last);
     }
 }
 
