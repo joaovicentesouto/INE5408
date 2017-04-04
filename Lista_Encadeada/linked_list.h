@@ -43,7 +43,6 @@ class LinkedList {
     bool contains(const T& data) const;  // contém
     std::size_t find(const T& data) const;  // posição do dado
     std::size_t size() const;  // tamanho da lista
-    void draw_connection() const;
 
  private:
     class Node {  // Elemento
@@ -181,7 +180,7 @@ void LinkedList<T>::clear() {
 template<typename T>
 void LinkedList<T>::push_back(const T& data) {
     try {
-        insert(data, size());
+        insert(data, size_);
     } catch(std::out_of_range error) {
         throw error;
     }
@@ -196,20 +195,17 @@ void LinkedList<T>::push_back(const T& data) {
  */
 template<typename T>
 void LinkedList<T>::push_front(const T& data) {
-    try {
-        std::size_t i = 0u;
-        insert(data, i);
-    } catch(std::out_of_range error) {
-        throw error;
-    }
+    Node* new_node = new Node(data);
+    if (new_node == nullptr)
+        throw std::out_of_range("Full list!");
+
+    new_node->next(head);
+    head = new_node;
+    size_++;
 }
 
 //! Inserção em qualquer lugar da lista.
-/*! Verificando se a posição for válida, será inserido nas seguintes possíveis
- *  condições:
- *   - Começo: antes do primeiro Node.
- *   - Final: depois do último Node.
- *   - No meio: entre dois Nodes.
+/*! Verificando se a posição for válida, depois inserindo onde se deve.
  *  Possíveis erros:
  *   - Se o índice não existir.
  *   - Se a lista estiver cheia.
@@ -220,36 +216,30 @@ void LinkedList<T>::push_front(const T& data) {
 template<typename T>
 void LinkedList<T>::insert(const T& data, std::size_t index) {
     if (index > size_)
-        throw std::out_of_range("Posição não existe!");
-
-    Node* new_node = new Node(data);
-    if (new_node == nullptr)
-        throw std::out_of_range("Full list!");
+        throw std::out_of_range("Invalid index!");
 
     if (index == 0) {
-        new_node->next(head);
-        head = new_node;
+        push_front(data);
     } else {
-        Node* last = before_index(index);
-        Node* next = last->next();
+        Node* new_node = new Node(data);
+        if (new_node == nullptr)
+            throw std::out_of_range("Full list!");
+
+        Node* before = before_index(index);
+        Node* next = before->next();
         new_node->next(next);
-        last->next(new_node);
+        before->next(new_node);
+        size_++;
     }
-    size_++;
 }
 
 //! Inserção em qualquer lugar da lista recebendo um ponteiro de um Node.
 /*! Polimorfismo do insert() para uso no insert_sorted().
- *  Verificando se a posição for válida, será inserido nas seguintes possíveis
- *  condições:
- *   - Começo: antes do primeiro Node.
- *   - Final: depois do último Node.
- *   - No meio: entre dois Nodes.
  *  Possíveis erros:
  *   - Se o índice não existir.
  *   - Se a lista estiver cheia.
  *  \param data Dado T que será inserido na fila.
- *  \param index Size_t indicando a posição que será inserido o dado.
+ *  \param last Node* anterior para inserir a sua frente.
  *  \sa push_back(), push_front(), insert_sorted()
  */
 template<typename T>
@@ -334,8 +324,7 @@ T LinkedList<T>::pop(std::size_t index) {
     Node* before_out = before_index(index);
     Node* out = before_out->next();
     T data = out->data();
-    Node* next = out->next();
-    before_out->next(next);
+    before_out->next(out->next());
     size_--;
     delete out;
     return data;
@@ -352,7 +341,7 @@ T LinkedList<T>::pop(std::size_t index) {
 template<typename T>
 T LinkedList<T>::pop_back() {
     try {
-        return pop(size()-1u);
+        return pop(size_ - 1u);
     } catch(std::out_of_range error) {
         throw error;
     }
@@ -439,26 +428,6 @@ std::size_t LinkedList<T>::find(const T& data) const {
 template<typename T>
 std::size_t LinkedList<T>::size() const {
     return size_;
-}
-
-//! Desenha as conexões dos nodes.
-/*! Só pra ver mesmo.
- */
-template<typename T>
-void LinkedList<T>::draw_connection() const {
-    if (size() > 1) {
-        auto current = head;
-        for (auto i = 0u; i < size()-1u; ++i) {
-            printf("%d -> ", current->data());
-            current = current->next();
-        }
-        printf("%d -> %p ... t%lu\n", current->data(), current->next(), size());
-    } else {
-        if (size() == 1)
-            printf("%d -> %p ... t%lu\n", head->data(), head->next(), size());
-        else
-            printf("%p ... t%lu\n", head, size());
-    }
 }
 
 }  // namespace structures

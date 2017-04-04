@@ -70,13 +70,7 @@ class LinkedList {
      *  \sa push_back(), insert(), insert_sorted()
      */
     void push_front(const T& data) {
-        Node* new_node = new Node(data);
-        if (new_node == nullptr)
-            throw std::out_of_range("Full list!");
-
-        new_node->next(head);
-        head = new_node;
-        size_++;
+        
     }
 
     //! Inserção em qualquer lugar da lista.
@@ -113,6 +107,31 @@ class LinkedList {
         }
     }
 
+    //! Inserção em qualquer lugar da lista recebendo um ponteiro de um Node.
+    /*! Polimorfismo do insert() para uso no insert_sorted().
+     *  Verificando se a posição for válida, será inserido nas seguintes possíveis
+     *  condições:
+     *   - Começo: antes do primeiro Node.
+     *   - Final: depois do último Node.
+     *   - No meio: entre dois Nodes.
+     *  Possíveis erros:
+     *   - Se o índice não existir.
+     *   - Se a lista estiver cheia.
+     *  \param data Dado T que será inserido na fila.
+     *  \param index Size_t indicando a posição que será inserido o dado.
+     *  \sa push_back(), push_front(), insert_sorted()
+     */
+    template<typename T>
+    void LinkedList<T>::insert(const T& data, Node* last) {
+        Node* new_node = new Node(data);
+        if (new_node == nullptr)
+            throw std::out_of_range("Full list!");
+
+        new_node->next(last->next());
+        last->next(new_node);
+        size_++;
+    }
+
     //! Inserção ordenada na lista.
     /*! Será buscado a posição ordenada do dado passado por parâmetro. A forma de
      *  comparação utilizada será o operador ">" que deve ser sobrescrito por quem
@@ -127,16 +146,20 @@ class LinkedList {
         if (empty()) {
             push_front(data);
         } else {
-            Node* actual = head;
+            auto actual = head;
+            auto before = head;
             auto position = 0;
             while (actual->next() != nullptr && data > actual->data()) {
+                before = actual;
                 actual = actual->next();
                 position++;
             }
-            if (data > actual->data())
+            position == 0? push_front(data)
+                         : insert(data, before);
+            /* if (data > actual->data())
                 insert(data, position+1);
             else
-                insert(data, position);
+                insert(data, position); */
         }
     }
 
@@ -155,9 +178,7 @@ class LinkedList {
         if (index >= size_)
             throw std::out_of_range("Invalid index!");
 
-        auto current = head;
-        for (auto i = 1u; i <= index; ++i)
-            current = current->next();
+        auto current = before_out(index)->next();
         return current->data();
     }
 
@@ -172,23 +193,21 @@ class LinkedList {
      *  \sa pop_back(), pop_front(), remove()
      */
     T pop(std::size_t index) {
+        if (empty())
+            throw std::out_of_range("Empty list!");
         if (index >= size_)
             throw std::out_of_range("Invalid index!");
 
-        if (index == 0) {
+        if (index == 0)
             return pop_front();
-        } else {
-            Node* last = head;
-            for (auto i = 1u; i < index; ++i)
-                last = last->next();
 
-            Node* out = last->next();
-            T data = out->data();
-            last->next(out->next());
-            size_--;
-            delete out;
-            return data;
-        }
+        Node* before_out = before_index(index);
+        Node* out = before_out->next();
+        T data = out->data();
+        before_out->next(out->next());
+        size_--;
+        delete out;
+        return data;
     }
 
     //! Coleta o dado do final da lista
@@ -383,9 +402,8 @@ class LinkedList {
      */
     Node* end() {  // último nodo da lista
         auto it = head;
-        for (auto i = 1u; i < size(); ++i) {
+        for (auto i = 1u; i < size(); ++i)
             it = it->next();
-        }
         return it;
     }
 
@@ -396,9 +414,8 @@ class LinkedList {
      */
     Node* before_index(std::size_t index) {  // último nodo da lista
         auto it = head;
-        for (auto i = 1u; i < index; ++i) {
+        for (auto i = 1u; i < index; ++i)
             it = it->next();
-        }
         return it;
     }
 
