@@ -70,7 +70,7 @@ class LinkedList {
      *  \sa push_back(), insert(), insert_sorted()
      */
     void push_front(const T& data) {
-        
+
     }
 
     //! Inserção em qualquer lugar da lista.
@@ -97,12 +97,12 @@ class LinkedList {
             if (new_node == nullptr)
                 throw std::out_of_range("Full list!");
 
-            Node* last = head;
+            Node* before = head;
             for (auto i = 1u; i < index; ++i)
-                last = last->next();
+                before = before->next();
 
-            new_node->next(last->next());
-            last->next(new_node);
+            new_node->next(before->next());
+            before->next(new_node);
             size_++;
         }
     }
@@ -122,13 +122,13 @@ class LinkedList {
      *  \sa push_back(), push_front(), insert_sorted()
      */
     template<typename T>
-    void LinkedList<T>::insert(const T& data, Node* last) {
+    void insert(const T& data, Node* before) {
         Node* new_node = new Node(data);
         if (new_node == nullptr)
             throw std::out_of_range("Full list!");
 
-        new_node->next(last->next());
-        last->next(new_node);
+        new_node->next(before->next());
+        before->next(new_node);
         size_++;
     }
 
@@ -146,17 +146,16 @@ class LinkedList {
         if (empty()) {
             push_front(data);
         } else {
-            auto actual = head;
+            auto current = head;
             auto before = head;
             auto position = 0;
-            while (actual->next() != nullptr && data > actual->data()) {
-                before = actual;
-                actual = actual->next();
+            while (current->next() != nullptr && data > current->data()) {
+                before = current;
+                current = current->next();
                 position++;
             }
-            position == 0? push_front(data)
-                         : insert(data, before);
-            /* if (data > actual->data())
+            position == 0? push_front(data) : insert(data, before);
+            /* if (data > current->data())
                 insert(data, position+1);
             else
                 insert(data, position); */
@@ -419,7 +418,7 @@ class LinkedList {
         return it;
     }
 
-    // void insert(const T& data, Node* last);  // inserir polimorfico
+    // void insert(const T& data, Node* before);  // inserir polimorfico
 
     Node* head{nullptr};  // head
     std::size_t size_{0u};  // size_

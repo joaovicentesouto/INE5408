@@ -133,7 +133,7 @@ class LinkedList {
      *  \sa end()
      *  \return Node* O node anterior ao índice.
      */
-    Node* before_index(std::size_t index) {  // último nodo da lista
+    Node* before_index(std::size_t index) {  // node anterior ao index
         auto it = head;
         for (auto i = 1u; i < index; ++i) {
             it = it->next();
@@ -141,7 +141,7 @@ class LinkedList {
         return it;
     }
 
-    void insert(const T& data, Node* last);  // inserir na posicao polimorfico
+    void insert(const T& data, Node* before);  // inserir na posicao polimorfico
 
     Node* head{nullptr};  // head
     std::size_t size_{0u};  // size_
@@ -239,17 +239,17 @@ void LinkedList<T>::insert(const T& data, std::size_t index) {
  *   - Se o índice não existir.
  *   - Se a lista estiver cheia.
  *  \param data Dado T que será inserido na fila.
- *  \param last Node* anterior para inserir a sua frente.
+ *  \param before Node* anterior para inserir a sua frente.
  *  \sa push_back(), push_front(), insert_sorted()
  */
 template<typename T>
-void LinkedList<T>::insert(const T& data, Node* last) {
+void LinkedList<T>::insert(const T& data, Node* before) {
     Node* new_node = new Node(data);
     if (new_node == nullptr)
         throw std::out_of_range("Full list!");
 
-    new_node->next(last->next());
-    last->next(new_node);
+    new_node->next(before->next());
+    before->next(new_node);
     size_++;
 }
 
@@ -269,17 +269,17 @@ void LinkedList<T>::insert_sorted(const T& data) {
         push_front(data);
     } else {
         Node* current = head;
-        Node* last = head;
+        Node* before = head;
         std::size_t position = size();
         for (auto i = 0u; i < size(); ++i) {
             if (!(data > current->data())) {
                 position = i;
                 break;
             }
-            last = current;
+            before = current;
             current = current->next();
         }
-        position == 0? push_front(data) : insert(data, last);
+        position == 0? push_front(data) : insert(data, before);
     }
 }
 
