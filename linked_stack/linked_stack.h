@@ -4,7 +4,7 @@
 
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
-#include "linked_list.h"  // Import LinkedList
+#include "./linked_list.h"  // Import LinkedList
 
 namespace structures {
 
@@ -21,7 +21,7 @@ namespace structures {
  *  \version 1.0
  */
 template<typename T>
-class LinkedStack : private LinkedList {
+class LinkedStack : private LinkedList<T> {
  public:
     LinkedStack();  // Construtor
     ~LinkedStack();  // Destrutor
@@ -37,14 +37,14 @@ class LinkedStack : private LinkedList {
 /*! Sem parâmetros chamando o contrutor da classe Pai
  */
 template<typename T>
-LinkedStack<T>::LinkedStack() : LinkedList() {}
+LinkedStack<T>::LinkedStack() : LinkedList<T>::LinkedList() {}
 
 //! Destrutor
 /*! Método para desalocar a memória utilizada pela pilha.
  */
 template<typename T>
 LinkedStack<T>::~LinkedStack() {
-  LinkedList::~LinkedList();
+  LinkedList<T>::clear();
 }
 
 //! Esvazia a pilha.
@@ -53,7 +53,7 @@ LinkedStack<T>::~LinkedStack() {
  */
 template<typename T>
 void LinkedStack<T>::clear() {
-  LinkedList::clear();
+  LinkedList<T>::clear();
 }
 
 //! Inserção de um novo dado na pilha.
@@ -64,7 +64,7 @@ void LinkedStack<T>::clear() {
 template<typename T>
 void LinkedStack<T>::push(const T& data) {
   try {
-    LinkedList::push_front(data);
+    LinkedList<T>::push_front(data);
   } catch (std::out_of_range error) {
     throw error;
   }
@@ -78,7 +78,7 @@ void LinkedStack<T>::push(const T& data) {
 template<typename T>
 T LinkedStack<T>::pop() {
   try {
-    return LinkedList::pop_front();
+    return LinkedList<T>::pop_front();
   } catch (std::out_of_range error) {
     throw error;
   }
@@ -93,7 +93,7 @@ T LinkedStack<T>::pop() {
 template<typename T>
 T& LinkedStack<T>::top() const {
   try {
-    return LinkedList::head->data();
+    return LinkedList<T>::at_front();
   } catch (std::out_of_range error) {
     throw error;
   }
@@ -105,7 +105,7 @@ T& LinkedStack<T>::top() const {
  */
 template<typename T>
 bool LinkedStack<T>::empty() const {
-  return LinkedList::empty();
+  return LinkedList<T>::empty();
 }
 
 //! Quantidade de dados na pilha.
@@ -114,7 +114,7 @@ bool LinkedStack<T>::empty() const {
  */
 template<typename T>
 size_t LinkedStack<T>::size() const {
-  return LinkedList::size();
+  return LinkedList<T>::size();
 }
 
 }  // namespace structures
