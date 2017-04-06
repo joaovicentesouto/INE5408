@@ -44,7 +44,7 @@ LinkedStack<T>::LinkedStack() : LinkedList<T>::LinkedList() {}
  */
 template<typename T>
 LinkedStack<T>::~LinkedStack() {
-  LinkedList<T>::clear();
+  LinkedList<T>::~LinkedList();
 }
 
 //! Esvazia a pilha.
@@ -93,7 +93,7 @@ T LinkedStack<T>::pop() {
 template<typename T>
 T& LinkedStack<T>::top() const {
   try {
-    return LinkedList<T>::at_front();
+    return LinkedList<T>::at(0u);
   } catch (std::out_of_range error) {
     throw error;
   }

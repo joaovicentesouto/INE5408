@@ -35,7 +35,7 @@ class LinkedList {
     void insert(const T& data, std::size_t index);  // inserir na posição
     void insert_sorted(const T& data);  // inserir em ordem
     T& at(std::size_t index);  // acessar um elemento na posição index
-    T& at_front() const;  // acessar um elemento na posição index
+    T& at(std::size_t index) const;  // acessar um elemento na posição index
     T pop(std::size_t index);  // retirar da posição
     T pop_back();  // retirar do fim
     T pop_front();  // retirar do início
@@ -134,7 +134,7 @@ class LinkedList {
      *  \sa end()
      *  \return Node* O node anterior ao índice.
      */
-    Node* before_index(std::size_t index) {  // node anterior ao index
+    Node* before_index(std::size_t index) const {  // node anterior ao index
         auto it = head;
         for (auto i = 1u; i < index; ++i) {
             it = it->next();
@@ -302,14 +302,16 @@ T& LinkedList<T>::at(std::size_t index) {
     return current->data();
 }
 
-//! Referencia o dado na posição da lista.
-/*!
+//! Reuso herança
+/*! reuso
  */
 template<typename T>
-T& LinkedList<T>::at_front() const {
-    if (empty())
-      throw std::out_of_range("Empty list");
-    return head->data();
+T& LinkedList<T>::at(std::size_t index) const {
+    if (index >= size())
+        throw std::out_of_range("Invalid index or empty list!");
+
+    Node* current = index == 0? head : before_index(index)->next();
+    return current->data();
 }
 
 //! Coleta o dado de uma posição específica da lista.
