@@ -40,7 +40,7 @@ LinkedQueue<T>::LinkedQueue() : LinkedList<T>::LinkedList() {}
  */
 template<typename T>
 LinkedQueue<T>::~LinkedQueue() {
-    LinkedList<T>::~LinkedList();
+    LinkedList<T>::clear();
 }
 
 //! Title
@@ -59,11 +59,13 @@ void LinkedQueue<T>::enqueue(const T& data) {
     auto new_node = new Node(data);
     if (new_node == nullptr)
         throw std::out_of_range("Full list!");
+
     if (empty()) {
         LinkedList<T>::head = new_node;
-        tail = new_node;
+        tail = LinkedList<T>::head;
     } else {
         tail->next(new_node);
+        tail = new_node;
     }
     LinkedList<T>::size_++;
 }
@@ -92,6 +94,8 @@ T& LinkedQueue<T>::front() const {
  */
 template<typename T>
 T& LinkedQueue<T>::back() const {
+    if (empty())
+        throw std::out_of_range("Empty list!");
     return tail->data();
 }
 
