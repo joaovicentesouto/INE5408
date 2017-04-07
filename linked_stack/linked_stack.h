@@ -63,11 +63,7 @@ void LinkedStack<T>::clear() {
  */
 template<typename T>
 void LinkedStack<T>::push(const T& data) {
-  try {
     LinkedList<T>::push_front(data);
-  } catch (std::out_of_range error) {
-    throw error;
-  }
 }
 
 //! Remoção de um dado da pilha.
@@ -77,11 +73,7 @@ void LinkedStack<T>::push(const T& data) {
  */
 template<typename T>
 T LinkedStack<T>::pop() {
-  try {
     return LinkedList<T>::pop_front();
-  } catch (std::out_of_range error) {
-    throw error;
-  }
 }
 
 //! Referencia o dado no topo da pilha.
@@ -92,11 +84,7 @@ T LinkedStack<T>::pop() {
  */
 template<typename T>
 T& LinkedStack<T>::top() const {
-  try {
     return LinkedList<T>::at(0u);
-  } catch (std::out_of_range error) {
-    throw error;
-  }
 }
 
 //! Pilha vazia
