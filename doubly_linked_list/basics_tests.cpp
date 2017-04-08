@@ -3,27 +3,21 @@
 int main(int argc, char const *argv[]) {
   structures::DoublyLinkedList<int> list{};
 
-  for (auto i = 9; i >= 0; --i) {
-      list.insert_sorted(i);
-  }
   for (auto i = 0; i < 10; ++i) {
-      //printf("%d\n", list.at(i));
+      list.push_back(i);
   }
 
-  list.clear();
-
-  list.insert_sorted(10);
-  list.insert_sorted(-10);
-  list.insert_sorted(42);
-  list.insert_sorted(0);
-  list.insert_sorted(-42);
-  for (auto i = 0; i < list.size(); ++i) {
+  for (auto i = 0; i < 10; ++i) {
       printf("%d\n", list.at(i));
   }
-  //ASSERT_EQ(-10, list.at(0));
-  //ASSERT_EQ(0, list.at(1));
-  //ASSERT_EQ(10, list.at(2));
-  //ASSERT_EQ(42, list.at(3));
+
+  printf("%d\n", list.pop(5));
+  printf("%lu\n", list.size());
+  printf("%d\n", list.pop(5));
+  //ASSERT_EQ(5, list.pop(5));
+  //ASSERT_EQ(6, list.pop(5));
+  //ASSERT_EQ(8u, list.size());
+  //ASSERT_THROW(list.pop(8), std::out_of_range);
 
   return 0;
 }

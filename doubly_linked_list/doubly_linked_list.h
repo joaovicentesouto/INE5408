@@ -282,6 +282,8 @@ T DoublyLinkedList<T>::pop(std::size_t index) {
     auto out = node_of_index(index);
     T data = out->data();
     out->prev()->next(out->next());
+    if (out->next() != nullptr)
+      out->next()->prev(out->prev());
     size_--;
     delete out;
     return data;
@@ -304,6 +306,7 @@ T DoublyLinkedList<T>::pop_front() {
     auto out = head;
     T data = out->data();
     head = out->next();
+    //head->prev(nullptr);
     size_--;
     delete out;
     return data;
