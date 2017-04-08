@@ -306,7 +306,6 @@ T DoublyLinkedList<T>::pop_front() {
     auto out = head;
     T data = out->data();
     head = out->next();
-    // head->prev(nullptr);
     size_--;
     delete out;
     return data;
