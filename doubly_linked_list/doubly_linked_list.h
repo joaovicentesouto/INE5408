@@ -139,7 +139,7 @@ class DoublyLinkedList {
         return it;
     }
 
-    void insert(const T& data, Node* current);  // insere posição com node
+    void insert(const T& data, Node* current);
 
     Node* head{nullptr};  //< head
     std::size_t size_{0u};  //< size
@@ -179,8 +179,14 @@ void DoublyLinkedList<T>::push_front(const T& data) {
     Node* new_node = new Node(data);
     if (new_node == nullptr)
         throw std::out_of_range("Full list!");
-    new_node->next(head);
-    head = new_node;
+
+    if (empty()) {
+      head = new_node;
+    } else {
+      new_node->next(head);
+      head->prev(new_node);
+      head = new_node;
+    }
     size_++;
 }
 
@@ -207,6 +213,7 @@ void DoublyLinkedList<T>::insert(const T& data, std::size_t index) {
             new_node->next(current);
             new_node->prev(current->prev());
             current->prev()->next(new_node);
+            new_node->prev(current->prev());
         }
         size_++;
     }
@@ -227,9 +234,15 @@ void DoublyLinkedList<T>::insert(const T& data, Node* previous) {
     if (new_node == nullptr)
         throw std::out_of_range("Full list!");
 
-    new_node->next(previous->next());
-    new_node->prev(previous);
-    previous->next(new_node);
+    if (empty()) {
+      head = new_node;
+    } else {
+      if (previous->next() != nullptr)
+        previous->next()->prev(new_node);
+      new_node->next(previous->next());
+      previous->next(new_node);
+      new_node->prev(previous);
+    }
     size_++;
 }
 
@@ -272,7 +285,7 @@ T DoublyLinkedList<T>::pop(std::size_t index) {
     T data = out->data();
     out->prev()->next(out->next());
     if (out->next() != nullptr)
-      out->next(out->prev());
+      out->next()->prev(out->prev());
     size_--;
     delete out;
     return data;
