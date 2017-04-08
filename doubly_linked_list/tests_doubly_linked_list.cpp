@@ -207,4 +207,3 @@ TEST_F(DoublyLinkedListTest, RemoveElement) {
     ASSERT_EQ(9u, list.size());
     ASSERT_FALSE(list.contains(4));
 }
-

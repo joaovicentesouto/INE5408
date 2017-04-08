@@ -12,10 +12,10 @@ template<typename T>
 //! Title
 //* Description
 class DoublyLinkedList {
-public:
-    DoublyLinkedList()
-    ~DoublyLinkedList()
-    void clear()
+ public:
+    DoublyLinkedList();
+    ~DoublyLinkedList();
+    void clear();
 
     void push_back(const T& data);  // insere no fim
     void push_front(const T& data);  // insere no início
@@ -35,14 +35,15 @@ public:
 
     std::size_t find(const T& data) const;  // posição de um dado
     std::size_t size() const;  // tamanho
-private:
+
+ private:
     //! Title
     //* Description
     class Node {
-    public:
+     public:
         //! Title
         //* Description
-        Node(const T& data):
+        explicit Node(const T& data):
         data_{data}
         {}
 
@@ -106,15 +107,15 @@ private:
         //! Title
         //* Description
         void next(Node* node) {
-            next+ = node;
+            next_ = node;
         }
 
-    private:
+     private:
         T data_;  //< data
         Node* prev_{nullptr};  //< prev
         Node* next_{nullptr};  //< next
     };
-    
+
     //! Passa pelos nodes até o último.
     /*! Retorna o último node.
      *  \sa before_index()
@@ -127,7 +128,7 @@ private:
         }
         return it;
     }
-    
+
     //! Title
     //* Description
     Node* node_of_index(std::size_t index) {  // node anterior ao index
@@ -137,6 +138,8 @@ private:
         }
         return it;
     }
+
+    void insert(const T& data, Node* current);  // insere posição com node
 
     Node* head{nullptr};  //< head
     std::size_t size_{0u};  //< size
@@ -157,7 +160,7 @@ DoublyLinkedList<T>::~DoublyLinkedList() {
 //! Title
 //* Description
 template<typename T>
-DoublyLinkedList<T>::void clear() {
+void DoublyLinkedList<T>::clear() {
     while (!empty())
         pop_front();
 }
@@ -176,9 +179,7 @@ void DoublyLinkedList<T>::push_front(const T& data) {
     Node* new_node = new Node(data);
     if (new_node == nullptr)
         throw std::out_of_range("Full list!");
-
     new_node->next(head);
-    head->prev(new_node);
     head = new_node;
     size_++;
 }
@@ -199,10 +200,12 @@ void DoublyLinkedList<T>::insert(const T& data, std::size_t index) {
 
         if (index == size_) {
             Node* before = end();
-            current->next(new_node);
+            before->next(new_node);
+            new_node->prev(before);
         } else {
             Node* current = node_of_index(index);
             new_node->next(current);
+            new_node->prev(current->prev());
             current->prev()->next(new_node);
         }
         size_++;
@@ -219,13 +222,14 @@ void DoublyLinkedList<T>::insert(const T& data, std::size_t index) {
  *  \sa push_back(), push_front(), insert_sorted()
  */
 template<typename T>
-void LinkedList<T>::insert(const T& data, Node* current) {
+void DoublyLinkedList<T>::insert(const T& data, Node* previous) {
     Node* new_node = new Node(data);
     if (new_node == nullptr)
         throw std::out_of_range("Full list!");
 
-    new_node->next(current);
-    current->prev()->next(new_node);
+    new_node->next(previous->next());
+    new_node->prev(previous);
+    previous->next(new_node);
     size_++;
 }
 
@@ -243,9 +247,12 @@ void DoublyLinkedList<T>::insert_sorted(const T& data) {
                 position = i;
                 break;
             }
-            current = current->next();
+            if (current->next() != nullptr)
+                current = current->next();
         }
-        position == 0? push_front(data) : insert(data, current);
+        position == 0? push_front(data) :
+        position == size_? insert(data, current) :
+                           insert(data, current->prev());
     }
 }
 
@@ -261,9 +268,11 @@ T DoublyLinkedList<T>::pop(std::size_t index) {
     if (index == 0)
         return pop_front();
 
-    auto out = node_of_index();
+    auto out = node_of_index(index);
     T data = out->data();
     out->prev()->next(out->next());
+    if (out->next() != nullptr)
+      out->next(out->prev());
     size_--;
     delete out;
     return data;
@@ -286,6 +295,7 @@ T DoublyLinkedList<T>::pop_front() {
     auto out = head;
     T data = out->data();
     head = out->next();
+    head->prev(nullptr);
     size_--;
     delete out;
     return data;
@@ -294,7 +304,7 @@ T DoublyLinkedList<T>::pop_front() {
 //! Title
 //* Description
 template<typename T>
-void remove(const T& data) {
+void DoublyLinkedList<T>::remove(const T& data) {
     pop(find(data));
 }
 
