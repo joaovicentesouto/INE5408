@@ -207,10 +207,12 @@ void DoublyLinkedList<T>::insert(const T& data, std::size_t index) {
         if (index == size_) {
             Node* before = end();
             before->next(new_node);
+            new_node->prev(before);
         } else {
             Node* current = node_of_index(index);
             new_node->next(current);
             current->prev()->next(new_node);
+            new_node->prev(current->prev());
         }
         size_++;
     }
