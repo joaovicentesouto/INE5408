@@ -211,7 +211,6 @@ void DoublyLinkedList<T>::insert(const T& data, std::size_t index) {
         } else {
             Node* current = node_of_index(index);
             new_node->next(current);
-            new_node->prev(current->prev());
             current->prev()->next(new_node);
             new_node->prev(current->prev());
         }
@@ -233,7 +232,6 @@ void DoublyLinkedList<T>::insert(const T& data, Node* previous) {
     Node* new_node = new Node(data);
     if (new_node == nullptr)
         throw std::out_of_range("Full list!");
-
     if (empty()) {
       head = new_node;
     } else {
@@ -308,7 +306,8 @@ T DoublyLinkedList<T>::pop_front() {
     auto out = head;
     T data = out->data();
     head = out->next();
-    head->prev(nullptr);
+    if (head != nullptr)
+        head->prev(nullptr);
     size_--;
     delete out;
     return data;
