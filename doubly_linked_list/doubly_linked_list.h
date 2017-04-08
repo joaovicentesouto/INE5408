@@ -228,13 +228,19 @@ void DoublyLinkedList<T>::insert(const T& data, std::size_t index) {
  *  \sa push_back(), push_front(), insert_sorted()
  */
 template<typename T>
-void DoublyLinkedList<T>::insert(const T& data, Node* current) {
+void DoublyLinkedList<T>::insert(const T& data, Node* previous) {
     Node* new_node = new Node(data);
     if (new_node == nullptr)
         throw std::out_of_range("Full list!");
-
-    new_node->next(current);
-    current->prev()->next(new_node);
+    if (empty()) {
+      head = new_node;
+    } else {
+      if (previous->next() != nullptr)
+        previous->next()->prev(new_node);
+      new_node->next(previous->next());
+      previous->next(new_node);
+      new_node->prev(previous);
+    }
     size_++;
 }
 
@@ -252,9 +258,12 @@ void DoublyLinkedList<T>::insert_sorted(const T& data) {
                 position = i;
                 break;
             }
-            current = current->next();
+            if (current->next() != nullptr)
+                current = current->next();
         }
-        position == 0? push_front(data) : insert(data, current);
+        position == 0? push_front(data) :
+        position == size_? insert(data, current) :
+                           insert(data, current->prev());
     }
 }
 
