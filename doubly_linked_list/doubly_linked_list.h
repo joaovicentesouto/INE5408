@@ -180,9 +180,13 @@ void DoublyLinkedList<T>::push_front(const T& data) {
     if (new_node == nullptr)
         throw std::out_of_range("Full list!");
 
-    new_node->next(head);
-    head->prev(new_node);
-    head = new_node;
+    if (empty()) {
+      head = new_node;
+    } else {
+      new_node->next(head);
+      head->prev(new_node);
+      head = new_node;
+    }
     size_++;
 }
 
