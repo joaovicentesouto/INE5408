@@ -9,116 +9,165 @@ namespace structures {
 
 template<typename T>
 
-//! Title
-//* Description
+//! Classe Lista Duplamente Encadeada
+/*! Implementação de uma lista se baseando em alocação dinâmica de memória.
+ *  Aspectos funcionais:
+ *   - Colocar e retirar.
+ *   - Testes de vazia, cheia ou que contenha um determinado dado.
+ *   - Iniciar e garantir determinada ordem dos elementos.
+ *  Características estruturais:
+ *   - Através de um HEAD que guarda a referência do primeiro elemento é
+ *     possível acessar qualquer outros elemento percorrendo de um elemento
+ *     ao próximo.
+ *   - Todo elemento sabe quem é seu próximo e seu anterior.
+ *   - O tamanho da lista inicia em 0, indicando que a lista esta vazia.
+ *
+ *  \author João Vicente Souto.
+ *  \since 04/04/17
+ *  \version 1.0
+ */
 class DoublyLinkedList {
  public:
     DoublyLinkedList();
     ~DoublyLinkedList();
     void clear();
 
-    void push_back(const T& data);  // insere no fim
-    void push_front(const T& data);  // insere no início
-    void insert(const T& data, std::size_t index);  // insere na posição
-    void insert_sorted(const T& data);  // insere em ordem
+    void push_back(const T& data);
+    void push_front(const T& data);
+    void insert(const T& data, std::size_t index);
+    void insert_sorted(const T& data);
 
-    T pop(std::size_t index);  // retira da posição
-    T pop_back();  // retira do fim
-    T pop_front();  // retira do início
-    void remove(const T& data);  // retira específico
+    T pop(std::size_t index);
+    T pop_back();
+    T pop_front();
+    void remove(const T& data);
 
-    bool empty() const;  // lista vazia
-    bool contains(const T& data) const;  // contém
+    bool empty() const;
+    bool contains(const T& data) const;
 
-    T& at(std::size_t index);  // acesso a um elemento (checando limites)
-    const T& at(std::size_t index) const;  // getter constante a um elemento
+    T& at(std::size_t index);
+    const T& at(std::size_t index) const;
 
-    std::size_t find(const T& data) const;  // posição de um dado
-    std::size_t size() const;  // tamanho
+    std::size_t find(const T& data) const;
+    std::size_t size() const;
 
  private:
-    //! Title
-    //* Description
+    //! Subclasse Node
+    /*! Elemento da minha lista que encapsula o dado,
+     *  ponteiro para o próximo e para o anterior.
+     */
     class Node {
      public:
-        //! Title
-        //* Description
+        //! Construtor Padrão
+        /*! Construtor com apenas o dado.
+         *  \param data T& que será armazenado.
+         */
         explicit Node(const T& data):
         data_{data}
         {}
 
-        //! Title
-        //* Description
+        //! Construtor Secundário
+        /*! Construtor com dado e o ponteiro para o próximo.
+         *  \param data T& que será armazenado.
+         *  \param next Node* para o próximo elemento.
+         */
         Node(const T& data, Node* next):
         data_{data},
         next_{next}
         {}
 
-        //! Title
-        //* Description
+        //! Construtor Padrão
+        /*! Construtor completo.
+         *  \param data T& que será armazenado.
+         *  \param next Node* para o próximo elemento.
+         *  \param prev Node* para o elemento anterior.
+         */
         Node(const T& data, Node* prev, Node* next):
         data_{data},
         prev_{prev},
         next_{next}
         {}
 
-        //! Title
-        //* Description
+        //! Retorna dado.
+        /*! Retorna o dado armazenado.
+         *  \sa data() const
+         *  \return T& referência do dado armazenado.
+         */
         T& data() {
             return data_;
         }
 
-        //! Title
-        //* Description
+        //! Retorna dado.
+        /*! Retorna o dado armazenado.
+         *  \sa data()
+         *  \return T& referência do dado armazenado.
+         */
         const T& data() const {
             return data_;
         }
 
-        //! Title
-        //* Description
+        //! Getter do node anterior.
+        /*! Retorna o node node.
+         *  \sa prev() const, prev(Node* node)
+         *  \return Node* node anterior.
+         */
         Node* prev() {
             return prev_;
         }
 
-        //! Title
-        //* Description
+        //! Getter do node anterior.
+        /*! Retorna o node node.
+         *  \sa prev(), prev(Node* node)
+         *  \return Node* node anterior.
+         */
         const Node* prev() const {
             return prev_;
         }
 
-        //! Title
-        //* Description
+        //! Setter o node anterior.
+        /*! Altera o próximo node.
+         *  \param Node* novo node anterior.
+         *  \sa prev(), prev() const
+         */
         void prev(Node* node) {
             prev_ = node;
         }
 
-        //! Title
-        //* Description
+        //! Getter do próximo node.
+        /*! Retorna o próximo node.
+         *  \sa next() const, next(Node* node)
+         *  \return Node* Próximo node.
+         */
         Node* next() {
             return next_;
         }
 
-        //! Title
-        //* Description
+        //! Getter constante do próximo node.
+        /*! Retorna o próximo node.
+         *  \sa next(), next(Node* node)
+         *  \return Node* Próximo node.
+         */
         const Node* next() const {
             return next_;
         }
 
-        //! Title
-        //* Description
+        //! Setter o próximo node.
+        /*! Altera o próximo node.
+         *  \sa next(), next() const
+         */
         void next(Node* node) {
             next_ = node;
         }
 
      private:
-        T data_;  //< data
-        Node* prev_{nullptr};  //< prev
-        Node* next_{nullptr};  //< next
+        T data_;  //!< data
+        Node* prev_{nullptr};  //!< prev
+        Node* next_{nullptr};  //!< next
     };
 
     //! Passa pelos nodes até o último.
     /*! Retorna o último node.
-     *  \sa before_index()
+     *  \sa node_of_index()
      *  \return Node* Último node.
      */
     Node* end() {  // último nodo da lista
@@ -129,9 +178,13 @@ class DoublyLinkedList {
         return it;
     }
 
-    //! Title
-    //* Description
-    Node* node_of_index(std::size_t index) {  // node anterior ao index
+    //! Passa pelos nodes até o índice procurado.
+    /*! Retorna o node que se procura.
+     *  \sa end()
+     *  \param size_t Índice do node.
+     *  \return Node* O node do índice.
+     */
+    Node* node_of_index(std::size_t index) {
         auto it = head;
         for (auto i = 1u; i <= index; ++i) {
             it = it->next();
@@ -141,39 +194,52 @@ class DoublyLinkedList {
 
     void insert(const T& data, Node* current);
 
-    Node* head{nullptr};  //< head
-    std::size_t size_{0u};  //< size
+    Node* head{nullptr};  //!< head
+    std::size_t size_{0u};  //!< size
 };
 
-//! Title
-//* Description
+//! Construtor padrão
+/*! Sem parâmetros, a lista já contém os valores padrões já na definição.
+ */
 template<typename T>
 DoublyLinkedList<T>::DoublyLinkedList() {}
 
-//! Title
-//* Description
+//! Destrutor
+/*! Método para desalocar a memória utilizada pela lista.
+ */
 template<typename T>
 DoublyLinkedList<T>::~DoublyLinkedList() {
     clear();
 }
 
-//! Title
-//* Description
+//! Esvazia a lista.
+/*! Retira todos os Nodes.
+ */
 template<typename T>
 void DoublyLinkedList<T>::clear() {
     while (!empty())
         pop_front();
 }
 
-//! Title
-//* Description
+//! Inserção no fim da lista.
+/*! Sempre será colocado no final da lista, caso não esteja vazia.
+ *  Possíveis erros:
+ *   - Se a lista estiver cheia.
+ *  \param data Dado T que será inserido na fila.
+ *  \sa push_front(), insert(), insert_sorted()
+ */
 template<typename T>
 void DoublyLinkedList<T>::push_back(const T& data) {
     insert(data, size_);
 }
 
-//! Title
-//* Description
+//! Inserção no começo da lista.
+/*! Sempre será colocado no início da fila.
+ *  Possíveis erros:
+ *   - Se a lista estiver cheia.
+ *  \param data Dado T que será inserido na fila.
+ *  \sa push_back(), insert(), insert_sorted()
+ */
 template<typename T>
 void DoublyLinkedList<T>::push_front(const T& data) {
     Node* new_node = new Node(data);
@@ -190,8 +256,15 @@ void DoublyLinkedList<T>::push_front(const T& data) {
     size_++;
 }
 
-//! Title
-//* Description
+//! Inserção em qualquer lugar da lista.
+/*! Verificando se a posição for válida, depois inserindo onde se deve.
+ *  Possíveis erros:
+ *   - Se o índice não existir.
+ *   - Se a lista estiver cheia.
+ *  \param data Dado T que será inserido na fila.
+ *  \param index Size_t indicando a posição que será inserido o dado.
+ *  \sa push_back(), push_front(), insert_sorted()
+ */
 template<typename T>
 void DoublyLinkedList<T>::insert(const T& data, std::size_t index) {
     if (index > size_)
@@ -244,8 +317,16 @@ void DoublyLinkedList<T>::insert(const T& data, Node* previous) {
     size_++;
 }
 
-//! Title
-//* Description
+//! Inserção ordenada na lista.
+/*! Será buscado a posição ordenada do dado passado por parâmetro. A forma de
+ *  comparação utilizada será o operador ">" que deve ser sobrescrito por quem
+ *  for utilizar a lista e este método.
+ *  Possíveis erros:
+ *   - Se a lista estiver cheia.
+ *  \param data Dado T que será inserido na fila.
+ *  \param Node* Ponteiro do elemento para inserir no próximo.
+ *  \sa push_back(), push_front(), insert()
+ */
 template<typename T>
 void DoublyLinkedList<T>::insert_sorted(const T& data) {
     if (empty()) {
@@ -267,8 +348,16 @@ void DoublyLinkedList<T>::insert_sorted(const T& data) {
     }
 }
 
-//! Title
-//* Description
+//! Retira o dado de uma posição específica da lista.
+/*! Verificando se a posição for válida, será removido e os ponteiros
+ *  reorganizados, depois o dado retirado é retornado e o tamanho decrementado.
+ *  Possíveis erros:
+ *   - Se o índice não existir.
+ *   - Se a lista estiver vazia.
+ *  \param index Size_t sendo a posição do dado a ser retirado.
+ *  \return T dado genérico retirado da lista.
+ *  \sa pop_back(), pop_front(), remove()
+ */
 template<typename T>
 T DoublyLinkedList<T>::pop(std::size_t index) {
     if (empty())
@@ -289,15 +378,27 @@ T DoublyLinkedList<T>::pop(std::size_t index) {
     return data;
 }
 
-//! Title
-//* Description
+//! Retira o dado do final da lista
+/*! Sempre será retirado no final da lista.
+ *  Reuso do método pop().
+ *  Possíveis erros:
+ *   - Se a lista estiver vazia.
+ *  \return T dado genérico retirado da lista.
+ *  \sa pop(), pop_front(), remove()
+ */
 template<typename T>
 T DoublyLinkedList<T>::pop_back() {
     return pop(size_ - 1u);
 }
 
-//! Title
-//* Description
+//! Coleta o dado do início da lista.
+/*! Sempre será retirado o primeiro dado da lista, caso não esteja vazia.
+ *  Reuso do método pop().
+ *  Possíveis erros:
+ *   - Se a lista estiver vazia.
+ *  \return T dado genérico retirado da lista.
+ *  \sa pop(), pop_back(), remove()
+ */
 template<typename T>
 T DoublyLinkedList<T>::pop_front() {
     if (empty())
@@ -313,29 +414,49 @@ T DoublyLinkedList<T>::pop_front() {
     return data;
 }
 
-//! Title
-//* Description
+//! Remoção de um dado da lista.
+/*! Busca o índice do dado e remove ele da lista.
+ *  Reuso do método pop() e find();
+ *  Possíveis erros:
+ *   - Se a lista estiver vazia.
+ *   - O dado não foi encontrado.
+ *  \param data Dado T que será removido da lista.
+ *  \sa pop(), pop_back(), pop_front(), find()
+ */
 template<typename T>
 void DoublyLinkedList<T>::remove(const T& data) {
     pop(find(data));
 }
 
-//! Title
-//* Description
+//! lista vazia
+/*! Testa se a lista está vazia.
+ *  \return um booleano.
+ */
 template<typename T>
 bool DoublyLinkedList<T>::empty() const {
     return size_ == 0u;
 }
 
-//! Title
-//* Description
+//! Contém um dado
+/*! Testa se um dado está na lista.
+ *  \param data T& Dado que se deseja testar a sua existência.
+ *  \return um booleano.
+ *  \sa find()
+ */
 template<typename T>
 bool DoublyLinkedList<T>::contains(const T& data) const {
     return find(data) != size_;
 }
 
-//! Title
-//* Description
+//! Referencia o dado na posição da lista.
+/*! Retorna o dado que esta na posição index da lista para uso externo,
+ *  caso exista.
+ *  Possíveis erros:
+ *   - Se o índice não existir.
+ *   - Se a lista estiver vazia.
+ *  \param index Size_t índice do node.
+ *  \return T& Dado que será referenciado.
+ */
 template<typename T>
 T& DoublyLinkedList<T>::at(std::size_t index) {
     if (index >= size())
@@ -345,8 +466,15 @@ T& DoublyLinkedList<T>::at(std::size_t index) {
     return current->data();
 }
 
-//! Title
-//* Description
+//! Referencia o dado na posição da lista / CONSTANTE.
+/*! Retorna o dado que esta na posição index da lista para uso externo,
+ *  caso exista.
+ *  Possíveis erros:
+ *   - Se o índice não existir.
+ *   - Se a lista estiver vazia.
+ *  \param index Size_t índice do node.
+ *  \return T& Dado que será referenciado.
+ */
 template<typename T>
 const T& DoublyLinkedList<T>::at(std::size_t index) const {
     if (index >= size())
@@ -356,8 +484,12 @@ const T& DoublyLinkedList<T>::at(std::size_t index) const {
     return current->data();
 }
 
-//! Title
-//* Description
+//! Procura dado.
+/*! Procura o índice do dado, caso não achar retorna o tamanho da lista.
+ *  \param data T& Dado que se deseja procurar.
+ *  \return um booleano.
+ *  \sa contains()
+ */
 template<typename T>
 std::size_t DoublyLinkedList<T>::find(const T& data) const {
     std::size_t index = 0u;
@@ -371,8 +503,10 @@ std::size_t DoublyLinkedList<T>::find(const T& data) const {
     return index;
 }
 
-//! Title
-//* Description
+//! Tamanho da lista.
+/*! Retorna o tamanho (size_) da lista.
+ *  \return size_t o tamanho da lista.
+ */
 template<typename T>
 std::size_t DoublyLinkedList<T>::size() const {
     return size_;

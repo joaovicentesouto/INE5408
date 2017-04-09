@@ -32,7 +32,7 @@ class LinkedQueue : private LinkedList<T> {
 
  private:
     typedef typename LinkedList<T>::Node Node;
-    Node* tail{nullptr}; //!< Ponteiro do último node da fila.
+    Node* tail{nullptr};  //!< Ponteiro do último node da fila.
 };
 
 //! Construtor padrão
