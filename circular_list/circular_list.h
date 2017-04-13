@@ -18,6 +18,7 @@ public:
     void push_front(const T& data); //  inserir no início
     void insert(const T& data, std::size_t index); //  inserir na posição
     void insert_sorted(const T& data); //  inserir em ordem
+    void insert(const T& data, Node* before);
 
     T& at(std::size_t index); //  acessar em um indice (com checagem de limites)
     const T& at(std::size_t index) const; //  versão const do acesso ao indice
@@ -158,27 +159,104 @@ template<typename T>
 void CircularList<T>::push_back(const T& data) {
   if (empty()) {
     push_front(data);
-    head->next(LinkedList<T>::head);
   } else {
-    Node* novoHead = new Node(head->data(), head->next());
-    head->next(novoHead);
-    head->data() = data;
-    head = novoHead;
+    Node* new_node = new Node(head->data(), head->next());
+    if (new_node == nullptr)
+        throw std::out_of_range("Full list!");
+
+    head->next(new_node);
+    head->data(data);
+    head = new_node;
     size_++;
   }
 }
 
 template<typename T>
-void CircularList<T>::push_front(const T& data);
+void CircularList<T>::push_front(const T& data) {
+  Node* new_node = new Node(data);
+  if (new_node == nullptr)
+      throw std::out_of_range("Full list!");
+
+  if (empty()) {
+    head = new_node;
+    head->next(head);
+  } else {
+    new_node->data(head->data());
+    new_node->next(head->next());
+    head->next(new_node);
+    head->data(data);
+  }
+  size_++;
+}
 
 template<typename T>
-void CircularList<T>::insert(const T& data, std::size_t index);
+void CircularList<T>::insert(const T& data, std::size_t index) {
+  if (index > size_)
+      throw std::out_of_range("Invalid index!");
+
+  if (index == 0) {
+      push_front(data);
+  } else if (index == size_) {
+      push_back(data);
+  } else {
+      Node* new_node = new Node(data);
+      if (new_node == nullptr)
+          throw std::out_of_range("Full list!");
+
+      Node* before = before_index(index);
+      Node* next = before->next();
+      new_node->next(next);
+      before->next(new_node);
+      size_++;
+  }
+}
+
+//! Inserção em qualquer lugar da lista recebendo um ponteiro de um Node.
+/*! Polimorfismo do insert() para uso no insert_sorted().
+ *  Possíveis erros:
+ *   - Se o índice não existir.
+ *   - Se a lista estiver cheia.
+ *  \param data Dado T que será inserido na fila.
+ *  \param before Node* anterior para inserir a sua frente.
+ *  \sa push_back(), push_front(), insert_sorted()
+ */
+template<typename T>
+void LinkedList<T>::insert(const T& data, Node* before) {
+    Node* new_node = new Node(data);
+    if (new_node == nullptr)
+        throw std::out_of_range("Full list!");
+
+    new_node->next(before->next());
+    before->next(new_node);
+    size_++;
+}
 
 template<typename T>
-void CircularList<T>::insert_sorted(const T& data);
+void CircularList<T>::insert_sorted(const T& data) {
+  if (empty()) {
+      push_front(data);
+  } else {
+      Node* current = head;
+      Node* before = head;
+      std::size_t position = size();
+      for (auto i = 0u; i < size(); ++i) {
+          if (!(data > current->data())) {
+              position = i;
+              break;
+          }
+          before = current;
+          current = current->next();
+      }
+      position == 0? push_front(data) :
+      position == size_? push_back(data) :
+                         insert(data, before);
+  }
+}
 
 template<typename T>
-T& CircularList<T>::at(std::size_t index);
+T& CircularList<T>::at(std::size_t index) {
+  
+}
 
 template<typename T>
 const T& CircularList<T>::at(std::size_t index) const;
