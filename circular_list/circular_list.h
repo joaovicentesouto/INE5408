@@ -30,32 +30,30 @@ class CircularList {
     CircularList();
     ~CircularList();
 
-    void clear(); //  limpar lista
+    void clear();  //  limpar lista
 
-    void push_back(const T& data); //  inserir no fim
-    void push_front(const T& data); //  inserir no início
-    void insert(const T& data, std::size_t index); //  inserir na posição
-    void insert_sorted(const T& data); //  inserir em ordem
-    void insert(const T& data, Node* before);
+    void push_back(const T& data);  //  inserir no fim
+    void push_front(const T& data);  //  inserir no início
+    void insert(const T& data, std::size_t index);  //  inserir na posição
+    void insert_sorted(const T& data);  //  inserir em ordem
 
-    T& at(std::size_t index); //  acessar em um indice (com checagem de limites)
-    const T& at(std::size_t index) const; //  versão const do acesso ao indice
+    T& at(std::size_t index);  //  acessar em um indice
+    const T& at(std::size_t index) const;  //  versão const do acesso ao indice
 
-    T pop(std::size_t index); //  retirar da posição
-    T pop_back(); //  retirar do fim
-    T pop_front(); //  retirar do início
-    void remove(const T& data); //  remover dado específico
+    T pop(std::size_t index);  //  retirar da posição
+    T pop_back();  //  retirar do fim
+    T pop_front();  //  retirar do início
+    void remove(const T& data);  //  remover dado específico
 
-    bool empty() const; //  lista vazia
-    bool contains(const T& data) const; //  lista contém determinado dado?
-    std::size_t find(const T& data) const; //  posição de um item na lista
+    bool empty() const;  //  lista vazia
+    bool contains(const T& data) const;  //  lista contém determinado dado?
+    std::size_t find(const T& data) const;  //  posição de um item na lista
 
-    std::size_t size() const; //  tamanho da lista
-    void draw_connection();
+    std::size_t size() const;  //  tamanho da lista
 
  private:
     class Node {  // Elemento
-    public:
+     public:
         //! Construtor usando apenas o dado.
         /*! Construtor usando apenas o dado recebido para a criação.
          *  \param data dado T armazenado pelo node.
@@ -128,7 +126,7 @@ class CircularList {
             next_ = node;
         }
 
-    private:
+     private:
         T data_;  // data_
         Node* next_{nullptr};  // next_
     };
@@ -277,7 +275,7 @@ void CircularList<T>::insert(const T& data, std::size_t index) {
  *  \sa push_back(), push_front(), insert_sorted()
  */
 template<typename T>
-void LinkedList<T>::insert(const T& data, Node* before) {
+void CircularList<T>::insert(const T& data, Node* before) {
     Node* new_node = new Node(data);
     if (new_node == nullptr)
         throw std::out_of_range("Full list!");
@@ -410,9 +408,8 @@ T CircularList<T>::pop_front() {
     if (empty())
         throw std::out_of_range("Empty list!");
 
-    auto out;
+    Node* out;
     T data = head->data();
-
     if (size_ == 1) {
         out = head;
         head = nullptr;
@@ -421,7 +418,6 @@ T CircularList<T>::pop_front() {
         head->next(out->next());
         head->data(out->data());
     }
-
     size_--;
     delete out;
     return data;
@@ -487,17 +483,6 @@ std::size_t CircularList<T>::find(const T& data) const {
 template<typename T>
 std::size_t CircularList<T>::size() const {
     return size_;
-}
-
-//! Desenha conexoes
-template<typename T>
-void CircularList<T>::draw_connection() {
-    auto temp = head;
-    for (auto i = 0; i < size_+2; ++i) {
-        printf("%d -> ", temp->data());
-        temp = temp->next();
-    }
-    printf("%d -> \n", temp->data());
 }
 
 }  //  namespace structures
