@@ -255,23 +255,71 @@ void CircularList<T>::insert_sorted(const T& data) {
 
 template<typename T>
 T& CircularList<T>::at(std::size_t index) {
-  
+  if (index >= size())
+      throw std::out_of_range("Invalid index or empty list!");
+
+  Node* current = index == 0? head : before_index(index)->next();
+  return current->data();
 }
 
 template<typename T>
-const T& CircularList<T>::at(std::size_t index) const;
+const T& CircularList<T>::at(std::size_t index) const {
+  if (index >= size())
+      throw std::out_of_range("Invalid index or empty list!");
+
+  Node* current = index == 0? head : before_index(index)->next();
+  return current->data();
+}
 
 template<typename T>
-T CircularList<T>::pop(std::size_t index);
+T CircularList<T>::pop(std::size_t index) {
+  if (empty())
+      throw std::out_of_range("Empty list");
+  if (index >= size())
+      throw std::out_of_range("Invalid index!");
+
+  if (index == 0)
+      return pop_front();
+
+  Node* before_out = before_index(index);
+  Node* out = before_out->next();
+  T data = out->data();
+  before_out->next(out->next());
+  size_--;
+  delete out;
+  return data;
+}
 
 template<typename T>
-T CircularList<T>::pop_back();
+T CircularList<T>::pop_back() {
+  return pop(size_ - 1u);
+}
 
 template<typename T>
-T CircularList<T>::pop_front();
+T CircularList<T>::pop_front() {
+  if (empty())
+      throw std::out_of_range("Empty list!");
+
+  auto out;
+  T data = head->data();
+
+  if (size_ == 1) {
+    out = head;
+    head = nullptr;
+  } else {
+    out = head->next();
+    head->next(out->next());
+    head->data(out->data());
+  }
+  size_--;
+  delete out;
+  return data;
+}
 
 template<typename T>
-void CircularList<T>::remove(const T& data);
+void CircularList<T>::remove(const T& data) {
+  pop(find(data));
+}
 
 template<typename T>
 bool CircularList<T>::empty() const;
