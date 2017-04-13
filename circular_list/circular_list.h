@@ -1,3 +1,4 @@
+//!  Copyright [2017] <João Vicente Souto>
 #ifndef STRUCTURES_CIRCULAR_LIST_H
 #define STRUCTURES_CIRCULAR_LIST_H
 
@@ -6,9 +7,26 @@
 
 namespace structures {
 
+//! Classe Lista circular
+/*! Implementação de uma lista se baseando em alocação dinâmica de memória.
+ *  Aspectos funcionais:
+ *   - Colocar e retirar.
+ *   - Testes de vazia, cheia ou que contenha um determinado dado.
+ *   - Iniciar e garantir determinada ordem dos elementos.
+ *  Características estruturais:
+ *   - Através de um HEAD que guarda a referência do primeiro elemento é
+ *     possível acessar qualquer outros elemento percorrendo de um elemento
+ *     ao próximo.
+ *   - O último elemento aponta para o primeiro.
+ *   - O tamanho da lista inicia em 0, indicando que a lista esta vazia.
+ *
+ *  \author João Vicente Souto.
+ *  \since 13/04/17
+ *  \version 1.0
+ */
 template<typename T>
 class CircularList {
-public:
+ public:
     CircularList();
     ~CircularList();
 
@@ -35,9 +53,9 @@ public:
     std::size_t size() const; //  tamanho da lista
     void draw_connection();
 
-  private:
+ private:
     class Node {  // Elemento
-     public:
+    public:
         //! Construtor usando apenas o dado.
         /*! Construtor usando apenas o dado recebido para a criação.
          *  \param data dado T armazenado pelo node.
@@ -110,7 +128,7 @@ public:
             next_ = node;
         }
 
-     private:
+    private:
         T data_;  // data_
         Node* next_{nullptr};  // next_
     };
@@ -158,7 +176,7 @@ CircularList<T>::CircularList() {}
  */
 template<typename T>
 CircularList<T>::~CircularList() {
-  clear();
+    clear();
 }
 
 //! Esvazia a lista.
@@ -166,8 +184,8 @@ CircularList<T>::~CircularList() {
  */
 template<typename T>
 void CircularList<T>::clear() {
-  while (!empty())
-    pop_front();
+    while (!empty())
+        pop_front();
 }
 
 //! Inserção no fim da lista.
@@ -179,18 +197,18 @@ void CircularList<T>::clear() {
  */
 template<typename T>
 void CircularList<T>::push_back(const T& data) {
-  if (empty()) {
-    push_front(data);
-  } else {
-    Node* new_node = new Node(head->data(), head->next());
-    if (new_node == nullptr)
-        throw std::out_of_range("Full list!");
+    if (empty()) {
+        push_front(data);
+    } else {
+        Node* new_node = new Node(head->data(), head->next());
+        if (new_node == nullptr)
+            throw std::out_of_range("Full list!");
 
-    head->next(new_node);
-    head->data(data);
-    head = new_node;
-    size_++;
-  }
+        head->next(new_node);
+        head->data(data);
+        head = new_node;
+        size_++;
+    }
 }
 
 //! Inserção no começo da lista.
@@ -202,20 +220,20 @@ void CircularList<T>::push_back(const T& data) {
  */
 template<typename T>
 void CircularList<T>::push_front(const T& data) {
-  Node* new_node = new Node(data);
-  if (new_node == nullptr)
-      throw std::out_of_range("Full list!");
+    Node* new_node = new Node(data);
+    if (new_node == nullptr)
+        throw std::out_of_range("Full list!");
 
-  if (empty()) {
-    head = new_node;
-    head->next(head);
-  } else {
-    new_node->data(head->data());
-    new_node->next(head->next());
-    head->next(new_node);
-    head->data(data);
-  }
-  size_++;
+    if (empty()) {
+        head = new_node;
+        head->next(head);
+    } else {
+        new_node->data(head->data());
+        new_node->next(head->next());
+        head->next(new_node);
+        head->data(data);
+    }
+    size_++;
 }
 
 //! Inserção em qualquer lugar da lista.
@@ -229,24 +247,24 @@ void CircularList<T>::push_front(const T& data) {
  */
 template<typename T>
 void CircularList<T>::insert(const T& data, std::size_t index) {
-  if (index > size_)
-      throw std::out_of_range("Invalid index!");
+    if (index > size_)
+        throw std::out_of_range("Invalid index!");
 
-  if (index == 0) {
-      push_front(data);
-  } else if (index == size_) {
-      push_back(data);
-  } else {
-      Node* new_node = new Node(data);
-      if (new_node == nullptr)
-          throw std::out_of_range("Full list!");
+    if (index == 0) {
+        push_front(data);
+    } else if (index == size_) {
+        push_back(data);
+    } else {
+        Node* new_node = new Node(data);
+        if (new_node == nullptr)
+            throw std::out_of_range("Full list!");
 
-      Node* before = before_index(index);
-      Node* next = before->next();
-      new_node->next(next);
-      before->next(new_node);
-      size_++;
-  }
+        Node* before = before_index(index);
+        Node* next = before->next();
+        new_node->next(next);
+        before->next(new_node);
+        size_++;
+    }
 }
 
 //! Inserção em qualquer lugar da lista recebendo um ponteiro de um Node.
@@ -281,24 +299,24 @@ void LinkedList<T>::insert(const T& data, Node* before) {
  */
 template<typename T>
 void CircularList<T>::insert_sorted(const T& data) {
-  if (empty()) {
-      push_front(data);
-  } else {
-      Node* current = head;
-      Node* before = head;
-      std::size_t position = size();
-      for (auto i = 0u; i < size(); ++i) {
-          if (!(data > current->data())) {
-              position = i;
-              break;
-          }
-          before = current;
-          current = current->next();
-      }
-      position == 0? push_front(data) :
-      position == size_? push_back(data) :
-                         insert(data, before);
-  }
+    if (empty()) {
+        push_front(data);
+    } else {
+        Node* current = head;
+        Node* before = head;
+        std::size_t position = size();
+        for (auto i = 0u; i < size(); ++i) {
+            if (!(data > current->data())) {
+                position = i;
+                break;
+            }
+            before = current;
+            current = current->next();
+        }
+        position == 0? push_front(data) :
+        position == size_?  push_back(data) :
+                            insert(data, before);
+    }
 }
 
 //! Referencia o dado na posição da lista.
@@ -312,11 +330,11 @@ void CircularList<T>::insert_sorted(const T& data) {
  */
 template<typename T>
 T& CircularList<T>::at(std::size_t index) {
-  if (index >= size())
-      throw std::out_of_range("Invalid index or empty list!");
+    if (index >= size())
+        throw std::out_of_range("Invalid index or empty list!");
 
-  Node* current = index == 0? head : before_index(index)->next();
-  return current->data();
+    Node* current = index == 0? head : before_index(index)->next();
+    return current->data();
 }
 
 //! Referencia o dado na posição da lista.
@@ -330,11 +348,11 @@ T& CircularList<T>::at(std::size_t index) {
  */
 template<typename T>
 const T& CircularList<T>::at(std::size_t index) const {
-  if (index >= size())
-      throw std::out_of_range("Invalid index or empty list!");
+    if (index >= size())
+        throw std::out_of_range("Invalid index or empty list!");
 
-  Node* current = index == 0? head : before_index(index)->next();
-  return current->data();
+    Node* current = index == 0? head : before_index(index)->next();
+    return current->data();
 }
 
 //! Coleta o dado de uma posição específica da lista.
@@ -349,21 +367,21 @@ const T& CircularList<T>::at(std::size_t index) const {
  */
 template<typename T>
 T CircularList<T>::pop(std::size_t index) {
-  if (empty())
-      throw std::out_of_range("Empty list");
-  if (index >= size())
-      throw std::out_of_range("Invalid index!");
+    if (empty())
+        throw std::out_of_range("Empty list");
+    if (index >= size())
+        throw std::out_of_range("Invalid index!");
 
-  if (index == 0)
-      return pop_front();
+    if (index == 0)
+        return pop_front();
 
-  Node* before_out = before_index(index);
-  Node* out = before_out->next();
-  T data = out->data();
-  before_out->next(out->next());
-  size_--;
-  delete out;
-  return data;
+    Node* before_out = before_index(index);
+    Node* out = before_out->next();
+    T data = out->data();
+    before_out->next(out->next());
+    size_--;
+    delete out;
+    return data;
 }
 
 //! Coleta o dado do final da lista
@@ -376,7 +394,7 @@ T CircularList<T>::pop(std::size_t index) {
  */
 template<typename T>
 T CircularList<T>::pop_back() {
-  return pop(size_ - 1u);
+    return pop(size_ - 1u);
 }
 
 //! Coleta o dado do início da lista.
@@ -389,23 +407,24 @@ T CircularList<T>::pop_back() {
  */
 template<typename T>
 T CircularList<T>::pop_front() {
-  if (empty())
-      throw std::out_of_range("Empty list!");
+    if (empty())
+        throw std::out_of_range("Empty list!");
 
-  auto out;
-  T data = head->data();
+    auto out;
+    T data = head->data();
 
-  if (size_ == 1) {
-    out = head;
-    head = nullptr;
-  } else {
-    out = head->next();
-    head->next(out->next());
-    head->data(out->data());
-  }
-  size_--;
-  delete out;
-  return data;
+    if (size_ == 1) {
+        out = head;
+        head = nullptr;
+    } else {
+        out = head->next();
+        head->next(out->next());
+        head->data(out->data());
+    }
+
+    size_--;
+    delete out;
+    return data;
 }
 
 //! Remoção de um dado da lista.
@@ -419,7 +438,7 @@ T CircularList<T>::pop_front() {
  */
 template<typename T>
 void CircularList<T>::remove(const T& data) {
-  pop(find(data));
+    pop(find(data));
 }
 
 //! lista vazia
@@ -428,7 +447,7 @@ void CircularList<T>::remove(const T& data) {
  */
 template<typename T>
 bool CircularList<T>::empty() const {
-  return size() == 0;
+    return size() == 0;
 }
 
 //! Contém um dado
@@ -439,7 +458,7 @@ bool CircularList<T>::empty() const {
  */
 template<typename T>
 bool CircularList<T>::contains(const T& data) const {
-  return find(data) != size();
+    return find(data) != size();
 }
 
 //! Procura dado.
@@ -450,15 +469,15 @@ bool CircularList<T>::contains(const T& data) const {
  */
 template<typename T>
 std::size_t CircularList<T>::find(const T& data) const {
-  std::size_t index = 0u;
-  Node* current = head;
-  while (index < size()) {
-      if (current->data() == data)
-          break;
-      current = current->next();
-      index++;
-  }
-  return index;
+    std::size_t index = 0u;
+    Node* current = head;
+    while (index < size()) {
+        if (current->data() == data)
+            break;
+        current = current->next();
+        index++;
+    }
+    return index;
 }
 
 //! Tamanho da lista.
@@ -467,20 +486,19 @@ std::size_t CircularList<T>::find(const T& data) const {
  */
 template<typename T>
 std::size_t CircularList<T>::size() const {
-  return size_;
+    return size_;
 }
 
 //! Desenha conexoes
 template<typename T>
 void CircularList<T>::draw_connection() {
-  auto temp = head;
-  for (auto i = 0; i < size_+2; ++i) {
-    printf("%d -> ", temp->data());
-    temp = temp->next();
-  }
-  printf("%d -> \n", temp->data());
+    auto temp = head;
+    for (auto i = 0; i < size_+2; ++i) {
+        printf("%d -> ", temp->data());
+        temp = temp->next();
+    }
+    printf("%d -> \n", temp->data());
 }
-
 
 }  //  namespace structures
 
