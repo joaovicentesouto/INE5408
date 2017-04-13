@@ -322,17 +322,37 @@ void CircularList<T>::remove(const T& data) {
 }
 
 template<typename T>
-bool CircularList<T>::empty() const;
+bool CircularList<T>::empty() const {
+  return size() == 0;
+}
 
 template<typename T>
-bool CircularList<T>::contains(const T& data) const;
+bool CircularList<T>::contains(const T& data) const {
+  return find(data) != size();
+}
 
 template<typename T>
-std::size_t CircularList<T>::find(const T& data) const;
+std::size_t CircularList<T>::find(const T& data) const {
+  std::size_t index = 0u;
+  Node* current = head;
+  while (index < size()) {
+      if (current->data() == data)
+          break;
+      current = current->next();
+      index++;
+  }
+  return index;
+}
 
 template<typename T>
-std::size_t CircularList<T>::size() const;
+std::size_t CircularList<T>::size() const {
+  return size_;
+}
 
+//! Tamanho da lista.
+/*! Retorna o tamanho (size_) da lista.
+ *  \return size_t o tamanho da lista.
+ */
 template<typename T>
 void CircularList<T>::draw_connection() {
   auto temp = head;
