@@ -50,7 +50,7 @@ class DoublyCircularList {
     const T& at(std::size_t index) const;
 
     std::size_t find(const T& data) const;
-    std::size_t size(); const;
+    std::size_t size() const;
 
  private:
     //! Subclasse Node
@@ -63,7 +63,7 @@ class DoublyCircularList {
         /*! Construtor com apenas o dado.
          *  \param data T& que será armazenado.
          */
-        Node(const T& data) :
+        explicit Node(const T& data):
         data_{data}
         {}
 
@@ -95,7 +95,7 @@ class DoublyCircularList {
          *  \return T& referência do dado armazenado.
          */
         T& data() {
-            return data_
+            return data_;
         }
 
         //! Retorna dado.
@@ -166,7 +166,25 @@ class DoublyCircularList {
         Node* next_;  //!< next
     };
 
-    Node* node_of_index(std::size_t index);
+    //! Passa pelos nodes até o índice procurado.
+    /*! Retorna o node que se procura.
+     *  \sa end()
+     *  \param size_t Índice do node.
+     *  \return Node* O node do índice.
+     */
+    Node* node_of_index(std::size_t index) {
+        auto it = head;
+        /* if (static_cast<int>(index) <= (static_cast<int>(size_)/2)) {
+            for (auto i = 1u; i <= index; ++i)
+                it = it->next();
+        } else {
+            for (auto i = 1u; i <= (size_-index); ++i)
+                it = it->prev();
+        } */
+        for (auto i = 1u; i <= index; ++i)
+            it = it->next();
+        return it;
+    }
 
     void insert(const T& data, Node* current);
 
@@ -193,7 +211,7 @@ DoublyCircularList<T>::~DoublyCircularList() {
  */
 template<typename T>
 void DoublyCircularList<T>::clear() {
-    while(!empty())
+    while (!empty())
         pop_front();
 }
 
@@ -206,7 +224,7 @@ void DoublyCircularList<T>::clear() {
  */
 template<typename T>
 void DoublyCircularList<T>::push_back(const T& data) {
-    insert(data, size_);
+      insert(data, size_);
 }
 
 //! Inserção no começo da lista.
@@ -218,7 +236,22 @@ void DoublyCircularList<T>::push_back(const T& data) {
  */
 template<typename T>
 void DoublyCircularList<T>::push_front(const T& data) {
-    insert(data, 0);
+    Node* new_node = new Node(data);
+    if (new_node == nullptr)
+        throw std::out_of_range("Full list!");
+
+    if(empty()) {
+      head = new_node;
+      head->next(head);
+      head->prev(head);
+    } else {
+      new_node->next(head);
+      new_node->prev(head->prev());
+      head->prev()->next(new_node);
+      head->prev(new_node);
+      head = new_node;
+    }
+    size_++;
 }
 
 //! Inserção em qualquer lugar da lista.
@@ -235,16 +268,20 @@ void DoublyCircularList<T>::insert(const T& data, std::size_t index) {
     if (index > size_)
         throw std::out_of_range("Invalid index!");
 
-    Node* new_node = new Node(data);
-    if (new_node == nullptr)
-        throw std::out_of_range("Full list!");
+    if (index == 0) {
+        push_front(data);
+    } else {
+        Node* new_node = new Node(data);
+        if (new_node == nullptr)
+            throw std::out_of_range("Full list!");
 
-    Node* current = node_of_index(index);
-    new_node->next(current);
-    new_node->prev(current->prev());
-    current->prev()->next(new_node);
-    current->prev(new_node);
-    size_++;
+        Node* current = node_of_index(index);
+        new_node->next(current);
+        new_node->prev(current->prev());
+        current->prev()->next(new_node);
+        current->prev(new_node);
+        size_++;
+    }
 }
 
 //! Inserção em qualquer lugar da lista recebendo um ponteiro de um Node.
@@ -257,13 +294,15 @@ void DoublyCircularList<T>::insert(const T& data, std::size_t index) {
  *  \sa push_back(), push_front(), insert_sorted()
  */
 template<typename T>
-void DoublyLinkedList<T>::insert(const T& data, Node* previous) {
+void DoublyCircularList<T>::insert(const T& data, Node* previous) {
     Node* new_node = new Node(data);
     if (new_node == nullptr)
         throw std::out_of_range("Full list!");
 
     if (empty()) {
         head = new_node;
+        head->next(head);
+        head->prev(head);
     } else {
         previous->next()->prev(new_node);
         new_node->next(previous->next());
@@ -288,7 +327,6 @@ void DoublyCircularList<T>::insert_sorted(const T& data) {
     if (empty()) {
         push_front(data);
     } else {
-
         /*
          auto current = head;
          std::size_t position = size_;
@@ -349,7 +387,7 @@ T DoublyCircularList<T>::pop(std::size_t index) {
  */
 template<typename T>
 T DoublyCircularList<T>::pop_back() {
-    return pop(size()-1);
+    return pop(size_-1);
 }
 
 //! Coleta o dado do início da lista.
@@ -362,7 +400,19 @@ T DoublyCircularList<T>::pop_back() {
  */
 template<typename T>
 T DoublyCircularList<T>::pop_front() {
-    return pop(0u);
+      if (empty())
+          throw std::out_of_range("Empty list");
+
+      auto out = head;
+      T data = head->data();
+      head->prev()->next(head->next());
+      head->next()->prev(head->prev());
+      head = head->next();
+      size_--;
+      delete out;
+      if (empty())
+        head = nullptr;
+      return data;
 }
 
 //! Remoção de um dado da lista.
@@ -385,7 +435,7 @@ void DoublyCircularList<T>::remove(const T& data) {
  */
 template<typename T>
 bool DoublyCircularList<T>::empty() const {
-    return size() != 0u;
+    return size() == 0u;
 }
 
 //! Contém um dado
@@ -413,7 +463,7 @@ T& DoublyCircularList<T>::at(std::size_t index) {
     if (index >= size())
         throw std::out_of_range("Invalid index or empty list!");
 
-    Node* current = index == 0? head : node_of_index(index);
+    Node* current = node_of_index(index);
     return current->data();
 }
 
@@ -431,7 +481,7 @@ const T& DoublyCircularList<T>::at(std::size_t index) const {
     if (index >= size())
         throw std::out_of_range("Invalid index or empty list!");
 
-    Node* current = index == 0? head : node_of_index(index);
+    Node* current = node_of_index(index);
     return current->data();
 }
 
@@ -459,27 +509,8 @@ std::size_t DoublyCircularList<T>::find(const T& data) const {
  *  \return size_t o tamanho da lista.
  */
 template<typename T>
-std::size_t DoublyCircularList<T>::size(); const {
+std::size_t DoublyCircularList<T>::size() const {
     return size_;
-}
-
-//! Passa pelos nodes até o índice procurado.
-/*! Retorna o node que se procura.
- *  \sa end()
- *  \param size_t Índice do node.
- *  \return Node* O node do índice.
- */
-template<typename T>
-Node* DoublyCircularList<T>::node_of_index(std::size_t index) {
-    auto it = head;
-    if (index <= (size()/2)) {
-        for (auto i = 1u; i <= index; ++i)
-            it = it->next();
-    } else {
-        for (auto i = 1u; i <= (size_-index); ++i)
-            it = it->prev();
-    }
-    return it;
 }
 
 }  // namespace structures
