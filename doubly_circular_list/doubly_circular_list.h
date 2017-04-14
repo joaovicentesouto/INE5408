@@ -157,8 +157,7 @@ void DoublyLinkedList<T>::insert(const T& data, Node* previous) {
     if (empty()) {
       head = new_node;
     } else {
-      if (previous->next() != nullptr)
-        previous->next()->prev(new_node);
+      previous->next()->prev(new_node);
       new_node->next(previous->next());
       previous->next(new_node);
       new_node->prev(previous);
@@ -171,22 +170,28 @@ void DoublyCircularList<T>::insert_sorted(const T& data) {
   if (empty()) {
       push_front(data);
   } else {
+
+      /*
       auto current = head;
       std::size_t position = size_;
-      /* for (auto i = 0u; i < size_; ++i) {
+      for (auto i = 0u; i < size_; ++i) {
           if (!(data > current->data())) {
               position = i;
               break;
           }
           current = current->next();
       } */
-      while (position < size() && data > current->data()) {
+
+      auto current = head;
+      std::size_t position = 0u;
+      while (data > current->data()) {
+        if (++position == size_)
+          break;
         current = current->next();
-        position++;
-      }    //  testar com while
+      }
       position == 0? push_front(data) :
       position == size_? push_back(data) :
-                         insert(data, current);  //  esta certo???
+                         insert(data, current);
   }
 }
 
@@ -246,6 +251,11 @@ std::size_t DoublyCircularList<T>::find(const T& data) const {
 }
 
 template<typename T>
+std::size_t DoublyCircularList<T>::size(); const {
+  return size_;
+}
+
+template<typename T>
 Node* DoublyCircularList<T>::node_of_index(std::size_t index) {
     auto it = head;
     if (index <= (size()/2)) {
@@ -256,11 +266,6 @@ Node* DoublyCircularList<T>::node_of_index(std::size_t index) {
           it = it->prev();
     }
     return it;
-}
-
-template<typename T>
-std::size_t DoublyCircularList<T>::size(); const {
-  return size_;
 }
 
 }  // namespace structures
