@@ -173,17 +173,20 @@ void DoublyCircularList<T>::insert_sorted(const T& data) {
   } else {
       auto current = head;
       std::size_t position = size_;
-      for (auto i = 0u; i < size_; ++i) {
+      /* for (auto i = 0u; i < size_; ++i) {
           if (!(data > current->data())) {
               position = i;
               break;
           }
-          if (current->next() != nullptr)
-              current = current->next();
-      }
+          current = current->next();
+      } */
+      while (position < size() && data > current->data()) {
+        current = current->next();
+        position++;
+      }    //  testar com while
       position == 0? push_front(data) :
-      position == size_? insert(data, current) :
-                         insert(data, current->prev());
+      position == size_? push_back(data) :
+                         insert(data, current);  //  esta certo???
   }
 }
 
