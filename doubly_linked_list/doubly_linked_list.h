@@ -284,8 +284,9 @@ void DoublyLinkedList<T>::insert(const T& data, std::size_t index) {
         } else {
             Node* current = node_of_index(index);
             new_node->next(current);
-            current->prev()->next(new_node);
             new_node->prev(current->prev());
+            current->prev()->next(new_node);
+            current->prev(new_node);
         }
         size_++;
     }
