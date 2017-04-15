@@ -174,15 +174,13 @@ class DoublyCircularList {
      */
     Node* node_of_index(std::size_t index) {
         auto it = head;
-        /* if (static_cast<int>(index) <= (static_cast<int>(size_)/2)) {
+        if (index <= size_/2) {
             for (auto i = 1u; i <= index; ++i)
                 it = it->next();
         } else {
             for (auto i = 1u; i <= (size_-index); ++i)
                 it = it->prev();
-        } */
-        for (auto i = 1u; i <= index; ++i)
-            it = it->next();
+        }
         return it;
     }
 
@@ -240,7 +238,7 @@ void DoublyCircularList<T>::push_front(const T& data) {
     if (new_node == nullptr)
         throw std::out_of_range("Full list!");
 
-    if(empty()) {
+    if (empty()) {
       head = new_node;
       head->next(head);
       head->prev(head);
@@ -327,17 +325,6 @@ void DoublyCircularList<T>::insert_sorted(const T& data) {
     if (empty()) {
         push_front(data);
     } else {
-        /*
-         auto current = head;
-         std::size_t position = size_;
-         for (auto i = 0u; i < size_; ++i) {
-         if (!(data > current->data())) {
-         position = i;
-         break;
-         }
-         current = current->next();
-         } */
-
         auto current = head;
         std::size_t position = 0u;
         while (data > current->data()) {
@@ -347,7 +334,7 @@ void DoublyCircularList<T>::insert_sorted(const T& data) {
         }
         position == 0? push_front(data) :
         position == size_?  push_back(data) :
-                            insert(data, current);
+                            insert(data, current->prev());
     }
 }
 
@@ -367,6 +354,9 @@ T DoublyCircularList<T>::pop(std::size_t index) {
         throw std::out_of_range("Empty list");
     if (index >= size())
         throw std::out_of_range("Invalid index!");
+
+    if (index == 0)
+        return pop_front();
 
     auto out = node_of_index(index);
     T data = out->data();
@@ -410,6 +400,7 @@ T DoublyCircularList<T>::pop_front() {
       head = head->next();
       size_--;
       delete out;
+
       if (empty())
         head = nullptr;
       return data;
