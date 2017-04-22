@@ -44,13 +44,13 @@ Então não vamos complicar onde não há necessidade. O importante é aprender 
 
 ##### Toques de programação para geração de valores aleatórios em um intervalo:
 
-Gerar valores aleatorios com distribuição uniforme no intervalo 0 à 1, utilize as funções `rand` e `srand`.
+- Gerar valores aleatorios com distribuição uniforme no intervalo 0 à 1, utilize as funções `rand` e `srand`.
 
-Lembre-se de inicializar o sempre gerador de numeros aleatorios, antes de usar, para garantir de que sejam usados valores diferentes em cada simulação.
+- Lembre-se de inicializar o sempre gerador de numeros aleatorios, antes de usar, para garantir de que sejam usados valores diferentes em cada simulação.
 
-Para gerar um numero entre 0 e 1, voce precisa dividir o valor gerado por `RAND_MAX`, definido em `stdlib.h`.
+- Para gerar um numero entre 0 e 1, voce precisa dividir o valor gerado por `RAND_MAX`, definido em `stdlib.h`.
 
-Para gerar um numero aleatorio com distribuição uniforme em um intervalo, pegue este resultado, multiplique pelo tamanho do intervalo e adicione a valor do limite inferior do intervalo.
+- Para gerar um numero aleatorio com distribuição uniforme em um intervalo, pegue este resultado, multiplique pelo tamanho do intervalo e adicione a valor do limite inferior do intervalo.
 
 Por exemplo: para gerar um valor aleatorio de tempos de chegada entre 8 e 12 segundo (10 +/- 2), você pega o tamanho do intervalo, que é de 8 a 12 inclusive, logo 5 valores, e multiplica o seu numero aleatorio de 0 a 1 por 5. A seguir adiciona o limite inferior do intervalo, 8, ao resultado.
 
