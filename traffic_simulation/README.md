@@ -19,22 +19,22 @@ Vocês não terão que realizar uma simulação gráfica, mas teremos alguns par
 
 
 ### Semáforo
-2. O sistema possui uma lista dos semáforos
-2. Cada semáforo possui uma lista das filas que fazem parte dele, dividindo-as em eferentes (saída) e aferentes (entrada).
-2. Cada semáforo asocia à lista de "pistas eferentes" (as suas filas de sáida) uma lista de probabilidades de um carro dobrar em cada uma dessas pistas eferentes.
+1. O sistema possui uma lista dos semáforos
+1. Cada semáforo possui uma lista das filas que fazem parte dele, dividindo-as em eferentes (saída) e aferentes (entrada).
+1. Cada semáforo asocia à lista de "pistas eferentes" (as suas filas de sáida) uma lista de probabilidades de um carro dobrar em cada uma dessas pistas eferentes.
 
 ### Veículos
-3. Cada veículo possui um tamanho.
-3. O tamanho do veículo é dado pelo seu tamanho mais 1 metro à frente e 2 metros atrás.
+1. Cada veículo possui um tamanho.
+1. O tamanho do veículo é dado pelo seu tamanho mais 1 metro à frente e 2 metros atrás.
 
 ### Relógio
-4. O sistema possui uma lista de eventos que representa o "relógio do sistema".
-4. São eventos:
+1. O sistema possui uma lista de eventos que representa o "relógio do sistema".
+1. São eventos:
     - Chegada de um novo carro;
     - Mudança de estado do semáforo;
     - Chegada de carro ao ao semáforo;
     - Troca de pista;
-4. O relógio é uma lista ordenada por hora de ocorrência do evento.
+1. O relógio é uma lista ordenada por hora de ocorrência do evento.
 
 
 ### Geração de Valores Aleatórios
@@ -42,7 +42,7 @@ Este é um trabalho de aula e por isso devemos fazer alguns compromissos para qu
 
 Então não vamos complicar onde não há necessidade. O importante é aprender a programar uma simulação, e não obter dados absolutamente realistas. Para facilitar vamos então utilizar variáveis com distribuição uniforme.
 
-###### Toques de programação para geração de valores aleatórios em um intervalo:
+##### Toques de programação para geração de valores aleatórios em um intervalo:
 
 Gerar valores aleatorios com distribuição uniforme no intervalo 0 à 1, utilize as funções `rand` e `srand`.
 
