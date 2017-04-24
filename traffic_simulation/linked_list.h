@@ -5,7 +5,6 @@
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
 
-
 namespace structures {
 
 //! Classe Lista Encadeada

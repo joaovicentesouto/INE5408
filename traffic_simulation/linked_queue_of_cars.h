@@ -8,10 +8,10 @@
 #include "./car.h"
 
 namespace structures {
-    
+
 class LinkedListOfCars {
  public:
-    LinkedListOfCars(std::size_t max_size);
+    LinkedListOfCars(std::size_t max_size, std::size_t speed);
     ~LinkedListOfCars();
     void clear();
     void enqueue(const Car& data);
@@ -20,16 +20,18 @@ class LinkedListOfCars {
     Car& back() const;
     bool empty() const;
     std::size_t size() const;
+    std::size_t speed() const;
     std::size_t max_size() const;
 
  private:
-    std::size_t max_size_;
+    std::size_t max_size_, speed_;
     std::size_t size_{0u};
     LinkedQueue<Car> queue{new LinkedQueue<Car>()};
 };
 
-LinkedListOfCars::LinkedListOfCars(std::size_t max_size) :
-max_size_{max_size}
+LinkedListOfCars::LinkedListOfCars(std::size_t max_size, std::size_t speed) :
+max_size_{max_size},
+speed_{speed}
 {}
 
 LinkedListOfCars::~LinkedListOfCars() {
@@ -67,6 +69,10 @@ bool LinkedListOfCars::empty() const {
 
 std::size_t LinkedListOfCars::size() const {
     return size_;
+}
+
+std::size_t LinkedListOfCars::speed() const {
+    return speed_;
 }
 
 std::size_t LinkedListOfCars::max_size() const {
