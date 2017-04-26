@@ -29,10 +29,11 @@ namespace structure {
     Event::~Event();
   }
 
-  void InputEvent::task() {
+  size_t InputEvent::task() {
     Car car = new Car();
     this->road->enqueue(car); //< acessa assim a estrada???
     ++input_counter_;
+    return 0u;
   }
 
 }  // namespace structure

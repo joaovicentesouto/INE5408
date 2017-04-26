@@ -24,8 +24,14 @@ namespace structure {
     Event::~Event();
   }
 
-  void RoadExchangeEvent::task() {
-    
+  std::size_t RoadExchangeEvent::task() {
+    try {
+      AferenteRoad *road = (AferenteRoad *) this->road;
+      road->change_car_of_road();
+    } catch(char error) {
+      printf("Congestionado onde quero ir.\n");
+    }
+    return  ;  //tempo do carro sair na road ...;
   }
 
 }  // namespace structure

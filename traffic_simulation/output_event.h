@@ -29,9 +29,10 @@ namespace structure {
     Event::~Event();
   }
 
-  void OutputEvent::task() {
+  size_t OutputEvent::task() {
     this->road->dequeue(); //< acessa assim a estrada???
     ++output_counter_;
+    return 0u;
   }
 
 }  // namespace structure

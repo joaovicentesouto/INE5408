@@ -14,7 +14,7 @@ namespace structure {
     ~Event();
 
     std::size_t time() const;
-    virtual void task();
+    virtual std::size_t task();
 
   private:
     std::size_t time_;

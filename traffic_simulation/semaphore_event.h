@@ -24,8 +24,9 @@ namespace structure {
     Event::~Event();
   }
 
-  void SemaphoreEvent::task() {
+  std::size_t SemaphoreEvent::task() {
     this->road->change_semaphore();
+    return 0u;
   }
 
 }  // namespace structure
