@@ -9,17 +9,20 @@ namespace structure {
 
   class Event {
   public:
-    Event(std::size_t time);
+    Event(std::size_t time, Semaphore semaphore);
     ~Event();
 
     std::size_t time() const;
+    virtual void task();
 
   private:
     std::size_t time_;
+    Semaphore *semaphore_;
   }
 
-  Event::Event(std::size_t time) :
-  time_{time;}
+  Event::Event(std::size_t time, Semaphore semaphore) :
+  time_{time},
+  semaphore_{semaphore}
   {}
 
   std::size_t time() const {

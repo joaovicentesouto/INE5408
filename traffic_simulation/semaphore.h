@@ -16,12 +16,16 @@ namespace structures {
     Semaphore();  //< Construtor
     ~Semaphore();  //< Destrutor
 
+    void road_to_the_left(Semaphore *sem);  //< Define qual é a estrada a esquerda
+    void road_to_the_front(Semaphore *sem);  //< Define qual é a estrada a frente
+    void road_to_the_right(Semaphore *sem);  //< Define qual é a estrada a direita
+
     void change_of_vehicle_road();  //< Tenta mudar o 1º carro de pista.
     void vehicle_input(Car &data); //< Insere novo veiculo
     void vehicle_output(); //< Retira carro, saiu pelo sumidouro.
 
   private:
-    LinkedQueueOfCars* aferente;  //< Estrada que entrar e que sai
+    LinkedQueueOfCars* aferente, eferente, left, front, right;  //< Estradas
     LinkedListOfEvents* events;
   };
 
