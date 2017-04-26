@@ -13,11 +13,14 @@ namespace structure {
     Car();
     ~Car();
 
+    std::size_t direction() const;
+    void decides_the_direction();
+    
     std::size_t size() const;
-    void leaving(std::size_t left);
 
   private:
-    std::size_t size_;
+
+    std::size_t size_, direction_;
   };
 
   //! Construtor padrão
@@ -27,6 +30,7 @@ namespace structure {
   Car::Car() {
     srand(time(NULL));
     size_ = rand()/RAND_MAX*5 + 5;
+    decides_the_direction();
   }
 
   //! Destrutor padrão
@@ -34,12 +38,16 @@ namespace structure {
    */
   Car::~Car() {}
 
-  std::size_t Car::size() {
-    return size_;
+  std::size_t Car::direction() const {
+    return direction_;
   }
 
-  void Car::leaving(std::size_t left) {
-    size_ -= left;
+  void Car::decides_the_direction() {
+    direction_ = rand()/RAND_MAX*2;
+  }
+
+  std::size_t Car::size() {
+    return size_;
   }
 
 }
