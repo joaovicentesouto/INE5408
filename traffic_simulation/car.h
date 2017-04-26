@@ -13,10 +13,9 @@ namespace structure {
     Car();
     ~Car();
 
+    std::size_t size() const;
     std::size_t direction() const;
     void decides_the_direction();
-    
-    std::size_t size() const;
 
   private:
 

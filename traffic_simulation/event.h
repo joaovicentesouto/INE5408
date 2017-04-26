@@ -9,7 +9,7 @@ namespace structure {
 
   class Event {
   public:
-    Event(std::size_t time, Semaphore semaphore);
+    Event(std::size_t time, LinkedListOfCars* road);
     ~Event();
 
     std::size_t time() const;
@@ -17,12 +17,12 @@ namespace structure {
 
   private:
     std::size_t time_;
-    Semaphore *semaphore_;
+    LinkedListOfCars *road_;
   }
 
-  Event::Event(std::size_t time, Semaphore semaphore) :
+  Event::Event(std::size_t time, LinkedListOfCars *road) :
   time_{time},
-  semaphore_{semaphore}
+  road_{road}
   {}
 
   std::size_t time() const {
