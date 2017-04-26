@@ -10,10 +10,11 @@ namespace structure {
 
   class RoadExchangeEvent : public Event {
   public:
-    RoadExchangeEvent(std::size_t time, LinkedListOfCars* road);
+    RoadExchangeEvent(std::size_t time, LinkedListOfCars *road);
     ~RoadExchangeEvent();
 
     virtual void task();
+    bool semaphore();
   }
 
   RoadExchangeEvent::RoadExchangeEvent(std::size_t time, LinkedListOfCars *road):
@@ -26,12 +27,16 @@ namespace structure {
 
   std::size_t RoadExchangeEvent::task() {
     try {
-      AferenteRoad *road = (AferenteRoad *) this->road;
-      road->change_car_of_road();
-    } catch(char error) {
+      EntryRoad *road = (EntryRoad *) this->road;
+      road->change_road_car();
+    } catch(std::out_of_range error) {
       printf("Está congestionado onde quero ir.\n");
     }
     return  ;  //tempo do carro sair na road ...;
+  }
+
+  bool RoadExchangeEvent::semaphore() {
+    return this->road->semaphore();
   }
 
 }  // namespace structure

@@ -16,7 +16,7 @@ namespace structure {
     std::size_t time() const;
     virtual std::size_t task();
 
-  private:
+  protected:
     std::size_t time_;
     LinkedListOfCars *road_;
   }

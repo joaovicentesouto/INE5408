@@ -14,7 +14,8 @@ class LinkedListOfCars : virtual public LinkedQueue<Car> {
     LinkedListOfCars(LinkedList<Event> *events,
                      ArrayList<LinkedListOfCars> *roads,
                      size_t max_size,
-                     size_t speed);
+                     size_t speed,
+                     size_t &universal_clock);
     ~LinkedListOfCars();
 
     virtual void enqueue(const Car& data);
@@ -23,31 +24,35 @@ class LinkedListOfCars : virtual public LinkedQueue<Car> {
     size_t speed() const;
     size_t size() const;
     size_t max_size() const;
+    bool full() const;
+
+    size_t time_of_route();
 
     bool semaphore();
     void change_semaphore();
 
-    virtual size_t result_probability();
-
- private:
+ protected:
     typedef std::size_t size_t;
     LinkedList<Event> *events_;
     ArrayList<LinkedListOfCars> *roads_;
     size_t max_size_, speed_;
     size_t size_{0u};
+    size_t &universal_clock_;
     bool semaphore_{false};
 };
 
 LinkedListOfCars::LinkedListOfCars(
-                 LinkedList<Event> events,
-                 ArrayList<LinkedListOfCars> roads,
+                 LinkedList<Event> *events,
+                 ArrayList<LinkedListOfCars> *roads,
                  size_t max_size,
-                 size_t speed) :
+                 size_t speed,
+                 size_t &universal_clock) :
 LinkedQueue<Car>::LinkedQueue(),
 events_{events},
 roads_{roads},
 max_size_{max_size},
-speed_{speed}
+speed_{speed},
+universal_clock_{universal_clock}
 {}
 
 LinkedListOfCars::~LinkedListOfCars() {
@@ -55,7 +60,7 @@ LinkedListOfCars::~LinkedListOfCars() {
 }
 
 void LinkedListOfCars::enqueue(const Car& data) {
-    if (data.size()+size_ > max_size_)
+    if (full(data))
         throw std::out_of_range("Full queue!");
     LinkedQueue<Car>::enqueue(data);
     size_ += data.size();
@@ -77,6 +82,14 @@ size_t LinkedListOfCars::size() const {
 
 size_t LinkedListOfCars::max_size() const {
     return max_size_;
+}
+
+bool LinkedListOfCars::full(const Car& data) const {
+  return data.size()+size_ > max_size_;
+}
+
+size_t LinkedListOfCars::time_of_route() {
+  return (size_t) max_size_/(speed_/3.6);  //< km/h => m/s
 }
 
 bool LinkedListOfCars::semaphore() {
