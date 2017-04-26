@@ -44,7 +44,7 @@ namespace structures {
   {}
 
   void EntryRoad::enqueue(const Car& data)  {
-    if (full())
+    if (LinkedListOfCars::full(data))
       throw std::out_of_range("Full queue!")
 
     data.direction(direction_probability());
