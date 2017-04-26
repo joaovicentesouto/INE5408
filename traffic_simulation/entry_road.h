@@ -4,7 +4,8 @@
 
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
-#include "./linked_queue.h"
+#include <cstdlib>
+#include "./linked_queue_of_cars.h"
 #include "./car.h"
 
 namespace structures {
@@ -25,6 +26,8 @@ namespace structures {
     size_t direction_probability();
 
   private:
+    bool yesOrNo(float probabilityOfYes);
+
     typedef std::size_t size_t;
     float prob_left_, prob_front_, prob_right_;
   }
@@ -61,7 +64,19 @@ namespace structures {
   }
 
   size_t EntryRoad::direction_probability() {
-    return probabilidade de virar pra qual rua;
+    if (yesOrNo(left))
+      return 0;
+    else if (yesOrNo(front))
+      return 1;
+    else if (yesOrNo(prob_right_))
+      return 2;
+  }
+
+  bool EntryRoad::yesOrNo(float probabilityOfYes) {
+    //  fonte: http://stackoverflow.com/ ->
+    //  -> questions/12885356/random-numbers-with-different-probabilities
+    srand((unsigned)time(0));
+    return rand()%100 < (probabilityOfYes * 100);
   }
 
 }  // namespace structures
