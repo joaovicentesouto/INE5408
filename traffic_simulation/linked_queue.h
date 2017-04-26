@@ -47,6 +47,7 @@ LinkedQueue<T>::LinkedQueue() : LinkedList<T>::LinkedList() {}
 template<typename T>
 LinkedQueue<T>::~LinkedQueue() {
     LinkedList<T>::clear();
+    delete tail;
 }
 
 //! Esvazia a fila.

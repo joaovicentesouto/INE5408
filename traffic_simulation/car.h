@@ -10,12 +10,12 @@ namespace structure {
 
   class Car {
   public:
-    Car();
+    Car(std::size_t direction);
     ~Car();
 
     std::size_t size() const;
     std::size_t direction() const;
-    void decides_the_direction();
+    void decides_the_direction(std::size_t direction);
 
   private:
 
@@ -26,10 +26,9 @@ namespace structure {
   /*  Construtor onde se define o tamanho do veículo em sua criação.
    *  Tamanho: tamanho do carro [2:6] metros + 2 metros a frente e 1 atrás.
    */
-  Car::Car() {
+  Car::Car(std::size_t direction) : direction_{direction} {
     srand(time(NULL));
     size_ = rand()/RAND_MAX*5 + 5;
-    decides_the_direction();
   }
 
   //! Destrutor padrão
@@ -41,8 +40,8 @@ namespace structure {
     return direction_;
   }
 
-  void Car::decides_the_direction() {
-    direction_ = rand()/RAND_MAX*2;
+  void Car::decides_the_direction(std::size_t direction) {
+    direction_ = direction;
   }
 
   std::size_t Car::size() {

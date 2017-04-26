@@ -11,26 +11,41 @@ namespace structures {
 
 class LinkedListOfCars : virtual public LinkedQueue<Car> {
  public:
-    LinkedListOfCars(char type, size_t max_size, size_t speed);
+    LinkedListOfCars(LinkedList<Event> *events,
+                     ArrayList<LinkedListOfCars> *roads,
+                     size_t max_size,
+                     size_t speed);
     ~LinkedListOfCars();
 
-    void enqueue(const Car& data);
+    virtual void enqueue(const Car& data);
     Car dequeue();
 
     size_t speed() const;
     size_t size() const;
     size_t max_size() const;
 
+    bool semaphore();
+    void change_semaphore();
+
+    virtual size_t result_probability();
+
  private:
     typedef std::size_t size_t;
-    char type;  //< 'a' : aferente / 'e' : eferente
+    LinkedList<Event> *events_;
+    ArrayList<LinkedListOfCars> *roads_;
     size_t max_size_, speed_;
     size_t size_{0u};
+    bool semaphore_{false};
 };
 
-LinkedListOfCars::LinkedListOfCars(char type, size_t max_size, size_t speed):
+LinkedListOfCars::LinkedListOfCars(
+                 LinkedList<Event> events,
+                 ArrayList<LinkedListOfCars> roads,
+                 size_t max_size,
+                 size_t speed) :
 LinkedQueue<Car>::LinkedQueue(),
-type_{type},
+events_{events},
+roads_{roads},
 max_size_{max_size},
 speed_{speed}
 {}
@@ -62,6 +77,14 @@ size_t LinkedListOfCars::size() const {
 
 size_t LinkedListOfCars::max_size() const {
     return max_size_;
+}
+
+bool LinkedListOfCars::semaphore() {
+    return semaphore_;
+}
+
+void LinkedListOfCars::change_semaphore() {
+    semaphore_ = !semaphore_;
 }
 
 }  // namespace structures
