@@ -29,7 +29,7 @@ namespace structure {
       AferenteRoad *road = (AferenteRoad *) this->road;
       road->change_car_of_road();
     } catch(char error) {
-      printf("Congestionado onde quero ir.\n");
+      printf("Está congestionado onde quero ir.\n");
     }
     return  ;  //tempo do carro sair na road ...;
   }
