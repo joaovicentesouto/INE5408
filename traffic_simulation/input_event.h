@@ -5,12 +5,14 @@
 #include <cstdint>
 #include <stdlib.h>
 #include "./event.h"
+#include "./car.h"
+#include "linked_list_of_cars.h"
 
 namespace structure {
 
   class InputEvent : public Event {
   public:
-    InputEvent(size_t time, LinkedListOfCars *road, size_t &input_counter);
+    InputEvent(size_t time, LinkedQueueOfCars *road, size_t &input_counter);
     ~InputEvent();
 
     virtual void task();
@@ -20,7 +22,7 @@ namespace structure {
     size_t &input_counter_;
   }
 
-  InputEvent::InputEvent(size_t time, LinkedListOfCars *road, size_t &input_counter):
+  InputEvent::InputEvent(size_t time, LinkedQueueOfCars *road, size_t &input_counter):
   Event::Event(time, road),
   input_counter_{input_counter}
   {}
@@ -30,9 +32,13 @@ namespace structure {
   }
 
   size_t InputEvent::task() {
-    Car car = new Car();
-    this->road->enqueue(car); //< acessa assim a estrada???
-    ++input_counter_;
+    try {
+      Car car = new Car();
+      this->road->enqueue(car); //< acessa assim a estrada???
+      ++input_counter_;
+    } catch(std::out_of_range error) {
+      delete car;
+    }
     return 0u;
   }
 

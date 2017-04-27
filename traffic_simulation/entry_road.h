@@ -5,15 +5,17 @@
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
 #include <cstdlib>
-#include "./linked_queue_of_cars.h"
 #include "./car.h"
+#include "./array_list.h"
+#include "./linked_list.h"
+#include "./linked_queue_of_cars.h"
 
 namespace structures {
 
-  class EntryRoad : public LinkedListOfCars {
+  class EntryRoad : public LinkedQueueOfCars {
   public:
     EntryRoad(LinkedList<Event> *events,
-              ArrayList<LinkedListOfCars> *roads,
+              ArrayList<LinkedQueueOfCars> *roads,
               size_t max_size,
               size_t speed,
               float prob_left,
@@ -33,25 +35,25 @@ namespace structures {
   }
 
   EntryRoad::EntryRoad(LinkedList<Event> *events,
-                       ArrayList<LinkedListOfCars> *roads,
+                       ArrayList<LinkedQueueOfCars> *roads,
                        size_t max_size,
                        size_t speed,
                        size_t &universal_clock,
                        float prob_left,
                        float prob_front,
                        float prob_right) :
-  LinkedListOfCars::LinkedListOfCars(events, roads, max_size, speed, size_t &universal_clock),
+  LinkedQueueOfCars::LinkedQueueOfCars(events, roads, max_size, speed, size_t &universal_clock),
   prob_left_{prob_left},
   prob_front_{prob_front},
   prob_right_{prob_right}
   {}
 
   void EntryRoad::enqueue(const Car& data)  {
-    if (LinkedListOfCars::full(data))
+    if (LinkedQueueOfCars::full(data))
       throw std::out_of_range("Full queue!")
 
     data.direction(direction_probability());
-    LinkedListOfCars::enqueue(data);
+    LinkedQueueOfCars::enqueue(data);
     size_t time_event = this->universal_clock_+time_of_route();
     RoadExchangeEvent *event = new RoadExchangeEvent(time_event, this);
     this->events.insert_sorted(event);
@@ -64,9 +66,9 @@ namespace structures {
   }
 
   size_t EntryRoad::direction_probability() {
-    if (yesOrNo(left))
+    if (yesOrNo(prob_left_))
       return 0;
-    else if (yesOrNo(front))
+    else if (yesOrNo(prob_front_))
       return 1;
     else if (yesOrNo(prob_right_))
       return 2;

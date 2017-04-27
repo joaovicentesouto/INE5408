@@ -10,7 +10,7 @@ namespace structure {
 
   class OutputEvent : public Event {
   public:
-    OutputEvent(size_t time, LinkedListOfCars *road, size_t &output_counter);
+    OutputEvent(size_t time, LinkedQueueOfCars *road, size_t &output_counter);
     ~OutputEvent();
 
     virtual void task();
@@ -20,7 +20,7 @@ namespace structure {
     size_t &output_counter_;
   }
 
-  OutputEvent::OutputEvent(std::size_t time, LinkedListOfCars *road, size_t &output_counter):
+  OutputEvent::OutputEvent(std::size_t time, LinkedQueueOfCars *road, size_t &output_counter):
   Event::Event(time, road),
   output_counter_{output_counter}
   {}

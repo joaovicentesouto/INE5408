@@ -10,7 +10,7 @@ namespace structure {
 
   class Event {
   public:
-    Event(std::size_t time, LinkedListOfCars* road);
+    Event(std::size_t time, LinkedQueueOfCars* road);
     ~Event();
 
     std::size_t time() const;
@@ -18,10 +18,10 @@ namespace structure {
 
   protected:
     std::size_t time_;
-    LinkedListOfCars *road_;
+    LinkedQueueOfCars *road_;
   }
 
-  Event::Event(std::size_t time, LinkedListOfCars *road) :
+  Event::Event(std::size_t time, LinkedQueueOfCars *road) :
   time_{time},
   road_{road}
   {}

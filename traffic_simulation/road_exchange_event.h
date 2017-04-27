@@ -10,14 +10,14 @@ namespace structure {
 
   class RoadExchangeEvent : public Event {
   public:
-    RoadExchangeEvent(std::size_t time, LinkedListOfCars *road);
+    RoadExchangeEvent(std::size_t time, LinkedQueueOfCars *road);
     ~RoadExchangeEvent();
 
     virtual void task();
     bool semaphore();
   }
 
-  RoadExchangeEvent::RoadExchangeEvent(std::size_t time, LinkedListOfCars *road):
+  RoadExchangeEvent::RoadExchangeEvent(std::size_t time, LinkedQueueOfCars *road):
   Event::Event(time, road)
   {}
 

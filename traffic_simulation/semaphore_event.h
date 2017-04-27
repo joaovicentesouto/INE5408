@@ -10,13 +10,13 @@ namespace structure {
 
   class SemaphoreEvent : public Event {
   public:
-    SemaphoreEvent(std::size_t time, LinkedListOfCars *road);
+    SemaphoreEvent(std::size_t time, LinkedQueueOfCars *road);
     ~SemaphoreEvent();
 
     virtual void task();
   }
 
-  SemaphoreEvent::SemaphoreEvent(std::size_t time, LinkedListOfCars *road):
+  SemaphoreEvent::SemaphoreEvent(std::size_t time, LinkedQueueOfCars *road):
   Event::Event(time, road)
   {}
 
