@@ -23,15 +23,20 @@ namespace structures {
               size_t speed,
               size_t input_range,
               size_t lower_input,
-              size_t &global_clock,
               float prob_left,
               float prob_front,
               float prob_right);
     ~EntryRoad();
 
-    virtual void enqueue(Car* data, Event*& event);
+    void crossroads(LinkedQueueOfCars *left,
+                    LinkedQueueOfCars *front,
+                    LinkedQueueOfCars *right);
+
+    virtual void enqueue(Car* data);
     void change_road_car();
+
     size_t direction_probability();
+    size_t input_frequency();
 
     bool semaphore();
     void semaphore(size_t semaphore);
@@ -41,34 +46,43 @@ namespace structures {
     bool yesOrNo(float probabilityOfYes);
 
     typedef std::size_t size_t;
-    float prob_left_, prob_front_, prob_right_;
-    size_t semaphore_{0u}, input_range_, lower_input_;
+    float _prob_left, _prob_front, _prob_right;
+    size_t _semaphore{0u}, _input_range, _lower_input;
+    ArrayList<LinkedQueueOfCars*> crossroads{3u};
   };
 
   EntryRoad::EntryRoad(size_t max_size,
                        size_t speed,
                        size_t input_range,
                        size_t lower_input,
-                       size_t &global_clock,
                        float prob_left,
                        float prob_front,
                        float prob_right) :
-  LinkedQueueOfCars::LinkedQueueOfCars(max_size, speed, global_clock),
-  input_range_{input_range},
-  lower_input_{lower_input},
-  prob_left_{prob_left},
-  prob_front_{prob_front},
-  prob_right_{prob_right}
+  LinkedQueueOfCars::LinkedQueueOfCars(max_size, speed),
+  _input_range{input_range},
+  _lower_input{lower_input},
+  _prob_left{prob_left},
+  _prob_front{prob_front},
+  _prob_right{prob_right}
   {}
 
-  void EntryRoad::enqueue(Car* data, Event*& event) {
+  void LinkedQueueOfCars::crossroads(LinkedQueueOfCars *left,
+                                     LinkedQueueOfCars *front,
+                                     LinkedQueueOfCars *right)
+  {
+   crossroads[0] = left;
+   crossroads[1] = front;
+   crossroads[2] = right;
+  }
+
+  void EntryRoad::enqueue(Car* data) {
     if (LinkedQueueOfCars::full(data))
       throw std::out_of_range("Full queue!");
       // preciso verificar pra mudar a direçao do carro
 
     data->direction(direction_probability());
     LinkedQueueOfCars::enqueue(data);
-    size_t time_event = this->global_clock_+time_of_route();
+    size_t time_event = this->_global_time+time_of_route();
     // cria um novo evento para quem chamou enqueue use
     event = new RoadExchangeEvent(time_event, this);
   }
@@ -80,12 +94,16 @@ namespace structures {
   }
 
   size_t EntryRoad::direction_probability() {
-    if (yesOrNo(prob_left_))
+    if (yesOrNo(_prob_left))
       return 0;
-    else if (yesOrNo(prob_front_))
+    else if (yesOrNo(_prob_front))
       return 1;
-    else if (yesOrNo(prob_right_))
+    else if (yesOrNo(_prob_right))
       return 2;
+  }
+
+  size_t EntryRoad::size_t input_frequency() {
+    return (size_t) rand()/RAND_MAX*_input_range + _lower_input;
   }
 
   bool EntryRoad::yesOrNo(float probabilityOfYes) {
@@ -95,15 +113,15 @@ namespace structures {
   }
 
   bool EntryRoad::semaphore() {
-    return semaphore_ == 0u;
+    return _semaphore == 0u;
   }
 
   void EntryRoad::semaphore(size_t semaphore) {
-    semaphore_ = semaphore;
+    _semaphore = semaphore;
   }
 
   void EntryRoad::exchange_semaphore() {
-    semaphore_ = (semaphore_+1)%4;
+    _semaphore = (_semaphore+1)%4;
   }
 
 }  // namespace structures

@@ -50,15 +50,15 @@ namespace structures {
 
     // Criando as ruas
     // AFERENTES
-    EntryRoad* N1_SUL = new EntryRoad(60, 500, 20, 5);      //N1_S  (60, 500, 20+/-5)
-    EntryRoad* N2_SUL = new EntryRoad(40, 500, 20, 5);      //N2_S  (40, 500, 20+/-5)
-    EntryRoad* O1_LESTE = new EntryRoad(80, 2000, 10, 2);   //O1_L  (80, 2000, 10+/-2)
-    EntryRoad* L1_OESTE = new EntryRoad(30, 400, 10, 2);    //L1_O  (30, 400, 10+/-2)
-    EntryRoad* S1_NORTE = new EntryRoad(60, 500, 30, 7);    //S1_N  (60, 500, 30+/-7)
-    EntryRoad* S2_NORTE = new EntryRoad(40, 500, 60, 15);   //S2_N  (40, 500, 60+/-15)
+    EntryRoad* N1_SUL = new EntryRoad(60, 500, 20, 5, 0.8, 0.1, 0.1);      //N1_S  (60, 500, 20+/-5)
+    EntryRoad* N2_SUL = new EntryRoad(40, 500, 20, 5, 0.4, 0.3, 0.3);      //N2_S  (40, 500, 20+/-5)
+    EntryRoad* O1_LESTE = new EntryRoad(80, 2000, 10, 2, 0.1, 0.8, 0.1);   //O1_L  (80, 2000, 10+/-2)
+    EntryRoad* L1_OESTE = new EntryRoad(30, 400, 10, 2, 0.3, 0.3, 0.4);    //L1_O  (30, 400, 10+/-2)
+    EntryRoad* S1_NORTE = new EntryRoad(60, 500, 30, 7, 0.1, 0.1, 0.8);    //S1_N  (60, 500, 30+/-7)
+    EntryRoad* S2_NORTE = new EntryRoad(40, 500, 60, 15, 0.3, 0.3, 0.4);   //S2_N  (40, 500, 60+/-15)
     // CENTRAIS
-    EntryRoad* C1_OESTE = new EntryRoad(60, 300, 0, 0);     //C1_O  (60, 300)
-    EntryRoad* C1_LESTE = new EntryRoad(60, 300, 0, 0);     //C1_L  (60, 300)
+    EntryRoad* C1_OESTE = new EntryRoad(60, 300, 0, 0, 0.3, 0.4, 0.3);     //C1_O  (60, 300)
+    EntryRoad* C1_LESTE = new EntryRoad(60, 300, 0, 0, 0.3, 0.4, 0.3);     //C1_L  (60, 300)
     // EFERENTES
     ExitRoad* N1_NORTE = new ExitRoad(60, 500);  // N1_N  (60, 500)
     ExitRoad* N2_NORTE = new ExitRoad(40, 500);  // N2_N  (40, 500)
@@ -93,8 +93,12 @@ namespace structures {
     _roads[12] = S1_SUL;
     _roads[13] = S2_SUL;
 
-    for (auto i = 0u; i<6; ++i)
-      _system_events.insert_sorted(new InputEvent(_global_time, _roads[i]));
+    for (auto i = 0u; i<6; ++i) {
+      EntryRoad* road = (EntryRoad*) _roads[i];
+      std::size_t event_time = _global_time + road->input_frequency();
+      _system_events.insert_sorted(new InputEvent(event_time, road));
+    }
+
   }
 
   void System::run() {}
