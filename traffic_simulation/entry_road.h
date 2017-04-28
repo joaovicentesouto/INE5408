@@ -33,21 +33,17 @@ namespace structures {
                     LinkedQueueOfCars *right);
 
     virtual void enqueue(Car* data);
+
     void change_road_car();
 
     size_t direction_probability();
     size_t input_frequency();
-
-    bool semaphore();
-    void semaphore(size_t semaphore);
-    void exchange_semaphore();
 
   private:
     bool yesOrNo(float probabilityOfYes);
 
     typedef std::size_t size_t;
 
-    bool _semaphore{false};
     size_t _input_range, _lower_input;
     float _prob_left, _prob_front, _prob_right;
     ArrayList<LinkedQueueOfCars*> crossroads{3u};

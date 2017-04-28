@@ -16,24 +16,17 @@ namespace structures {
 
   class ExitRoad : public LinkedQueueOfCars {
   public:
-    EntryRoad(LinkedList<Event*> *events,
-              ArrayList<LinkedQueueOfCars*> *roads,
-              size_t max_size,
-              size_t speed);
+    EntryRoad(size_t max_size, size_t speed);
     ~EntryRoad();
 
-    void enqueue(const Car* data);
+    virtual void enqueue(const Car* data);
 
   private:
     typedef std::size_t size_t;
   };
 
-  EntryRoad::EntryRoad(
-                   LinkedList<Event*> *events,
-                   ArrayList<LinkedQueueOfCars*> *roads,
-                   size_t max_size,
-                   size_t speed) :
-  LinkedQueueOfCars::LinkedQueueOfCars(events, roads, max_size, speed),
+  EntryRoad::EntryRoad(size_t max_size, size_t speed) :
+  LinkedQueueOfCars::LinkedQueueOfCars(max_size, speed)
   {}
 
   void EntryRoad::enqueue(const Car* data)  {

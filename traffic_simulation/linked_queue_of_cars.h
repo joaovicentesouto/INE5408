@@ -63,7 +63,7 @@ void LinkedQueueOfCars::enqueue(Car* data) {
 }
 
 Car* LinkedQueueOfCars::dequeue() {
-    Car *out = LinkedQueue<Car*>::dequeue();
+    Car* out = LinkedQueue<Car*>::dequeue();
     _size -= out->size();
     --_output_counter;
     return out;

@@ -113,3 +113,5 @@ namespace structures {
   void System::result() {}
 
 }  //  namespace structures
+
+#endif
