@@ -26,7 +26,8 @@ int main(int argc, char const *argv[]) {
   printf("sizep:%lu\n", test.size());
   printf("maxp:%lu\n", test.max_size());
   printf("b:%lu\n", b);
-  test.enqueue(car);
+  structures::Event* x = nullptr;
+  test.enqueue(car, x);
   printf("b:%lu\n", b);
 
   return 0;

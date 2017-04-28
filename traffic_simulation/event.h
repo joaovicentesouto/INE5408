@@ -8,20 +8,28 @@
 
 namespace structures {
 
+  class LinkedQueueOfCars;
+
   class Event {
   public:
+    Event();
     Event(std::size_t event_time, LinkedQueueOfCars *road);
     ~Event();
 
     std::size_t time() const;
-    LinkedQueueOfCars* road() const;
+    //std::size_t time(std::size_t event_time_);
 
-    virtual bool task(std::size_t &global_clock);
+    LinkedQueueOfCars* road() const;
+    //void road(LinkedQueueOfCars* road);
+
+    virtual bool task();
 
   protected:
-    std::size_t event_time_;
-    LinkedQueueOfCars *road_;
+    std::size_t event_time_{0u};
+    LinkedQueueOfCars *road_{nullptr};
   };
+
+  Event::Event() {}
 
   Event::Event(std::size_t event_time, LinkedQueueOfCars *road) :
   event_time_{event_time},
@@ -36,7 +44,7 @@ namespace structures {
     return road_;
   }
 
-  bool Event::task(std::size_t &global_clock) {
+  bool Event::task() {
     return false;
   }
 
