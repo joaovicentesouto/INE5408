@@ -36,6 +36,10 @@ namespace structures {
     return road_;
   }
 
+  bool Event::task(std::size_t &global_clock) {
+    return false;
+  }
+
 }  //  namespace structures
 
 #endif
