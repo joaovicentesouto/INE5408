@@ -13,7 +13,7 @@ namespace structures {
     SemaphoreEvent(std::size_t time, LinkedQueueOfCars *road);
     ~SemaphoreEvent();
 
-    virtual void task();
+    virtual bool task(std::size_t &global_clock);
   };
 
   SemaphoreEvent::SemaphoreEvent(std::size_t time, LinkedQueueOfCars *road):
@@ -24,9 +24,10 @@ namespace structures {
     Event::~Event();
   }
 
-  std::size_t SemaphoreEvent::task() {
+  bool SemaphoreEvent::task(std::size_t &global_clock) {
     this->road_->change_semaphore();
-    return 0u;
+    // Gera outro evento de troca de semaforo.
+    return true;
   }
 
 }  // namespace structures

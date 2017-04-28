@@ -13,7 +13,7 @@ namespace structures {
     RoadExchangeEvent(std::size_t time, LinkedQueueOfCars *road);
     ~RoadExchangeEvent();
 
-    virtual void task();
+    virtual bool task(std::size_t &global_clock);
     bool semaphore();
   };
 
@@ -25,14 +25,18 @@ namespace structures {
     Event::~Event();
   }
 
-  std::size_t RoadExchangeEvent::task() {
+  bool RoadExchangeEvent::task(std::size_t &global_clock) {
     try {
       EntryRoad *road = (EntryRoad *) this->road();
+      Car *car = road->front();
+      std::size_t time_to_change = car->size()/(road->speed()/3.6);
+      global_clock += time_to_change;
       road->change_road_car();
+      return true;
     } catch(std::out_of_range error) {
-      printf("Está congestionado onde quero ir.\n");
+      //printf("Está congestionado onde quero ir.\n");
+      return false;
     }
-    return  ;  //tempo do carro sair na road ...;
   }
 
   bool RoadExchangeEvent::semaphore() {

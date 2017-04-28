@@ -13,7 +13,7 @@ namespace structures {
     OutputEvent(size_t time, LinkedQueueOfCars *road, size_t &output_counter);
     ~OutputEvent();
 
-    virtual void task();
+    virtual bool task(std::size_t &global_clock);
 
   private:
     typedef std::size_t size_t;
@@ -29,10 +29,10 @@ namespace structures {
     Event::~Event();
   }
 
-  size_t OutputEvent::task() {
+  bool OutputEvent::task(std::size_t &global_clock) {
     this->road()->dequeue(); //< acessa assim a estrada???
     ++output_counter_;
-    return 0u;
+    return true;
   }
 
 }  // namespace structures

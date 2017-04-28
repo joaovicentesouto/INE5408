@@ -16,7 +16,7 @@ namespace structures {
     std::size_t time() const;
     LinkedQueueOfCars* road() const;
 
-    virtual std::size_t task();
+    virtual bool task(std::size_t &global_clock);
 
   protected:
     std::size_t event_time_;

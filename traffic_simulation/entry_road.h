@@ -5,6 +5,7 @@
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
 #include <cstdlib>
+#include <stdlib.h>
 #include "./car.h"
 #include "./event.h"
 #include "./array_list.h"
@@ -43,7 +44,7 @@ namespace structures {
                        float prob_left,
                        float prob_front,
                        float prob_right) :
-  LinkedQueueOfCars::LinkedQueueOfCars(events, roads, max_size, speed, size_t &universal_clock),
+  LinkedQueueOfCars::LinkedQueueOfCars(events, roads, max_size, speed, universal_clock),
   prob_left_{prob_left},
   prob_front_{prob_front},
   prob_right_{prob_right}
@@ -61,8 +62,8 @@ namespace structures {
   }
 
   void EntryRoad::change_road_car() {
-      Car Car* = this->front();
-      roads[car.direction()]->enqueue(car);
+      Car* car = this->front();
+      roads[car->direction()]->enqueue(car); //pode dar erro
       this->dequeue();
   }
 
@@ -78,7 +79,7 @@ namespace structures {
   bool EntryRoad::yesOrNo(float probabilityOfYes) {
     //  fonte: http://stackoverflow.com/ ->
     //  -> questions/12885356/random-numbers-with-different-probabilities
-    srand((unsigned)time(0));
+    //srand((unsigned)time(0));
     return rand()%100 < (probabilityOfYes * 100);
   }
 

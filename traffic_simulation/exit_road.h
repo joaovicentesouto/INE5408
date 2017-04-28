@@ -4,8 +4,13 @@
 
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
-#include "./linked_queue_of_cars.h"
+#include <cstdlib>
+#include <stdlib.h>
 #include "./car.h"
+#include "./event.h"
+#include "./array_list.h"
+#include "./linked_list.h"
+#include "./linked_queue_of_cars.h"
 
 namespace structures {
 
@@ -18,6 +23,9 @@ namespace structures {
     ~EntryRoad();
 
     void enqueue(const Car* data);
+
+  private:
+    typedef std::size_t size_t;
   };
 
   EntryRoad::EntryRoad(
