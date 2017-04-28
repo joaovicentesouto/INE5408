@@ -14,7 +14,7 @@ namespace structures {
     ~SemaphoreEvent();
 
     virtual void task();
-  }
+  };
 
   SemaphoreEvent::SemaphoreEvent(std::size_t time, LinkedQueueOfCars *road):
   Event::Event(time, road)
@@ -29,6 +29,6 @@ namespace structures {
     return 0u;
   }
 
-}  // namespace structure
+}  // namespace structures
 
 #endif

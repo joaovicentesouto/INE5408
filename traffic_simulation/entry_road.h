@@ -15,8 +15,8 @@ namespace structures {
 
   class EntryRoad : public LinkedQueueOfCars {
   public:
-    EntryRoad(LinkedList<*Event> *events,
-              ArrayList<*LinkedQueueOfCars> *roads,
+    EntryRoad(LinkedList<Event*> *events,
+              ArrayList<LinkedQueueOfCars*> *roads,
               size_t max_size,
               size_t speed,
               float prob_left,
@@ -24,7 +24,7 @@ namespace structures {
               float prob_right);
     ~EntryRoad();
 
-    virtual void enqueue(const *Car data);
+    void enqueue(const Car* data);
     void change_road_car();
     size_t direction_probability();
 
@@ -33,10 +33,10 @@ namespace structures {
 
     typedef std::size_t size_t;
     float prob_left_, prob_front_, prob_right_;
-  }
+  };
 
-  EntryRoad::EntryRoad(LinkedList<*Event> *events,
-                       ArrayList<*LinkedQueueOfCars> *roads,
+  EntryRoad::EntryRoad(LinkedList<Event*> *events,
+                       ArrayList<LinkedQueueOfCars*> *roads,
                        size_t max_size,
                        size_t speed,
                        size_t &universal_clock,
@@ -49,7 +49,7 @@ namespace structures {
   prob_right_{prob_right}
   {}
 
-  void EntryRoad::enqueue(const *Car data)  {
+  void EntryRoad::enqueue(const Car* data)  {
     if (LinkedQueueOfCars::full(data))
       throw std::out_of_range("Full queue!");
 
@@ -61,7 +61,7 @@ namespace structures {
   }
 
   void EntryRoad::change_road_car() {
-      Car *car = this->front();
+      Car Car* = this->front();
       roads[car.direction()]->enqueue(car);
       this->dequeue();
   }

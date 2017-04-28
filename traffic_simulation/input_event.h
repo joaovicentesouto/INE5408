@@ -20,7 +20,7 @@ namespace structures {
   private:
     typedef std::size_t size_t;
     size_t &input_counter_;
-  }
+  };
 
   InputEvent::InputEvent(size_t time, LinkedQueueOfCars *road, size_t &input_counter):
   Event::Event(time, road),
@@ -42,6 +42,6 @@ namespace structures {
     return 0u;
   }
 
-}  // namespace structure
+}  // namespace structures
 
 #endif

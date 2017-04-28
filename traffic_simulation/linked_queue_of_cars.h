@@ -12,22 +12,22 @@
 
 namespace structures {
 
-class LinkedQueueOfCars : public LinkedQueue<*Car> {
+class LinkedQueueOfCars : public LinkedQueue<Car*> {
  public:
-    LinkedQueueOfCars(LinkedList<*Event> *events,
-                     ArrayList<*LinkedQueueOfCars> *roads,
+    LinkedQueueOfCars(LinkedList<Event*> *events,
+                     ArrayList<LinkedQueueOfCars*> *roads,
                      size_t max_size,
                      size_t speed,
                      size_t &universal_clock);
     ~LinkedQueueOfCars();
 
-    void enqueue(const *Car data);
-    *Car dequeue();
+    void enqueue(const Car* data);
+    Car* dequeue();
 
     size_t speed() const;
     size_t size() const;
     size_t max_size() const;
-    bool full() const;
+    bool full(const Car* data) const;
 
     size_t time_of_route();
 
@@ -36,9 +36,9 @@ class LinkedQueueOfCars : public LinkedQueue<*Car> {
 
  protected:
     typedef std::size_t size_t;
-    typedef structures::Car Car;
-    LinkedList<*Event> *events_;
-    ArrayList<*LinkedQueueOfCars> *roads_;
+    //typedef structures::Car Car;
+    LinkedList<Event*> *events_;
+    ArrayList<LinkedQueueOfCars*> *roads_;
     size_t max_size_, speed_;
     size_t size_{0u};
     size_t &universal_clock_;
@@ -46,12 +46,12 @@ class LinkedQueueOfCars : public LinkedQueue<*Car> {
 };
 
 LinkedQueueOfCars::LinkedQueueOfCars(
-                 LinkedList<*Event> *events,
-                 ArrayList<*LinkedQueueOfCars> *roads,
+                 LinkedList<Event*> *events,
+                 ArrayList<LinkedQueueOfCars*> *roads,
                  size_t max_size,
                  size_t speed,
                  size_t &universal_clock) :
-LinkedQueue<*Car>::LinkedQueue(),
+LinkedQueue<Car*>::LinkedQueue(),
 events_{events},
 roads_{roads},
 max_size_{max_size},
@@ -60,18 +60,18 @@ universal_clock_{universal_clock}
 {}
 
 LinkedQueueOfCars::~LinkedQueueOfCars() {
-    LinkedQueue<*Car>::clear();
+    LinkedQueue<Car*>::clear();
 }
 
-void LinkedQueueOfCars::enqueue(const *Car data) {
+void LinkedQueueOfCars::enqueue(const Car* data) {
     if (full(data))
         throw std::out_of_range("Full queue!");
-    LinkedQueue<*Car>::enqueue(data);
+    LinkedQueue<Car*>::enqueue(data);
     size_ += data->size();
 }
 
-*Car LinkedQueueOfCars::dequeue() {
-    Car *out = LinkedQueue<*Car>::dequeue();
+Car* LinkedQueueOfCars::dequeue() {
+    Car *out = LinkedQueue<Car*>::dequeue();
     size_ -= out->size();
     return out;
 }
@@ -88,7 +88,7 @@ size_t LinkedQueueOfCars::max_size() const {
     return max_size_;
 }
 
-bool LinkedQueueOfCars::full(const *Car data) const {
+bool LinkedQueueOfCars::full(const Car* data) const {
   return data->size()+size_ > max_size_;
 }
 

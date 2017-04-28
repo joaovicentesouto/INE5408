@@ -15,7 +15,7 @@ namespace structures {
 
     virtual void task();
     bool semaphore();
-  }
+  };
 
   RoadExchangeEvent::RoadExchangeEvent(std::size_t time, LinkedQueueOfCars *road):
   Event::Event(time, road)
@@ -39,6 +39,6 @@ namespace structures {
     return this->road()->semaphore();
   }
 
-}  // namespace structure
+}  // namespace structures
 
 #endif
