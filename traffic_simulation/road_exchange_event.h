@@ -13,31 +13,34 @@ namespace structures {
 
   class RoadExchangeEvent : public Event {
   public:
-    RoadExchangeEvent(std::size_t time, LinkedQueueOfCars *road);
+    RoadExchangeEvent(size_t &global_clock, size_t event_time, LinkedQueueOfCars *road);
     ~RoadExchangeEvent();
 
-    virtual bool task(std::size_t &global_clock);
-    bool semaphore();
+    virtual bool task(LinkedList<Event*>& events);
   };
 
-  RoadExchangeEvent::RoadExchangeEvent(std::size_t time, LinkedQueueOfCars *road):
-  Event::Event(time, road)
-  {}
+  RoadExchangeEvent::RoadExchangeEvent(
+                     size_t &global_clock,
+                     size_t event_time,
+                     LinkedQueueOfCars *road):
+  Event::Event(global_clock, event_time, road)
+  {
+    Event::_type = 'r';
+  }
 
   RoadExchangeEvent::~RoadExchangeEvent() {
     Event::~Event();
   }
 
-  bool RoadExchangeEvent::task(std::size_t &global_clock) {
+  bool RoadExchangeEvent::task(LinkedList<Event*>& events) {
+    EntryRoad* road = (EntryRoad*) Event::road();
     try {
-      EntryRoad *road = (EntryRoad *) Event::road();
-      Car *car = road->front();
-      std::size_t time_to_change = car->size()/(road->speed()/3.6);
-      global_clock += time_to_change;
-      road->change_road_car();
+      road->change_road_car(events);
       return true;
     } catch(std::out_of_range error) {
-      //printf("Está congestionado onde quero ir.\n");
+      Car* car = road->front();
+      size_t wait == car->size()/(road->speed()/3.6);
+      this->_global_clock += wait > 0? wait : 1;
       return false;
     }
   }

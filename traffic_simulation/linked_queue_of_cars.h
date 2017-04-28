@@ -12,13 +12,15 @@
 
 namespace structures {
 
+class Event;
+
 class LinkedQueueOfCars : private LinkedQueue<Car*> {
  public:
     LinkedQueueOfCars(size_t speed, size_t max_size);
     ~LinkedQueueOfCars();
 
     void clear();
-    virtual void enqueue(Car* data);
+    virtual void enqueue(Car* data, LinkedList<Event*>& events);
     Car* dequeue();
     Car* front() const;
     Car* back() const;
@@ -54,7 +56,7 @@ void LinkedQueueOfCars::clear() {
     LinkedQueue<Car*>::clear();
 }
 
-void LinkedQueueOfCars::enqueue(Car* data) {
+void LinkedQueueOfCars::enqueue(Car* data, LinkedList<Event*>& events) {
     if (full(data))
         throw std::out_of_range("Full queue!");
     LinkedQueue<Car*>::enqueue(data);

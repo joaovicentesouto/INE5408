@@ -5,33 +5,41 @@
 #include <cstdint>
 #include <stdlib.h>
 #include "./event.h"
+#include "./linked_list.h"
+#include "./linked_queue_of_cars.h"
 
 namespace structures {
 
+  class LinkedQueueOfCars;
+
   class OutputEvent : public Event {
   public:
-    OutputEvent(size_t time, LinkedQueueOfCars *road, size_t &output_counter);
+    OutputEvent(size_t &global_clock,
+                size_t event_time,
+                LinkedQueueOfCars *road);
     ~OutputEvent();
 
-    virtual bool task(std::size_t &global_clock);
+    virtual bool task();
 
   private:
     typedef std::size_t size_t;
-    size_t &output_counter_;
   };
 
-  OutputEvent::OutputEvent(std::size_t time, LinkedQueueOfCars *road, size_t &output_counter):
-  Event::Event(time, road),
-  output_counter_{output_counter}
-  {}
+  OutputEvent::OutputEvent(
+               size_t &global_clock,
+               size_t event_time,
+               LinkedQueueOfCars *road):
+  Event::Event(global_clock, event_time, road),
+  {
+    Event::_type = 'o';
+  }
 
   OutputEvent::~OutputEvent() {
     Event::~Event();
   }
 
-  bool OutputEvent::task(std::size_t &global_clock) {
-    this->road()->dequeue(); //< acessa assim a estrada???
-    ++output_counter_;
+  bool OutputEvent::task(LinkedList<Event*>& events) {
+    this->road()->dequeue();
     return true;
   }
 

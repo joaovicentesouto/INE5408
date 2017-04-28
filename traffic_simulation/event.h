@@ -12,48 +12,82 @@ namespace structures {
 
   class Event {
   public:
-    Event();
-    Event(size_t event_time, size_t &global_clock, LinkedQueueOfCars *road);
+    Event(size_t &global_clock, size_t event_time, LinkedQueueOfCars *road);
     ~Event();
 
-    size_t execute_time() const;
-    bool operator<(Event*& event);
-
+    size_t event_time() const;
     LinkedQueueOfCars* road() const;
+    char type() const;
+    virtual bool task(LinkedList<Event*>& events);
 
-    virtual bool task();
+    bool operator<(Event*& event);
 
   protected:
     typedef std::size_t size_t;
 
-    size_t event_time_{0u}, &global_clock_;
-    LinkedQueueOfCars *road_{nullptr};
+    size_t &_global_clock, _event_time{0u};
+    LinkedQueueOfCars *_road{nullptr};
+    char _type{'e'};
   };
 
-  Event::Event() {}
-
-  Event::Event(size_t event_time,
-               size_t &global_clock,
+  //! Construtor
+  /*! Construtor usando apenas o dado recebido para a criação.
+   *  \param global_clock Relógio global
+   *  \param event_time hora da execução
+   *  \param road estrada fonte do evento
+   */
+  Event::Event(size_t &global_clock,
+               size_t event_time,
                LinkedQueueOfCars *road) :
-  event_time_{event_time},
-  global_clock_{global_clock},
-  road_{road}
+  _global_clock{global_clock},
+  _event_time{event_time},
+  _road{road}
   {}
 
-  std::size_t Event::execute_time() const {
-    return event_time_;
+  //! Destrutor
+  /*! Destrutor padrão
+   */
+  Event::~Event() {}
+
+  //! Horário de execução
+  /*! Retorna a hora que o evento deve ocorrer.
+   *  \return size_t Horário de execução
+   */
+  size_t Event::event_time() const {
+    return _event_time;
   }
 
-  bool Event::operator<(Event*& event) {
-    return this->execute_time() < event->execute_time();
-  }
-
+  //! Estrada fonte do evento
+  /*! Retorna a estrada que deve ser alterada pelo evento
+   *  \return LinkedQueueOfCars* Estrada do evento
+   */
   LinkedQueueOfCars* Event::road() const {
-    return road_;
+    return _road;
   }
 
-  bool Event::task() {
+  //! Tipo do evento
+  /*! Retorna o tipo do evento
+   *  \return char tipo do evento
+   */
+  char Event::type() const {
+    return _type;
+  }
+
+  //! Tarefa que deve ser executada
+  /*! Tarefa que cada tipo de evento irá executar
+   *  \return bool Sucesso na hora de executar a tarefa.
+   */
+  bool Event::task(LinkedList<Event*>& events) {
     return false;
+  }
+
+  //! Sobrecarga do operador <
+  /*! Comparando dois eventos através do tempo para execução.
+   *  \param Event*& Evento externo para comparação.
+   *  \return bool Comparação dos tempos de exec.
+   */
+  bool Event::operator<(Event*& event) {
+    return this->event_time() < event->event_time();
   }
 
 }  //  namespace structures

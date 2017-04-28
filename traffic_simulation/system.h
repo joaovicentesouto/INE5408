@@ -16,7 +16,7 @@ namespace structures {
   private:
     std::size_t _execution_time,
                 _semaphore_time,
-                _global_time{0u},
+                _global_clock{0u},
                 _input_counter{0u},
                 _output_counter{0u};
     LinkedList<Event*> _system_events{},
@@ -99,8 +99,8 @@ namespace structures {
     _exit_roads[13] = S2_SUL;
 
     for (auto i = 0u; i<6; ++i) {
-      std::size_t event_time = _global_time + _entry_roads[i]->input_frequency();
-      InputEvent* event = new InputEvent(_global_time, event_time, _entry_roads[i]);
+      std::size_t event_time = _global_clock + _entry_roads[i]->input_frequency();
+      InputEvent* event = new InputEvent(_global_clock, event_time, _entry_roads[i]);
       _system_events.insert_sorted(event);
     }
 

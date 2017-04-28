@@ -16,24 +16,24 @@ namespace structures {
 
   class ExitRoad : public LinkedQueueOfCars {
   public:
-    EntryRoad(size_t max_size, size_t speed);
-    ~EntryRoad();
+    ExitRoad(size_t max_size, size_t speed);
+    ~ExitRoad();
 
-    virtual void enqueue(const Car* data);
+    virtual void enqueue(Car* data, LinkedList<Event*>& events);
 
   private:
     typedef std::size_t size_t;
   };
 
-  EntryRoad::EntryRoad(size_t max_size, size_t speed) :
+  ExitRoad::ExitRoad(size_t max_size, size_t speed) :
   LinkedQueueOfCars::LinkedQueueOfCars(max_size, speed)
   {}
 
-  void EntryRoad::enqueue(const Car* data)  {
+  void ExitRoad::enqueue(Car* data, LinkedList<Event*>& events)  {
     LinkedQueueOfCars::enqueue(data);
     size_t time_event = this->universal_clock_+time_of_route();
-    OutputEvent *event = new OutputEvent(time_event, this);
-    this->events.insert_sorted(event);
+    Event *event = new OutputEvent(time_event, this);
+    events.push_back(event);
   }
 
 }  // namespace structures

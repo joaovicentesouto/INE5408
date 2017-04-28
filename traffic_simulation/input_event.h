@@ -10,11 +10,12 @@
 
 namespace structures {
 
+  class car;
+
   class InputEvent : public Event {
   public:
-    InputEvent(size_t event_time,
-               size_t &global_clock,
-               size_t &input_counter,
+    InputEvent(size_t &global_clock,
+               size_t event_time,
                LinkedQueueOfCars *road);
     ~InputEvent();
 
@@ -22,35 +23,33 @@ namespace structures {
 
   private:
     typedef std::size_t size_t;
-    size_t &input_counter_;
   };
 
   InputEvent::InputEvent(
-              size_t event_time,
               size_t &global_clock,
-              size_t &input_counter,
+              size_t event_time,
               LinkedQueueOfCars *road):
-  Event::Event(event_time, global_clock, road),
-  input_counter_{input_counter}
-  {}
+  Event::Event(global_clock, event_time, road),
+  {
+    Event::_type = 'i';
+  }
 
   InputEvent::~InputEvent() {
     Event::~Event();
   }
 
-  bool InputEvent::task() {
+  bool InputEvent::task(LinkedList<Event*>& events) {
+    Car* car = new Car();
+    EntryRoad* road = (EntryRoad*) Event::road();
     try {
-      Car* car = new Car();
-      Event::road()->enqueue(car); //< acessa assim a estrada???
-      ++input_counter_;
-      //gerar outro evento input
-      this->global_clock_ += 0; // tempo do evento ocorrer.
-      return true;
+      road->enqueue(car, events);
     } catch(std::out_of_range error) {
       delete car;
-      this->global_clock_ += 0; // tempo do evento ocorrer.
       return false;
     }
+    size_t event_time = this->_global_clock+road->input_frequency();
+    events.push_back(new InputEvent(_global_clock, event_time, road));
+    return true;
   }
 
 }  // namespace structures

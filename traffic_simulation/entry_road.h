@@ -32,9 +32,9 @@ namespace structures {
                     LinkedQueueOfCars *front,
                     LinkedQueueOfCars *right);
 
-    virtual void enqueue(Car* data);
+    virtual void enqueue(Car* data, LinkedList<Event*>& events);
 
-    void change_road_car();
+    void change_road_car(LinkedList<Event*>& events);
 
     size_t direction_probability();
     size_t input_frequency();
@@ -46,7 +46,7 @@ namespace structures {
 
     size_t _input_range, _lower_input;
     float _prob_left, _prob_front, _prob_right;
-    ArrayList<LinkedQueueOfCars*> crossroads{3u};
+    ArrayList<LinkedQueueOfCars*> _crossroads{3u};
   };
 
   EntryRoad::EntryRoad(size_t max_size,
@@ -68,12 +68,12 @@ namespace structures {
                                      LinkedQueueOfCars *front,
                                      LinkedQueueOfCars *right)
   {
-   crossroads[0] = left;
-   crossroads[1] = front;
-   crossroads[2] = right;
+   _crossroads[0] = left;
+   _crossroads[1] = front;
+   _crossroads[2] = right;
   }
 
-  void EntryRoad::enqueue(Car* data) {
+  void EntryRoad::enqueue(Car* data, LinkedList<Event*>& events) {
     if (LinkedQueueOfCars::full(data))
       throw std::out_of_range("Full queue!");
       // preciso verificar pra mudar a direçao do carro
@@ -81,14 +81,13 @@ namespace structures {
     data->direction(direction_probability());
     LinkedQueueOfCars::enqueue(data);
     size_t time_event = this->_global_time+time_of_route();
-
-    // cria um novo evento para quem chamou enqueue use
-    //event = new RoadExchangeEvent(time_event, this);
+    Event* event = new RoadExchangeEvent(this->_global_time, time_event, this);
+    events.push_back(event);
   }
 
-  void EntryRoad::change_road_car() {
+  void EntryRoad::change_road_car(LinkedList<Event*>& events) {
       Car* car = this->front();
-      roads_[car->direction()]->enqueue(car); //pode dar erro
+      _crossroads[car->direction()]->enqueue(car, events); //pode dar erro
       LinkedQueueOfCars::dequeue();
   }
 
@@ -110,14 +109,6 @@ namespace structures {
     //  fonte: http://stackoverflow.com/ ->
     //  -> questions/12885356/random-numbers-with-different-probabilities
     return rand()%100 < (probabilityOfYes * 100);
-  }
-
-  bool EntryRoad::semaphore() {
-    return _semaphore;
-  }
-
-  void EntryRoad::exchange_semaphore() {
-    _semaphore = !_semaphore;
   }
 
 }  // namespace structures
