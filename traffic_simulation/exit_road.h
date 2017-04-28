@@ -11,25 +11,25 @@ namespace structures {
 
   class ExitRoad : public LinkedQueueOfCars {
   public:
-    EntryRoad(LinkedList<Event> *events,
-              ArrayList<LinkedQueueOfCars> *roads,
+    EntryRoad(LinkedList<*Event> *events,
+              ArrayList<*LinkedQueueOfCars> *roads,
               size_t max_size,
               size_t speed);
     ~EntryRoad();
 
-    virtual void enqueue(const Car& data);
+    virtual void enqueue(const *Car data);
 
   }
 
   EntryRoad::EntryRoad(
-                   LinkedList<Event> *events,
-                   ArrayList<LinkedQueueOfCars> *roads,
+                   LinkedList<*Event> *events,
+                   ArrayList<*LinkedQueueOfCars> *roads,
                    size_t max_size,
                    size_t speed) :
   LinkedQueueOfCars::LinkedQueueOfCars(events, roads, max_size, speed),
   {}
 
-  void EntryRoad::enqueue(const Car& data)  {
+  void EntryRoad::enqueue(const *Car data)  {
     LinkedQueueOfCars::enqueue(data);
     size_t time_event = this->universal_clock_+time_of_route();
     OutputEvent *event = new OutputEvent(time_event, this);
@@ -37,3 +37,5 @@ namespace structures {
   }
 
 }  // namespace structures
+
+#endif

@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "./event.h"
 
-namespace structure {
+namespace structures {
 
   class RoadExchangeEvent : public Event {
   public:
@@ -27,7 +27,7 @@ namespace structure {
 
   std::size_t RoadExchangeEvent::task() {
     try {
-      EntryRoad *road = (EntryRoad *) this->road;
+      EntryRoad *road = (EntryRoad *) this->road();
       road->change_road_car();
     } catch(std::out_of_range error) {
       printf("Está congestionado onde quero ir.\n");
@@ -36,7 +36,9 @@ namespace structure {
   }
 
   bool RoadExchangeEvent::semaphore() {
-    return this->road->semaphore();
+    return this->road()->semaphore();
   }
 
 }  // namespace structure
+
+#endif

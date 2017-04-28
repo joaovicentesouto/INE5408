@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "./event.h"
 
-namespace structure {
+namespace structures {
 
   class OutputEvent : public Event {
   public:
@@ -30,9 +30,11 @@ namespace structure {
   }
 
   size_t OutputEvent::task() {
-    this->road->dequeue(); //< acessa assim a estrada???
+    this->road()->dequeue(); //< acessa assim a estrada???
     ++output_counter_;
     return 0u;
   }
 
 }  // namespace structure
+
+#endif

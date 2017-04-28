@@ -4,16 +4,17 @@
 
 #include <cstdint>
 #include <stdlib.h>
-#include "./linked_list_of_cars.h"
+#include "./linked_queue_of_cars.h"
 
-namespace structure {
+namespace structures {
 
   class Event {
   public:
-    Event(std::size_t time, LinkedQueueOfCars* road);
+    Event(std::size_t time, LinkedQueueOfCars *road);
     ~Event();
 
     std::size_t time() const;
+    std::size_t road() const;
     virtual std::size_t task();
 
   protected:
@@ -30,4 +31,10 @@ namespace structure {
     return time_;
   }
 
+  std::size_t road() const {
+    return road_;
+  }
+
 }  //  namespace structure
+
+#endif

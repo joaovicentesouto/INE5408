@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include "./event.h"
 
-namespace structure {
+namespace structures {
 
   class SemaphoreEvent : public Event {
   public:
@@ -25,8 +25,10 @@ namespace structure {
   }
 
   std::size_t SemaphoreEvent::task() {
-    this->road->change_semaphore();
+    this->road_->change_semaphore();
     return 0u;
   }
 
 }  // namespace structure
+
+#endif

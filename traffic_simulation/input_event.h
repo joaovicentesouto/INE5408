@@ -8,7 +8,7 @@
 #include "./car.h"
 #include "linked_list_of_cars.h"
 
-namespace structure {
+namespace structures {
 
   class InputEvent : public Event {
   public:
@@ -33,8 +33,8 @@ namespace structure {
 
   size_t InputEvent::task() {
     try {
-      Car car = new Car();
-      this->road->enqueue(car); //< acessa assim a estrada???
+      Car *car = new Car();
+      this->road()->enqueue(car); //< acessa assim a estrada???
       ++input_counter_;
     } catch(std::out_of_range error) {
       delete car;
@@ -43,3 +43,5 @@ namespace structure {
   }
 
 }  // namespace structure
+
+#endif

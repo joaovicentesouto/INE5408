@@ -6,6 +6,7 @@
 #include <stdexcept>  // C++ exceptions
 #include <cstdlib>
 #include "./car.h"
+#include "./event.h"
 #include "./array_list.h"
 #include "./linked_list.h"
 #include "./linked_queue_of_cars.h"
@@ -14,8 +15,8 @@ namespace structures {
 
   class EntryRoad : public LinkedQueueOfCars {
   public:
-    EntryRoad(LinkedList<Event> *events,
-              ArrayList<LinkedQueueOfCars> *roads,
+    EntryRoad(LinkedList<*Event> *events,
+              ArrayList<*LinkedQueueOfCars> *roads,
               size_t max_size,
               size_t speed,
               float prob_left,
@@ -23,7 +24,7 @@ namespace structures {
               float prob_right);
     ~EntryRoad();
 
-    virtual void enqueue(const Car& data);
+    virtual void enqueue(const *Car data);
     void change_road_car();
     size_t direction_probability();
 
@@ -34,8 +35,8 @@ namespace structures {
     float prob_left_, prob_front_, prob_right_;
   }
 
-  EntryRoad::EntryRoad(LinkedList<Event> *events,
-                       ArrayList<LinkedQueueOfCars> *roads,
+  EntryRoad::EntryRoad(LinkedList<*Event> *events,
+                       ArrayList<*LinkedQueueOfCars> *roads,
                        size_t max_size,
                        size_t speed,
                        size_t &universal_clock,
@@ -48,11 +49,11 @@ namespace structures {
   prob_right_{prob_right}
   {}
 
-  void EntryRoad::enqueue(const Car& data)  {
+  void EntryRoad::enqueue(const *Car data)  {
     if (LinkedQueueOfCars::full(data))
-      throw std::out_of_range("Full queue!")
+      throw std::out_of_range("Full queue!");
 
-    data.direction(direction_probability());
+    data->direction(direction_probability());
     LinkedQueueOfCars::enqueue(data);
     size_t time_event = this->universal_clock_+time_of_route();
     RoadExchangeEvent *event = new RoadExchangeEvent(time_event, this);
@@ -60,9 +61,9 @@ namespace structures {
   }
 
   void EntryRoad::change_road_car() {
-      Car &car = this->road.front();
-      roads[car.direction()].enqueue(car);
-      this->road.dequeue();
+      Car *car = this->front();
+      roads[car.direction()]->enqueue(car);
+      this->dequeue();
   }
 
   size_t EntryRoad::direction_probability() {
@@ -82,3 +83,5 @@ namespace structures {
   }
 
 }  // namespace structures
+
+#endif

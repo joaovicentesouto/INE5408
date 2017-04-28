@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-namespace structure {
+namespace structures {
 
   class Car {
   public:
@@ -18,16 +18,17 @@ namespace structure {
     void decides_the_direction(std::size_t direction);
 
   private:
-    std::size_t size_, direction_{0u};
+    std::size_t size_, direction_;
   };
 
   //! Construtor padrão
   /*  Construtor onde se define o tamanho do veículo em sua criação.
    *  Tamanho: tamanho do carro [2:6] metros + 2 metros a frente e 1 atrás.
    */
-  Car::Car(std::size_t direction) {
+  Car::Car() {
     srand(time(NULL));
     size_ = rand()/RAND_MAX*5 + 5;
+    direction_ = 0u;
   }
 
   //! Destrutor padrão
@@ -43,8 +44,10 @@ namespace structure {
     direction_ = direction;
   }
 
-  std::size_t Car::size() {
+  std::size_t Car::size() const {
     return size_;
   }
 
-}
+}  //  namespace structures
+
+#endif
