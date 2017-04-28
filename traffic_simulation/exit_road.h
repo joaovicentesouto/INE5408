@@ -8,15 +8,15 @@
 #include <stdlib.h>
 #include "./car.h"
 #include "./event.h"
-#include "./array_list.h"
-#include "./linked_list.h"
+#include "./output_event.h"
+#include "./structures/linked_list.h"
 #include "./linked_queue_of_cars.h"
 
 namespace structures {
 
   class ExitRoad : public LinkedQueueOfCars {
   public:
-    ExitRoad(size_t max_size, size_t speed);
+    ExitRoad(size_t speed, size_t max_size);
     ~ExitRoad();
 
     virtual void enqueue(Car* data, LinkedList<Event*>& events);
@@ -25,8 +25,8 @@ namespace structures {
     typedef std::size_t size_t;
   };
 
-  ExitRoad::ExitRoad(size_t max_size, size_t speed) :
-  LinkedQueueOfCars::LinkedQueueOfCars(max_size, speed)
+  ExitRoad::ExitRoad(size_t speed, size_t max_size) :
+  LinkedQueueOfCars::LinkedQueueOfCars(speed, max_size)
   {}
 
   void ExitRoad::enqueue(Car* data, LinkedList<Event*>& events)  {

@@ -6,9 +6,9 @@
 #include <stdexcept>  // C++ exceptions
 #include "./car.h"
 #include "./event.h"
-#include "./linked_queue.h"
-#include "./linked_list.h"
-#include "./array_list.h"
+#include "./structures/linked_queue.h"
+#include "./structures/linked_list.h"
+#include "./structures/array_list.h"
 
 namespace structures {
 

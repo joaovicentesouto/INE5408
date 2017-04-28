@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <stdlib.h>
 #include "./event.h"
-#include "./linked_list.h"
+#include "./structures/linked_list.h"
 #include "./linked_queue_of_cars.h"
 
 namespace structures {

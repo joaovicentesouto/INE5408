@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include "./event.h"
 #include "./entry_road.h"
+#include "./linked_queue_of_cars.h"
+#include "./structures/linked_list.h"
 
 namespace structures {
 
@@ -34,20 +36,15 @@ namespace structures {
 
   bool RoadExchangeEvent::task(LinkedList<Event*>& events) {
     EntryRoad* road = (EntryRoad*) Event::road();
+    Car* car = road->front();
+    size_t wait == car->size()/(road->speed()/3.6);
+    this->_global_clock += wait > 0? wait : 1;
     try {
       road->change_road_car(events);
       return true;
     } catch(std::out_of_range error) {
-      Car* car = road->front();
-      size_t wait == car->size()/(road->speed()/3.6);
-      this->_global_clock += wait > 0? wait : 1;
       return false;
     }
-  }
-
-  bool RoadExchangeEvent::semaphore() {
-    EntryRoad *road = (EntryRoad *) Event::road();
-    return road->semaphore();
   }
 
 }  // namespace structures

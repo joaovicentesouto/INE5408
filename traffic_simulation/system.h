@@ -2,6 +2,22 @@
 #ifndef STRUCTURES_SYSTEM_H
 #define STRUCTURES_SYSTEM_H
 
+#include <cstdint>  // std::size_t
+#include <stdexcept>  // C++ exceptions
+
+#include "./event.h"
+#include "./input_event.h"
+#include "./output_event.h"
+#include "./road_exchange_event.h"
+#include "./semaphore_event.h"
+
+#include "./exit_road.h"
+#include "./entry_road.h"
+#include "./semaphore.h"
+
+#include "./structures/linked_list.h"
+#include "./structures/array_list.h"
+
 namespace structures {
 
   class System {

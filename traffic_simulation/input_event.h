@@ -6,7 +6,10 @@
 #include <stdlib.h>
 #include "./event.h"
 #include "./car.h"
-#include "linked_list_of_cars.h"
+#include "./input_event.h"
+#include "./entry_road.h"
+#include "./linked_list_of_cars.h"
+#include "./structures/linked_list.h"
 
 namespace structures {
 

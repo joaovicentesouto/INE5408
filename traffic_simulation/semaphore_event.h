@@ -5,28 +5,50 @@
 #include <cstdint>
 #include <stdlib.h>
 #include "./event.h"
+#include "./structures/linked_list.h"
+#include "./semaphore.h"
 
 namespace structures {
 
+  class semaphore;
+
   class SemaphoreEvent : public Event {
   public:
-    SemaphoreEvent(std::size_t time, LinkedQueueOfCars *road);
+    SemaphoreEvent(size_t &global_clock,
+                   size_t event_time,
+                   Semaphore* semaphore);
     ~SemaphoreEvent();
 
-    virtual bool task(std::size_t &global_clock);
+    virtual bool task(LinkedList<Event*>& events);
+
+  private:
+    typedef std::size_t size_t;
+    Semaphore* _semaphore;
   };
 
-  SemaphoreEvent::SemaphoreEvent(std::size_t time, LinkedQueueOfCars *road):
-  Event::Event(time, road)
-  {}
+  SemaphoreEvent::SemaphoreEvent(
+                  size_t &global_clock,
+                  size_t event_time,
+                  Semaphore* semaphore):
+  Event::Event(global_clock, event_time, nullptr),
+  _semaphore{semaphore}
+  {
+    Event::type = 's';
+  }
 
   SemaphoreEvent::~SemaphoreEvent() {
     Event::~Event();
   }
 
-  bool SemaphoreEvent::task(std::size_t &global_clock) {
-    this->road_->change_semaphore();
-    // Gera outro evento de troca de semaforo.
+  bool SemaphoreEvent::task(LinkedList<Event*>& events) {
+    _semaphore->change();
+    std::size_t sem_time = _semaphore->semaphore_time()
+    this->_global_clock = this->event_time();
+    Event* event = new SemaphoreEvent(
+                       this->_global_clock,
+                       this->_global_clock+sem_time,
+                       _semaphore);
+    events.push_back(event);
     return true;
   }
 

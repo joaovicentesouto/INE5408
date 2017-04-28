@@ -6,11 +6,14 @@
 #include <stdexcept>  // C++ exceptions
 #include <cstdlib>
 #include <stdlib.h>
+
+// objects
 #include "./car.h"
 #include "./event.h"
 #include "./road_exchange_event.h"
-#include "./array_list.h"
-#include "./linked_list.h"
+// structures
+#include "./structures/array_list.h"
+#include "./structures/linked_list.h"
 #include "./linked_queue_of_cars.h"
 
 namespace structures {
@@ -19,8 +22,8 @@ namespace structures {
 
   class EntryRoad : public LinkedQueueOfCars {
   public:
-    EntryRoad(size_t max_size,
-              size_t speed,
+    EntryRoad(size_t speed,
+              size_t max_size,
               size_t input_range,
               size_t lower_input,
               float prob_left,
@@ -49,14 +52,14 @@ namespace structures {
     ArrayList<LinkedQueueOfCars*> _crossroads{3u};
   };
 
-  EntryRoad::EntryRoad(size_t max_size,
-                       size_t speed,
+  EntryRoad::EntryRoad(size_t speed,
+                       size_t max_size,
                        size_t input_range,
                        size_t lower_input,
                        float prob_left,
                        float prob_front,
                        float prob_right) :
-  LinkedQueueOfCars::LinkedQueueOfCars(max_size, speed),
+  LinkedQueueOfCars::LinkedQueueOfCars(speed, max_size),
   _input_range{input_range},
   _lower_input{lower_input},
   _prob_left{prob_left},
@@ -77,7 +80,6 @@ namespace structures {
     if (LinkedQueueOfCars::full(data))
       throw std::out_of_range("Full queue!");
       // preciso verificar pra mudar a direçao do carro
-
     data->direction(direction_probability());
     LinkedQueueOfCars::enqueue(data);
     size_t time_event = this->_global_time+time_of_route();

@@ -2,9 +2,11 @@
 #ifndef STRUCTURES_EVENT_H
 #define STRUCTURES_EVENT_H
 
-#include <cstdint>
-#include <stdlib.h>
+#include <cstdint>  // std::size_t
+#include <stdexcept>  // C++ exceptions
+
 #include "./linked_queue_of_cars.h"
+#include "./structures/linked_list.h"
 
 namespace structures {
 
