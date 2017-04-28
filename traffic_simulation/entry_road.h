@@ -16,16 +16,14 @@ namespace structures {
 
   class EntryRoad : public LinkedQueueOfCars {
   public:
-    EntryRoad(LinkedList<Event*> *events,
-              ArrayList<LinkedQueueOfCars*> *roads,
-              size_t max_size,
+    EntryRoad(size_t max_size,
               size_t speed,
               float prob_left,
               float prob_front,
               float prob_right);
     ~EntryRoad();
 
-    void enqueue(const Car* data);
+    virtual void enqueue(Car* data);
     void change_road_car();
     size_t direction_probability();
 
@@ -36,27 +34,25 @@ namespace structures {
     float prob_left_, prob_front_, prob_right_;
   };
 
-  EntryRoad::EntryRoad(LinkedList<Event*> *events,
-                       ArrayList<LinkedQueueOfCars*> *roads,
-                       size_t max_size,
+  EntryRoad::EntryRoad(size_t max_size,
                        size_t speed,
-                       size_t &universal_clock,
                        float prob_left,
                        float prob_front,
                        float prob_right) :
-  LinkedQueueOfCars::LinkedQueueOfCars(events, roads, max_size, speed, universal_clock),
+  LinkedQueueOfCars::LinkedQueueOfCars(max_size, speed),
   prob_left_{prob_left},
   prob_front_{prob_front},
   prob_right_{prob_right}
   {}
 
-  void EntryRoad::enqueue(const Car* data)  {
+  void EntryRoad::enqueue(Car* data)  {
     if (LinkedQueueOfCars::full(data))
       throw std::out_of_range("Full queue!");
+      // preciso verificar pra mudar a direçao do carro
 
     data->direction(direction_probability());
     LinkedQueueOfCars::enqueue(data);
-    size_t time_event = this->universal_clock_+time_of_route();
+    size_t time_event = this+time_of_route();
     RoadExchangeEvent *event = new RoadExchangeEvent(time_event, this);
     this->events.insert_sorted(event);
   }

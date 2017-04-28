@@ -13,13 +13,17 @@ namespace structures {
 
 class LinkedQueueOfCars : private LinkedQueue<Car*> {
  public:
-    LinkedQueueOfCars(ArrayList<LinkedQueueOfCars*> *roads,
-                     size_t max_size,
-                     size_t speed);
+    LinkedQueueOfCars(size_t max_size,
+                      size_t speed,
+                      size_t &global_clock);
     ~LinkedQueueOfCars();
 
+    void road_left(LinkedQueueOfCars* left);
+    void road_front(LinkedQueueOfCars* front);
+    void road_right(LinkedQueueOfCars* right);
+
     void clear();
-    void enqueue(Car* data);
+    virtual void enqueue(Car* data);
     Car* dequeue();
     Car* front() const;
     Car* back() const;
@@ -36,23 +40,35 @@ class LinkedQueueOfCars : private LinkedQueue<Car*> {
  protected:
     typedef std::size_t size_t;
     typedef structures::Car Car;
-    ArrayList<LinkedQueueOfCars*> *roads_;
-    size_t max_size_, speed_;
+    ArrayList<LinkedQueueOfCars*> roads_{3u};
+    size_t max_size_, speed_, &global_clock_;
     size_t size_{0u};
 };
 
 LinkedQueueOfCars::LinkedQueueOfCars(
-                 ArrayList<LinkedQueueOfCars*> *roads,
-                 size_t max_size,
-                 size_t speed) :
+                   size_t max_size,
+                   size_t speed,
+                   size_t &global_clock) :
 LinkedQueue<Car*>::LinkedQueue(),
-roads_{roads},
 max_size_{max_size},
-speed_{speed}
+speed_{speed},
+global_clock_{global_clock}
 {}
 
 LinkedQueueOfCars::~LinkedQueueOfCars() {
     LinkedQueue<Car*>::clear();
+}
+
+void LinkedQueueOfCars::road_left(LinkedQueueOfCars* left) {
+  roads_.insert(left, 0u);
+}
+
+void LinkedQueueOfCars::road_front(LinkedQueueOfCars* front) {
+  roads_.insert(front, 1u);
+}
+
+void LinkedQueueOfCars::road_right(LinkedQueueOfCars* right) {
+  roads_.insert(right, 2u);
 }
 
 void LinkedQueueOfCars::clear() {
@@ -101,7 +117,7 @@ bool LinkedQueueOfCars::empty() const {
 }
 
 bool LinkedQueueOfCars::full(const Car* data) const {
-  return data->size()+size_ > max_size_;
+  return data->size()+size() > max_size();
 }
 
 }  // namespace structures
