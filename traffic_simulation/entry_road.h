@@ -46,8 +46,10 @@ namespace structures {
     bool yesOrNo(float probabilityOfYes);
 
     typedef std::size_t size_t;
+
+    bool _semaphore{false};
+    size_t _input_range, _lower_input;
     float _prob_left, _prob_front, _prob_right;
-    size_t _semaphore{0u}, _input_range, _lower_input;
     ArrayList<LinkedQueueOfCars*> crossroads{3u};
   };
 
@@ -83,8 +85,9 @@ namespace structures {
     data->direction(direction_probability());
     LinkedQueueOfCars::enqueue(data);
     size_t time_event = this->_global_time+time_of_route();
+
     // cria um novo evento para quem chamou enqueue use
-    event = new RoadExchangeEvent(time_event, this);
+    //event = new RoadExchangeEvent(time_event, this);
   }
 
   void EntryRoad::change_road_car() {
@@ -103,7 +106,8 @@ namespace structures {
   }
 
   size_t EntryRoad::size_t input_frequency() {
-    return (size_t) rand()/RAND_MAX*_input_range + _lower_input;
+    double tmp = (double) rand()/RAND_MAX;
+    return tmp*_input_range + _lower_input;
   }
 
   bool EntryRoad::yesOrNo(float probabilityOfYes) {
@@ -113,15 +117,11 @@ namespace structures {
   }
 
   bool EntryRoad::semaphore() {
-    return _semaphore == 0u;
-  }
-
-  void EntryRoad::semaphore(size_t semaphore) {
-    _semaphore = semaphore;
+    return _semaphore;
   }
 
   void EntryRoad::exchange_semaphore() {
-    _semaphore = (_semaphore+1)%4;
+    _semaphore = !_semaphore;
   }
 
 }  // namespace structures

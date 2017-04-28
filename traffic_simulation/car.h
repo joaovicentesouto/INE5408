@@ -25,8 +25,8 @@ namespace structures {
    *  Tamanho: tamanho do carro [2:6] metros + 2 metros a frente e 1 atrás.
    */
   Car::Car() {
-    double tmp = ((double) rand() / (RAND_MAX));
-    size_ = (tmp*5 + 5);
+    double tmp = (double) rand()/RAND_MAX;
+    size_ = tmp*5 + 5;
   }
 
   //! Destrutor padrão

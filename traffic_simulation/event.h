@@ -16,7 +16,8 @@ namespace structures {
     Event(size_t event_time, size_t &global_clock, LinkedQueueOfCars *road);
     ~Event();
 
-    size_t time() const;
+    size_t execute_time() const;
+    bool operator<(Event*& event);
 
     LinkedQueueOfCars* road() const;
 
@@ -39,8 +40,12 @@ namespace structures {
   road_{road}
   {}
 
-  std::size_t Event::time() const {
+  std::size_t Event::execute_time() const {
     return event_time_;
+  }
+
+  bool Event::operator<(Event*& event) {
+    return this->execute_time() < event->execute_time();
   }
 
   LinkedQueueOfCars* Event::road() const {

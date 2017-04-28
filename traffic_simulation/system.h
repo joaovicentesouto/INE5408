@@ -21,8 +21,10 @@ namespace structures {
                 _output_counter{0u};
     LinkedList<Event*> _system_events{},
                        _crossroads_events{};
-    ArrayList<LinkedQueueOfCars*> _roads{14u};
-  }
+    ArrayList<EntryRoad*> _entry_roads{8u};
+    ArrayList<ExitRoad*> _exit_roads{6u};
+    Semaphore* _semaphore;
+  };
 
   //! Construtor padrão
   /*! Atribuindo os valores bases para o funcionamento do sistema.
@@ -40,7 +42,9 @@ namespace structures {
   System::~System() {
     delete _system_events;
     delete _crossroads_events;
-    delete _roads;
+    delete _entry_roads;
+    delete _exit_roads;
+    delete _semaphore;
   }
 
   //! Inícia todas as estradas e eventos iniciais
@@ -76,28 +80,31 @@ namespace structures {
     S2_NORTE->crossroads(C1_OESTE, N2_NORTE, L1_LESTE);
 
     // AFERENTES
-    _roads[0] = N1_SUL;
-    _roads[1] = N2_SUL;
-    _roads[2] = O1_LESTE;
-    _roads[3] = L1_OESTE;
-    _roads[4] = S1_NORTE;
-    _roads[5] = S2_NORTE;
+    _entry_roads[0] = N1_SUL;
+    _entry_roads[1] = N2_SUL;
+    _entry_roads[2] = O1_LESTE;
+    _entry_roads[3] = L1_OESTE;
+    _entry_roads[4] = S1_NORTE;
+    _entry_roads[5] = S2_NORTE;
     // CENTRAIS
-    _roads[6] = C1_OESTE;
-    _roads[7] = C1_LESTE;
+    _entry_roads[6] = C1_OESTE;
+    _entry_roads[7] = C1_LESTE;
+
     // EFERENTES
-    _roads[8] = N1_NORTE;
-    _roads[9] = N2_NORTE;
-    _roads[10] = O1_OESTE;
-    _roads[11] = L1_LESTE;
-    _roads[12] = S1_SUL;
-    _roads[13] = S2_SUL;
+    _exit_roads[8] = N1_NORTE;
+    _exit_roads[9] = N2_NORTE;
+    _exit_roads[10] = O1_OESTE;
+    _exit_roads[11] = L1_LESTE;
+    _exit_roads[12] = S1_SUL;
+    _exit_roads[13] = S2_SUL;
 
     for (auto i = 0u; i<6; ++i) {
-      EntryRoad* road = (EntryRoad*) _roads[i];
-      std::size_t event_time = _global_time + road->input_frequency();
-      _system_events.insert_sorted(new InputEvent(event_time, road));
+      std::size_t event_time = _global_time + _entry_roads[i]->input_frequency();
+      InputEvent* event = new InputEvent(_global_time, event_time, _entry_roads[i]);
+      _system_events.insert_sorted(event);
     }
+
+    _semaphore = new Semaphore(_entry_roads);
 
   }
 
