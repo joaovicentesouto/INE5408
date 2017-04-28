@@ -15,8 +15,7 @@ namespace structures {
 class LinkedQueueOfCars : private LinkedQueue<Car*> {
  public:
     LinkedQueueOfCars(size_t max_size,
-                      size_t speed,
-                      size_t &global_clock);
+                      size_t speed);
     ~LinkedQueueOfCars();
 
     void road_left(LinkedQueueOfCars* left);
@@ -24,7 +23,7 @@ class LinkedQueueOfCars : private LinkedQueue<Car*> {
     void road_right(LinkedQueueOfCars* right);
 
     void clear();
-    virtual void enqueue(Car* data, Event*& event);
+    virtual Event* enqueue(Car* data, Event*& event);
     Car* dequeue();
     Car* front() const;
     Car* back() const;
@@ -40,9 +39,8 @@ class LinkedQueueOfCars : private LinkedQueue<Car*> {
 
  protected:
     typedef std::size_t size_t;
-    typedef structures::Car Car;
     ArrayList<LinkedQueueOfCars*> roads_{3u};
-    size_t max_size_, speed_, &global_clock_;
+    size_t max_size_, speed_;
     size_t size_{0u};
 };
 

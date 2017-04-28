@@ -13,26 +13,29 @@ namespace structures {
   class Event {
   public:
     Event();
-    Event(std::size_t event_time, LinkedQueueOfCars *road);
+    Event(size_t event_time, size_t &global_clock, LinkedQueueOfCars *road);
     ~Event();
 
-    std::size_t time() const;
-    //std::size_t time(std::size_t event_time_);
+    size_t time() const;
 
     LinkedQueueOfCars* road() const;
-    //void road(LinkedQueueOfCars* road);
 
     virtual bool task();
 
   protected:
-    std::size_t event_time_{0u};
+    typedef std::size_t size_t;
+
+    size_t event_time_{0u}, &global_clock_;
     LinkedQueueOfCars *road_{nullptr};
   };
 
   Event::Event() {}
 
-  Event::Event(std::size_t event_time, LinkedQueueOfCars *road) :
+  Event::Event(size_t event_time,
+               size_t &global_clock,
+               LinkedQueueOfCars *road) :
   event_time_{event_time},
+  global_clock_{global_clock},
   road_{road}
   {}
 

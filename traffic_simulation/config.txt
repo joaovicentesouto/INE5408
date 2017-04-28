@@ -1,0 +1,22 @@
+Aferentes (Velocidade, Tamanho, *Frequência)
+
+N1_S  (60, 500, 20+/-5)
+N2_S  (40, 500, 20+/-5)
+O1_L  (80, 2000, 10+/-2)
+L1_O  (30, 400, 10+/-2)
+S1_N  (60, 500, 30+/-7)
+S2_N  (40, 500, 60+/-15)
+
+Centrais (Velocidade, Tamanho)
+
+C1_O  (60, 300)
+C1_L  (60, 300)
+
+Eferentes (Velocidade, Tamanho)
+
+N1_N  (60, 500)
+N2_N  (40, 500)
+O1_O  (80, 2000)
+L1_L  (30, 400)
+S1_S  (60, 500)
+S2_S  (40, 500)

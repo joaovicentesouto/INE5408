@@ -5,8 +5,11 @@
 #include <cstdint>
 #include <stdlib.h>
 #include "./event.h"
+#include "./entry_road.h"
 
 namespace structures {
+
+  class EntryRoad;
 
   class RoadExchangeEvent : public Event {
   public:
@@ -27,7 +30,7 @@ namespace structures {
 
   bool RoadExchangeEvent::task(std::size_t &global_clock) {
     try {
-      EntryRoad *road = (EntryRoad *) this->road();
+      EntryRoad *road = (EntryRoad *) Event::road();
       Car *car = road->front();
       std::size_t time_to_change = car->size()/(road->speed()/3.6);
       global_clock += time_to_change;
@@ -40,7 +43,8 @@ namespace structures {
   }
 
   bool RoadExchangeEvent::semaphore() {
-    return this->road()->semaphore();
+    EntryRoad *road = (EntryRoad *) Event::road();
+    return road->semaphore();
   }
 
 }  // namespace structures

@@ -12,18 +12,25 @@ namespace structures {
 
   class InputEvent : public Event {
   public:
-    InputEvent(size_t time, LinkedQueueOfCars *road, size_t &input_counter);
+    InputEvent(size_t event_time,
+               size_t &global_clock,
+               size_t &input_counter,
+               LinkedQueueOfCars *road);
     ~InputEvent();
 
-    virtual bool task(size_t &global_clock);
+    virtual bool task();
 
   private:
     typedef std::size_t size_t;
     size_t &input_counter_;
   };
 
-  InputEvent::InputEvent(size_t time, LinkedQueueOfCars *road, size_t &input_counter):
-  Event::Event(time, road),
+  InputEvent::InputEvent(
+              size_t event_time,
+              size_t &global_clock,
+              size_t &input_counter,
+              LinkedQueueOfCars *road):
+  Event::Event(event_time, global_clock, road),
   input_counter_{input_counter}
   {}
 
@@ -31,17 +38,17 @@ namespace structures {
     Event::~Event();
   }
 
-  bool InputEvent::task(size_t &global_clock) {
+  bool InputEvent::task() {
     try {
       Car* car = new Car();
-      this->road()->enqueue(car); //< acessa assim a estrada???
+      Event::road()->enqueue(car); //< acessa assim a estrada???
       ++input_counter_;
       //gerar outro evento input
-      global_clock += 0; // tempo do evento ocorrer.
+      this->global_clock_ += 0; // tempo do evento ocorrer.
       return true;
     } catch(std::out_of_range error) {
       delete car;
-      global_clock+=0; // tempo do evento ocorrer.
+      this->global_clock_ += 0; // tempo do evento ocorrer.
       return false;
     }
   }

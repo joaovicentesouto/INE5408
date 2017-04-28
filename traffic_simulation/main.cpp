@@ -9,10 +9,10 @@
 
 #include "./linked_list.h"
 //#include "./array_list.h"
-//#include "./entry_road.h"
+#include "./entry_road.h"
 //#include "./exit_road.h"
 //#include "./input_event.h"
-#include "./linked_queue_of_cars.h"
+//#include "./linked_queue_of_cars.h"
 #include "./car.h"
 #include "./event.h"
 
@@ -20,15 +20,7 @@ int main(int argc, char const *argv[]) {
   srand(time(NULL));
   std::size_t b = 5;
   //structures::LinkedList<structures::Event*> system_events{};
-  structures::LinkedQueueOfCars test{50,50,b};
-  structures::Car* car = new structures::Car();
-  printf("car:%lu\n", car->size());
-  printf("sizep:%lu\n", test.size());
-  printf("maxp:%lu\n", test.max_size());
-  printf("b:%lu\n", b);
-  structures::Event* x = nullptr;
-  test.enqueue(car, x);
-  printf("b:%lu\n", b);
+  structures::EntryRoad test{50, 50, 5, 5, b, 0.1, 0.8, 0.1};
 
   return 0;
 }

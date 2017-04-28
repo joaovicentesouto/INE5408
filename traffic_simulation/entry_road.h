@@ -8,16 +8,21 @@
 #include <stdlib.h>
 #include "./car.h"
 #include "./event.h"
+#include "./road_exchange_event.h"
 #include "./array_list.h"
 #include "./linked_list.h"
 #include "./linked_queue_of_cars.h"
 
 namespace structures {
 
+  class Event;
+
   class EntryRoad : public LinkedQueueOfCars {
   public:
     EntryRoad(size_t max_size,
               size_t speed,
+              size_t input_range,
+              size_t lower_input,
               size_t &global_clock,
               float prob_left,
               float prob_front,
@@ -37,16 +42,20 @@ namespace structures {
 
     typedef std::size_t size_t;
     float prob_left_, prob_front_, prob_right_;
-    size_t semaphore_{0u};
+    size_t semaphore_{0u}, input_range_, lower_input_;
   };
 
   EntryRoad::EntryRoad(size_t max_size,
                        size_t speed,
+                       size_t input_range,
+                       size_t lower_input,
                        size_t &global_clock,
                        float prob_left,
                        float prob_front,
                        float prob_right) :
   LinkedQueueOfCars::LinkedQueueOfCars(max_size, speed, global_clock),
+  input_range_{input_range},
+  lower_input_{lower_input},
   prob_left_{prob_left},
   prob_front_{prob_front},
   prob_right_{prob_right}
@@ -66,7 +75,7 @@ namespace structures {
 
   void EntryRoad::change_road_car() {
       Car* car = this->front();
-      roads[car->direction()]->enqueue(car); //pode dar erro
+      roads_[car->direction()]->enqueue(car); //pode dar erro
       LinkedQueueOfCars::dequeue();
   }
 
@@ -94,7 +103,7 @@ namespace structures {
   }
 
   void EntryRoad::exchange_semaphore() {
-    semaphore_ == (semaphore_+1)%4;
+    semaphore_ = (semaphore_+1)%4;
   }
 
 }  // namespace structures
