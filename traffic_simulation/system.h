@@ -97,14 +97,15 @@ namespace structures {
 
     // AFERENTES
     _entry_roads[0] = N1_SUL;
-    _entry_roads[1] = N2_SUL;
+    _entry_roads[1] = S1_NORTE; // N2_SUL
     _entry_roads[2] = O1_LESTE;
     _entry_roads[3] = L1_OESTE;
-    _entry_roads[4] = S1_NORTE;
+
+    _entry_roads[4] = N2_SUL;   // S1_NORTE
     _entry_roads[5] = S2_NORTE;
     // CENTRAIS
-    _entry_roads[6] = C1_OESTE;
-    _entry_roads[7] = C1_LESTE;
+    _entry_roads[6] = C1_LESTE; // C1_OESTE
+    _entry_roads[7] = C1_OESTE; // C1_LESTE
 
     // EFERENTES
     _exit_roads[8] = N1_NORTE;
