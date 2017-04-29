@@ -19,7 +19,7 @@ namespace structures {
     RoadExchangeEvent(size_t event_time, EntryRoad *road);
     ~RoadExchangeEvent();
 
-    EntryRoad* road();
+    EntryRoad* road() const;
     virtual bool task();
 
   private:
@@ -36,7 +36,7 @@ namespace structures {
     Event::~Event();
   }
 
-  EntryRoad* RoadExchangeEvent::road() {
+  EntryRoad* RoadExchangeEvent::road() const {
     return _road;
   }
 

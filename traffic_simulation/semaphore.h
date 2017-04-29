@@ -13,22 +13,22 @@ namespace structures {
 
   class Semaphore {
   public:
-    Semaphore(std::size_t semaphore_time, ArrayList<EntryRoad*> roads);
+    Semaphore(std::size_t semaphore_time, ArrayList<EntryRoad*>& roads);
     ~Semaphore();
 
     std::size_t semaphore_time() const;
 
     void change();
-    bool open(const EntryRoad*& road) const;
+    bool open(const EntryRoad* road) const;
 
   private:
     std::size_t _semaphore{0u}, _semaphore_time;
     EntryRoad *_S1, *_S2;
-    ArrayList<EntryRoad*> _roads;
+    ArrayList<EntryRoad*>& _roads;
   };
 
   Semaphore::Semaphore(std::size_t semaphore_time,
-                       ArrayList<EntryRoad*> roads):
+                       ArrayList<EntryRoad*>& roads):
   _semaphore_time{semaphore_time},
   _roads{roads},
   _S1{roads[0]},
@@ -47,7 +47,7 @@ namespace structures {
     _S2 = _roads[_semaphore+4];
   }
 
-  bool Semaphore::open(const EntryRoad*& road) const {
+  bool Semaphore::open(const EntryRoad* road) const {
     return _S1 == road || _S2 == road;
   }
 
