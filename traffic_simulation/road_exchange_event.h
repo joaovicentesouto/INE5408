@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <stdlib.h>
+#include "./car.h"
 #include "./event.h"
 #include "./entry_road.h"
 #include "./linked_queue_of_cars.h"
@@ -15,11 +16,13 @@ namespace structures {
 
   class RoadExchangeEvent : public Event {
   public:
-    RoadExchangeEvent(size_t &global_clock, size_t event_time, EntryRoad *road);
+    RoadExchangeEvent(size_t &global_clock,
+                      size_t event_time,
+                      EntryRoad *road);
     ~RoadExchangeEvent();
 
     EntryRoad* road();
-    virtual bool task(LinkedList<Event*>& get_events);
+    virtual bool task(int &control);
 
   private:
     typedef std::size_t size_t;
@@ -32,9 +35,7 @@ namespace structures {
                      EntryRoad *road):
   Event::Event(global_clock, event_time),
   _road{road}
-  {
-    Event::_type = 'r';
-  }
+  {}
 
   RoadExchangeEvent::~RoadExchangeEvent() {
     Event::~Event();
@@ -44,12 +45,9 @@ namespace structures {
     return _road;
   }
 
-  bool RoadExchangeEvent::task(LinkedList<Event*>& get_events) {
-    Car* car = _road->front();
-    size_t wait == car->size()/(_road->speed()/3.6);
-    this->_global_clock += wait > 0? wait : 1;
+  bool RoadExchangeEvent::task(int &control) {
     try {
-      _road->change_road_car(get_events);
+      //_road->change_road_car();
       return true;
     } catch(std::out_of_range error) {
       return false;

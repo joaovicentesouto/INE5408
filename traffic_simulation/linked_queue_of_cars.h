@@ -20,7 +20,7 @@ class LinkedQueueOfCars : private LinkedQueue<Car*> {
     ~LinkedQueueOfCars();
 
     void clear();
-    virtual void enqueue(Car* data, LinkedList<Event*>& get_events);
+    void enqueue(Car* data);
     Car* dequeue();
     Car* front() const;
     Car* back() const;
@@ -57,7 +57,7 @@ void LinkedQueueOfCars::clear() {
     LinkedQueue<Car*>::clear();
 }
 
-void LinkedQueueOfCars::enqueue(Car* data, LinkedList<Event*>& get_events) {
+void LinkedQueueOfCars::enqueue(Car* data) {
     if (full(data))
         throw std::out_of_range("Full queue!");
     LinkedQueue<Car*>::enqueue(data);

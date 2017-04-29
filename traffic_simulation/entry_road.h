@@ -35,10 +35,9 @@ namespace structures {
     void crossroads(LinkedQueueOfCars *left,
                     LinkedQueueOfCars *front,
                     LinkedQueueOfCars *right);
+    LinkedQueueOfCars* crossroads(size_t index);
 
-    virtual void enqueue(Car* data, LinkedList<Event*>& get_events);
-
-    void change_road_car(LinkedList<Event*>& get_events);
+    void change_road_car();
 
     size_t direction_probability();
     size_t input_frequency();
@@ -69,42 +68,36 @@ namespace structures {
   _prob_right{prob_right}
   {}
 
-  void LinkedQueueOfCars::crossroads(LinkedQueueOfCars *left,
-                                     LinkedQueueOfCars *front,
-                                     LinkedQueueOfCars *right)
+  void EntryRoad::crossroads(LinkedQueueOfCars *left,
+                             LinkedQueueOfCars *front,
+                             LinkedQueueOfCars *right)
   {
-   _crossroads[0] = left;
-   _crossroads[1] = front;
-   _crossroads[2] = right;
+   _crossroads.insert(left, 0u);
+   _crossroads.insert(front, 1u);
+   _crossroads.insert(right, 2u);
   }
 
-  void EntryRoad::enqueue(Car* data, LinkedList<Event*>& get_events) {
-    if (LinkedQueueOfCars::full(data))
-      throw std::out_of_range("Full queue!");
-      // preciso verificar pra mudar a direçao do carro
-    data->direction(direction_probability());
-    LinkedQueueOfCars::enqueue(data);
-    size_t time_event = this->_global_time+time_of_route();
-    Event *new_event = new RoadExchangeEvent(this->_global_time, time_event, this);
-    get_events.push_back(new_event);
+  LinkedQueueOfCars* EntryRoad::crossroads(size_t index) {
+    return _crossroads[index];
   }
 
-  void EntryRoad::change_road_car(LinkedList<Event*>& get_events) {
+  void EntryRoad::change_road_car() {
       Car* car = this->front();
-      _crossroads[car->direction()]->enqueue(car, get_events); //pode dar erro
+      _crossroads[car->direction()]->enqueue(car); //pode dar erro
       LinkedQueueOfCars::dequeue();
   }
 
   size_t EntryRoad::direction_probability() {
     if (yesOrNo(_prob_left))
-      return 0;
+      return 0u;
     else if (yesOrNo(_prob_front))
-      return 1;
+      return 1u;
     else if (yesOrNo(_prob_right))
-      return 2;
+      return 2u;
+    return 0u;
   }
 
-  size_t EntryRoad::size_t input_frequency() {
+  size_t EntryRoad::input_frequency() {
     double tmp = (double) rand()/RAND_MAX;
     return tmp*_input_range + _lower_input;
   }

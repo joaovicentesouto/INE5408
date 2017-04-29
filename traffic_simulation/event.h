@@ -16,8 +16,7 @@ namespace structures {
     ~Event();
 
     size_t event_time() const;
-    char type() const;
-    virtual bool task(LinkedList<Event*>& get_events);
+    virtual bool task(int &control);
 
     bool operator<(const Event& other_event) const;
     bool operator>(const Event& other_event) const;
@@ -26,7 +25,6 @@ namespace structures {
     typedef std::size_t size_t;
 
     size_t &_global_clock, _event_time{0u};
-    char _type{'e'};
   };
 
   //! Construtor
@@ -54,25 +52,17 @@ namespace structures {
     return _event_time;
   }
 
-  //! Tipo do evento
-  /*! Retorna o tipo do evento
-   *  \return char tipo do evento
-   */
-  char Event::type() const {
-    return _type;
-  }
-
   //! Tarefa que deve ser executada
   /*! Tarefa que cada tipo de evento irá executar
    *  \return bool Sucesso na hora de executar a tarefa.
    */
-  bool Event::task(LinkedList<Event*>& get_events) {
+  bool Event::task(int &control) {
     return false;
   }
 
   //! Sobrecarga do operador <
   /*! Comparando dois eventos através do tempo para execução.
-   *  \param Event*& Evento externo para comparação.
+   *  \param Event& Evento externo para comparação.
    *  \return bool Comparação dos tempos de exec.
    */
   bool Event::operator<(const Event& other_event) const {

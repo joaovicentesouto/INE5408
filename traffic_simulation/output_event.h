@@ -21,7 +21,7 @@ namespace structures {
     ~OutputEvent();
 
     ExitRoad* road();
-    virtual bool task(LinkedList<Event*>& get_events);
+    virtual bool task(int &control);
 
   private:
     typedef std::size_t size_t;
@@ -34,9 +34,7 @@ namespace structures {
                ExitRoad *road):
   Event::Event(global_clock, event_time),
   _road{road}
-  {
-    Event::_type = 'o';
-  }
+  {}
 
   OutputEvent::~OutputEvent() {
     Event::~Event();
@@ -46,7 +44,7 @@ namespace structures {
     return _road;
   }
 
-  bool OutputEvent::task(LinkedList<Event*>& get_events) {
+  bool OutputEvent::task(int &control) {
     _road->dequeue();
     return true;
   }
