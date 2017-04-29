@@ -29,7 +29,7 @@ namespace structures {
                size_t &global_clock,
                size_t event_time,
                LinkedQueueOfCars *road):
-  Event::Event(global_clock, event_time, road),
+  Event::Event(global_clock, event_time, road)
   {
     Event::_type = 'o';
   }

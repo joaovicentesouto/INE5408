@@ -22,7 +22,8 @@ namespace structures {
     char type() const;
     virtual bool task(LinkedList<Event>& get_events);
 
-    bool operator<(const Event& other_event);
+    bool operator<(const Event& other_event) const;
+    bool operator>(const Event& other_event) const;
 
   protected:
     typedef std::size_t size_t;
@@ -88,8 +89,12 @@ namespace structures {
    *  \param Event*& Evento externo para comparação.
    *  \return bool Comparação dos tempos de exec.
    */
-  bool Event::operator<(const Event& other_event) {
+  bool Event::operator<(const Event& other_event) const {
     return _event_time < other_event.event_time();
+  }
+
+  bool Event::operator>(const Event& other_event) const {
+    return _event_time > other_event.event_time();
   }
 
 }  //  namespace structures

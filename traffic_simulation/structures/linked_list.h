@@ -272,7 +272,7 @@ void LinkedList<T>::insert_sorted(const T& data) {
         Node* before = head;
         std::size_t position = size();
         for (auto i = 0u; i < size(); ++i) {
-            if (!(data > current->data())) {
+            if (data < current->data()) {
                 position = i;
                 break;
             }

@@ -71,14 +71,15 @@ namespace structures {
     // Criando as ruas
     // AFERENTES
     EntryRoad* N1_SUL = new EntryRoad(60, 500, 20, 5, 0.8, 0.1, 0.1);      //N1_S  (60, 500, 20+/-5)
-    EntryRoad* N2_SUL = new EntryRoad(40, 500, 20, 5, 0.4, 0.3, 0.3);      //N2_S  (40, 500, 20+/-5)
+    EntryRoad* S1_NORTE = new EntryRoad(60, 500, 30, 7, 0.1, 0.1, 0.8);    //S1_N  (60, 500, 30+/-7)
     EntryRoad* O1_LESTE = new EntryRoad(80, 2000, 10, 2, 0.1, 0.8, 0.1);   //O1_L  (80, 2000, 10+/-2)
     EntryRoad* L1_OESTE = new EntryRoad(30, 400, 10, 2, 0.3, 0.3, 0.4);    //L1_O  (30, 400, 10+/-2)
-    EntryRoad* S1_NORTE = new EntryRoad(60, 500, 30, 7, 0.1, 0.1, 0.8);    //S1_N  (60, 500, 30+/-7)
+    EntryRoad* N2_SUL = new EntryRoad(40, 500, 20, 5, 0.4, 0.3, 0.3);      //N2_S  (40, 500, 20+/-5)
     EntryRoad* S2_NORTE = new EntryRoad(40, 500, 60, 15, 0.3, 0.3, 0.4);   //S2_N  (40, 500, 60+/-15)
     // CENTRAIS
-    EntryRoad* C1_OESTE = new EntryRoad(60, 300, 0, 0, 0.3, 0.4, 0.3);     //C1_O  (60, 300)
     EntryRoad* C1_LESTE = new EntryRoad(60, 300, 0, 0, 0.3, 0.4, 0.3);     //C1_L  (60, 300)
+    EntryRoad* C1_OESTE = new EntryRoad(60, 300, 0, 0, 0.3, 0.4, 0.3);     //C1_O  (60, 300)
+
     // EFERENTES
     ExitRoad* N1_NORTE = new ExitRoad(60, 500);  // N1_N  (60, 500)
     ExitRoad* N2_NORTE = new ExitRoad(40, 500);  // N2_N  (40, 500)
@@ -97,15 +98,14 @@ namespace structures {
 
     // AFERENTES
     _entry_roads[0] = N1_SUL;
-    _entry_roads[1] = S1_NORTE; // N2_SUL
+    _entry_roads[1] = S1_NORTE;
     _entry_roads[2] = O1_LESTE;
     _entry_roads[3] = L1_OESTE;
-
-    _entry_roads[4] = N2_SUL;   // S1_NORTE
+    _entry_roads[4] = N2_SUL;
     _entry_roads[5] = S2_NORTE;
     // CENTRAIS
-    _entry_roads[6] = C1_LESTE; // C1_OESTE
-    _entry_roads[7] = C1_OESTE; // C1_LESTE
+    _entry_roads[6] = C1_LESTE;
+    _entry_roads[7] = C1_OESTE;
 
     // EFERENTES
     _exit_roads[8] = N1_NORTE;
@@ -115,13 +115,18 @@ namespace structures {
     _exit_roads[12] = S1_SUL;
     _exit_roads[13] = S2_SUL;
 
+    // Inputs iniciais
     for (auto i = 0u; i<6; ++i) {
       std::size_t event_time = _global_clock + _entry_roads[i]->input_frequency();
-      InputEvent* event = new InputEvent(_global_clock, event_time, _entry_roads[i]);
-      _system_events.insert_sorted(event);
+      InputEvent input(_global_clock, event_time, _entry_roads[i]);
+      _system_events.insert_sorted(input);
     }
 
+    // Primeiro evento de troca de semáforo
     _semaphore = new Semaphore(_entry_roads);
+    std::size_t event_time = _global_clock + _semaphore_time;
+    SemaphoreEvent change_sem(_global_clock, event_time, _semaphore);
+    _system_events.insert_sorted(change_sem);
 
   }
 
