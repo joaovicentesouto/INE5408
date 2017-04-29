@@ -11,16 +11,24 @@ namespace structures {
 
   class ExitRoad : public LinkedQueueOfCars {
   public:
-    ExitRoad(size_t &global_clock, size_t speed, size_t max_size);
+    ExitRoad(size_t speed, size_t max_size);
     ~ExitRoad();
+
+    virtual void enqueue(Car* data);
 
   private:
     typedef std::size_t size_t;
   };
 
-  ExitRoad::ExitRoad(size_t &global_clock, size_t speed, size_t max_size) :
-  LinkedQueueOfCars::LinkedQueueOfCars(global_clock, speed, max_size)
-  {}
+  ExitRoad::ExitRoad(size_t speed, size_t max_size) :
+  LinkedQueueOfCars::LinkedQueueOfCars(speed, max_size)
+  {
+    LinkedQueueOfCars::_type = 'e';
+  }
+
+  void ExitRoad::enqueue(Car* data) {
+    LinkedQueueOfCars::enqueue(data);
+  }
 
 }  // namespace structures
 

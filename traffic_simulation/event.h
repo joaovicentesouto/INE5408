@@ -12,11 +12,11 @@ namespace structures {
 
   class Event {
   public:
-    Event(size_t &global_clock, size_t event_time);
+    Event(size_t event_time);
     ~Event();
 
     size_t event_time() const;
-    virtual bool task(int &control);
+    virtual bool task();
 
     bool operator<(const Event& other_event) const;
     bool operator>(const Event& other_event) const;
@@ -24,7 +24,7 @@ namespace structures {
   protected:
     typedef std::size_t size_t;
 
-    size_t &_global_clock, _event_time{0u};
+    size_t _event_time{0u};
   };
 
   //! Construtor
@@ -33,9 +33,7 @@ namespace structures {
    *  \param event_time hora da execução
    *  \param road estrada fonte do evento
    */
-  Event::Event(size_t &global_clock,
-               size_t event_time) :
-  _global_clock{global_clock},
+  Event::Event(size_t event_time) :
   _event_time{event_time}
   {}
 
@@ -56,7 +54,7 @@ namespace structures {
   /*! Tarefa que cada tipo de evento irá executar
    *  \return bool Sucesso na hora de executar a tarefa.
    */
-  bool Event::task(int &control) {
+  bool Event::task() {
     return false;
   }
 

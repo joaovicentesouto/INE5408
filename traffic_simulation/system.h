@@ -75,23 +75,23 @@ namespace structures {
 
     // Criando as ruas
     // AFERENTES
-    EntryRoad* N1_SUL = new EntryRoad(_global_clock, 60, 500, 20, 5, 0.8, 0.1, 0.1);      //N1_S  (60, 500, 20+/-5)
-    EntryRoad* S1_NORTE = new EntryRoad(_global_clock, 60, 500, 30, 7, 0.1, 0.1, 0.8);    //S1_N  (60, 500, 30+/-7)
-    EntryRoad* O1_LESTE = new EntryRoad(_global_clock, 80, 2000, 10, 2, 0.1, 0.8, 0.1);   //O1_L  (80, 2000, 10+/-2)
-    EntryRoad* L1_OESTE = new EntryRoad(_global_clock, 30, 400, 10, 2, 0.3, 0.3, 0.4);    //L1_O  (30, 400, 10+/-2)
-    EntryRoad* N2_SUL = new EntryRoad(_global_clock, 40, 500, 20, 5, 0.4, 0.3, 0.3);      //N2_S  (40, 500, 20+/-5)
-    EntryRoad* S2_NORTE = new EntryRoad(_global_clock, 40, 500, 60, 15, 0.3, 0.3, 0.4);   //S2_N  (40, 500, 60+/-15)
+    EntryRoad* N1_SUL = new EntryRoad(60, 500, 20, 5, 0.8, 0.1, 0.1);      //N1_S  (60, 500, 20+/-5)
+    EntryRoad* S1_NORTE = new EntryRoad(60, 500, 30, 7, 0.1, 0.1, 0.8);    //S1_N  (60, 500, 30+/-7)
+    EntryRoad* O1_LESTE = new EntryRoad(80, 2000, 10, 2, 0.1, 0.8, 0.1);   //O1_L  (80, 2000, 10+/-2)
+    EntryRoad* L1_OESTE = new EntryRoad(30, 400, 10, 2, 0.3, 0.3, 0.4);    //L1_O  (30, 400, 10+/-2)
+    EntryRoad* N2_SUL = new EntryRoad(40, 500, 20, 5, 0.4, 0.3, 0.3);      //N2_S  (40, 500, 20+/-5)
+    EntryRoad* S2_NORTE = new EntryRoad(40, 500, 60, 15, 0.3, 0.3, 0.4);   //S2_N  (40, 500, 60+/-15)
     // CENTRAIS
-    EntryRoad* C1_LESTE = new EntryRoad(_global_clock, 60, 300, 0, 0, 0.3, 0.4, 0.3);     //C1_L  (60, 300)
-    EntryRoad* C1_OESTE = new EntryRoad(_global_clock, 60, 300, 0, 0, 0.3, 0.4, 0.3);     //C1_O  (60, 300)
+    EntryRoad* C1_LESTE = new EntryRoad(60, 300, 0, 0, 0.3, 0.4, 0.3);     //C1_L  (60, 300)
+    EntryRoad* C1_OESTE = new EntryRoad(60, 300, 0, 0, 0.3, 0.4, 0.3);     //C1_O  (60, 300)
 
     // EFERENTES
-    ExitRoad* N1_NORTE = new ExitRoad(_global_clock, 60, 500);  // N1_N  (60, 500)
-    ExitRoad* N2_NORTE = new ExitRoad(_global_clock, 40, 500);  // N2_N  (40, 500)
-    ExitRoad* O1_OESTE = new ExitRoad(_global_clock, 80, 2000); // O1_O  (80, 2000)
-    ExitRoad* L1_LESTE = new ExitRoad(_global_clock, 60, 500);  // L1_L  (30, 400)
-    ExitRoad* S1_SUL = new ExitRoad(_global_clock, 60, 500);    // S1_S  (60, 500)
-    ExitRoad* S2_SUL = new ExitRoad(_global_clock, 40, 500);    // S2_S  (40, 500)
+    ExitRoad* N1_NORTE = new ExitRoad(60, 500);  // N1_N  (60, 500)
+    ExitRoad* N2_NORTE = new ExitRoad(40, 500);  // N2_N  (40, 500)
+    ExitRoad* O1_OESTE = new ExitRoad(80, 2000); // O1_O  (80, 2000)
+    ExitRoad* L1_LESTE = new ExitRoad(60, 500);  // L1_L  (30, 400)
+    ExitRoad* S1_SUL = new ExitRoad(60, 500);    // S1_S  (60, 500)
+    ExitRoad* S2_SUL = new ExitRoad(40, 500);    // S2_S  (40, 500)
 
     // Interligando os cruzamentos : estrada->cruzamento(left, front, right)
     N1_SUL->crossroads(C1_LESTE, S1_SUL, O1_OESTE);
@@ -123,7 +123,7 @@ namespace structures {
     // Inputs iniciais
     for (auto i = 0u; i<6; ++i) {
       std::size_t event_time = _global_clock + _entry_roads[i]->input_frequency();
-      InputEvent input(_global_clock, event_time, _entry_roads[i]);
+      InputEvent input(event_time, _entry_roads[i]);
       _input_events.insert_sorted(input);
       ++_input_counter;
     }
@@ -131,7 +131,7 @@ namespace structures {
     // Primeiro evento de troca de semáforo
     _semaphore = new Semaphore(_semaphore_time, _entry_roads);
     std::size_t event_time = _global_clock + _semaphore_time;
-    SemaphoreEvent change_sem(_global_clock, event_time, _semaphore);
+    SemaphoreEvent change_sem(event_time, _semaphore);
     _semaphore_events.insert_sorted(change_sem);
 
   }
@@ -144,21 +144,19 @@ namespace structures {
 
       SemaphoreEvent *sem = &_semaphore_events.at(0);
       if (sem->event_time() < _global_clock) {
-        int x=-1;
-        sem->task(x); // troca semaforo
+        sem->task(); // troca semaforo
         _global_clock = sem->event_time();
         _semaphore_events.pop_front(); // elimina evento
 
         // cria outro evento de semaforo
         std::size_t event_time = _global_clock + _semaphore_time;
-        SemaphoreEvent change_sem(_global_clock, event_time, _semaphore);
+        SemaphoreEvent change_sem(event_time, _semaphore);
         _semaphore_events.insert_sorted(change_sem);
       }
 
       OutputEvent *out = &_output_events.at(0);
       while (out->event_time() < _global_clock) {
-        int x=-1;
-        out->task(x); // tira carro da pista
+        out->task(); // tira carro da pista
         _output_events.pop_front();
         ++_output_counter;
 
@@ -169,10 +167,9 @@ namespace structures {
       int i = 0;
       InputEvent *in = &_input_events.at(i);
       while (in->event_time() < _global_clock) {
-        int x=-1;
-        if (in->task(x)) {// tenta executar input
+        if (in->task()) {// tenta executar input
           std::size_t event_time = in->event_time() + in->road()->input_frequency();
-          InputEvent input(_global_clock, event_time, in->road());
+          InputEvent input(event_time, in->road());
           _input_events.insert_sorted(input);
           _input_events.pop(i);
           ++_input_counter;
@@ -187,9 +184,30 @@ namespace structures {
       i = 0;
       RoadExchangeEvent *exchange = &_crossroads_events.at(i);
       while (exchange->event_time() < _global_clock) {
-        
+        try {
+          std::size_t event_time;
+          Car* car = exchange->road()->front();
+          void* tmp = exchange->road()->crossroads(car->direction());
+          if (((LinkedQueueOfCars*)tmp)->type() == 'a') {
+            EntryRoad* next_road = (EntryRoad*) tmp;
+            next_road->enqueue(car); //pode dar erro
+            _crossroads_events.pop(i);
+            event_time = exchange->event_time() + next_road->time_of_route();
+            RoadExchangeEvent change(event_time, next_road);
+            _crossroads_events.insert_sorted(change);
+          } else {
+            ExitRoad* next_road = (ExitRoad*) tmp;
+            next_road->enqueue(car); //pode dar erro
+            _crossroads_events.pop(i);
+            event_time = exchange->event_time() + next_road->time_of_route();
+            OutputEvent out(event_time, next_road);
+            _output_events.insert_sorted(out);
+          }
+        } catch(std::out_of_range error) {
+          ++i;
+        }
 
-
+        ++_global_clock;
         if (!_crossroads_events.empty())
           exchange = &_crossroads_events.at(i);
       }

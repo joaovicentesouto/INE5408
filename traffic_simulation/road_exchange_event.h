@@ -16,24 +16,19 @@ namespace structures {
 
   class RoadExchangeEvent : public Event {
   public:
-    RoadExchangeEvent(size_t &global_clock,
-                      size_t event_time,
-                      EntryRoad *road);
+    RoadExchangeEvent(size_t event_time, EntryRoad *road);
     ~RoadExchangeEvent();
 
     EntryRoad* road();
-    virtual bool task(int &control);
+    virtual bool task();
 
   private:
     typedef std::size_t size_t;
     EntryRoad *_road;
   };
 
-  RoadExchangeEvent::RoadExchangeEvent(
-                     size_t &global_clock,
-                     size_t event_time,
-                     EntryRoad *road):
-  Event::Event(global_clock, event_time),
+  RoadExchangeEvent::RoadExchangeEvent(size_t event_time, EntryRoad *road):
+  Event::Event(event_time),
   _road{road}
   {}
 
@@ -45,13 +40,8 @@ namespace structures {
     return _road;
   }
 
-  bool RoadExchangeEvent::task(int &control) {
-    try {
-      //_road->change_road_car();
-      return true;
-    } catch(std::out_of_range error) {
-      return false;
-    }
+  bool RoadExchangeEvent::task() {
+    return true;
   }
 
 }  // namespace structures

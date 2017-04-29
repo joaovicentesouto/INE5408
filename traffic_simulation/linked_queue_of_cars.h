@@ -16,17 +16,18 @@ class Event;
 
 class LinkedQueueOfCars : private LinkedQueue<Car*> {
  public:
-    LinkedQueueOfCars(size_t &global_clock, size_t speed, size_t max_size);
+    LinkedQueueOfCars(size_t speed, size_t max_size);
     ~LinkedQueueOfCars();
 
     void clear();
-    void enqueue(Car* data);
+    virtual void enqueue(Car* data);
     Car* dequeue();
     Car* front() const;
     Car* back() const;
 
     size_t time_of_route();
 
+    char type();
     size_t speed() const;
     size_t size() const;
     size_t max_size() const;
@@ -38,13 +39,13 @@ class LinkedQueueOfCars : private LinkedQueue<Car*> {
 
  protected:
     typedef std::size_t size_t;
-    size_t &_global_clock, _speed, _max_size;
+    char _type{'r'};
+    size_t _speed, _max_size;
     size_t _size{0u}, _input_counter{0u}, _output_counter{0u};
 };
 
-LinkedQueueOfCars::LinkedQueueOfCars(size_t &global_clock, size_t speed, size_t max_size) :
+LinkedQueueOfCars::LinkedQueueOfCars(size_t speed, size_t max_size) :
 LinkedQueue<Car*>::LinkedQueue(),
-_global_clock{global_clock},
 _speed{speed},
 _max_size{max_size}
 {}
@@ -68,7 +69,7 @@ void LinkedQueueOfCars::enqueue(Car* data) {
 Car* LinkedQueueOfCars::dequeue() {
     Car* out = LinkedQueue<Car*>::dequeue();
     _size -= out->size();
-    --_output_counter;
+    ++_output_counter;
     return out;
 }
 
@@ -82,6 +83,10 @@ Car* LinkedQueueOfCars::back() const {
 
 size_t LinkedQueueOfCars::time_of_route() {
   return (size_t) _max_size/(_speed/3.6);  //< km/h => m/s
+}
+
+char LinkedQueueOfCars::type() {
+  return _type;
 }
 
 size_t LinkedQueueOfCars::speed() const {

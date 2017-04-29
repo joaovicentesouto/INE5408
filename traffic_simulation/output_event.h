@@ -15,24 +15,19 @@ namespace structures {
 
   class OutputEvent : public Event {
   public:
-    OutputEvent(size_t &global_clock,
-                size_t event_time,
-                ExitRoad *road);
+    OutputEvent(size_t event_time, ExitRoad *road);
     ~OutputEvent();
 
     ExitRoad* road();
-    virtual bool task(int &control);
+    virtual bool task();
 
   private:
     typedef std::size_t size_t;
     ExitRoad *_road;
   };
 
-  OutputEvent::OutputEvent(
-               size_t &global_clock,
-               size_t event_time,
-               ExitRoad *road):
-  Event::Event(global_clock, event_time),
+  OutputEvent::OutputEvent(size_t event_time, ExitRoad *road):
+  Event::Event(event_time),
   _road{road}
   {}
 
@@ -44,7 +39,7 @@ namespace structures {
     return _road;
   }
 
-  bool OutputEvent::task(int &control) {
+  bool OutputEvent::task() {
     _road->dequeue();
     return true;
   }

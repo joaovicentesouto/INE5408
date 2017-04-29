@@ -16,24 +16,19 @@ namespace structures {
 
   class InputEvent : public Event {
   public:
-    InputEvent(size_t &global_clock,
-               size_t event_time,
-               EntryRoad *road);
+    InputEvent(size_t event_time, EntryRoad *road);
     ~InputEvent();
 
     EntryRoad* road();
-    virtual bool task(int &control);
+    virtual bool task();
 
   private:
     typedef std::size_t size_t;
     EntryRoad *_road;
   };
 
-  InputEvent::InputEvent(
-              size_t &global_clock,
-              size_t event_time,
-              EntryRoad *road):
-  Event::Event(global_clock, event_time),
+  InputEvent::InputEvent(size_t event_time, EntryRoad *road):
+  Event::Event(event_time),
   _road{road}
   {}
 
@@ -45,7 +40,7 @@ namespace structures {
     return _road;
   }
 
-  bool InputEvent::task(int &control) {
+  bool InputEvent::task() {
     Car* car = new Car();
     try {
       _road->enqueue(car);

@@ -14,24 +14,19 @@ namespace structures {
 
   class SemaphoreEvent : public Event {
   public:
-    SemaphoreEvent(size_t &global_clock,
-                   size_t event_time,
-                   Semaphore* semaphore);
+    SemaphoreEvent(size_t event_time, Semaphore* semaphore);
     ~SemaphoreEvent();
 
     Semaphore* semaphore();
-    virtual bool task(int &control);
+    virtual bool task();
 
   private:
     typedef std::size_t size_t;
     Semaphore* _semaphore;
   };
 
-  SemaphoreEvent::SemaphoreEvent(
-                  size_t &global_clock,
-                  size_t event_time,
-                  Semaphore* semaphore):
-  Event::Event(global_clock, event_time),
+  SemaphoreEvent::SemaphoreEvent(size_t event_time, Semaphore* semaphore):
+  Event::Event(event_time),
   _semaphore{semaphore}
   {}
 
@@ -43,7 +38,7 @@ namespace structures {
     return _semaphore;
   }
 
-  bool SemaphoreEvent::task(int &control) {
+  bool SemaphoreEvent::task() {
     _semaphore->change();
     return true;
   }
