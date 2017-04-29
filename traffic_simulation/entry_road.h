@@ -22,7 +22,8 @@ namespace structures {
 
   class EntryRoad : public LinkedQueueOfCars {
   public:
-    EntryRoad(size_t speed,
+    EntryRoad(size_t &global_clock,
+              size_t speed,
               size_t max_size,
               size_t input_range,
               size_t lower_input,
@@ -35,9 +36,9 @@ namespace structures {
                     LinkedQueueOfCars *front,
                     LinkedQueueOfCars *right);
 
-    virtual void enqueue(Car* data, LinkedList<Event>& get_events);
+    virtual void enqueue(Car* data, LinkedList<Event*>& get_events);
 
-    void change_road_car(LinkedList<Event>& get_events);
+    void change_road_car(LinkedList<Event*>& get_events);
 
     size_t direction_probability();
     size_t input_frequency();
@@ -52,14 +53,15 @@ namespace structures {
     ArrayList<LinkedQueueOfCars*> _crossroads{3u};
   };
 
-  EntryRoad::EntryRoad(size_t speed,
+  EntryRoad::EntryRoad(size_t &global_clock,
+                       size_t speed,
                        size_t max_size,
                        size_t input_range,
                        size_t lower_input,
                        float prob_left,
                        float prob_front,
                        float prob_right) :
-  LinkedQueueOfCars::LinkedQueueOfCars(speed, max_size),
+  LinkedQueueOfCars::LinkedQueueOfCars(global_clock, speed, max_size),
   _input_range{input_range},
   _lower_input{lower_input},
   _prob_left{prob_left},
@@ -76,18 +78,18 @@ namespace structures {
    _crossroads[2] = right;
   }
 
-  void EntryRoad::enqueue(Car* data, LinkedList<Event>& get_events) {
+  void EntryRoad::enqueue(Car* data, LinkedList<Event*>& get_events) {
     if (LinkedQueueOfCars::full(data))
       throw std::out_of_range("Full queue!");
       // preciso verificar pra mudar a direçao do carro
     data->direction(direction_probability());
     LinkedQueueOfCars::enqueue(data);
     size_t time_event = this->_global_time+time_of_route();
-    Event* event = new RoadExchangeEvent(this->_global_time, time_event, this);
-    get_events.push_back(event);
+    Event *new_event = new RoadExchangeEvent(this->_global_time, time_event, this);
+    get_events.push_back(new_event);
   }
 
-  void EntryRoad::change_road_car(LinkedList<Event>& get_events) {
+  void EntryRoad::change_road_car(LinkedList<Event*>& get_events) {
       Car* car = this->front();
       _crossroads[car->direction()]->enqueue(car, get_events); //pode dar erro
       LinkedQueueOfCars::dequeue();

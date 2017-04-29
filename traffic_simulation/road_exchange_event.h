@@ -15,17 +15,23 @@ namespace structures {
 
   class RoadExchangeEvent : public Event {
   public:
-    RoadExchangeEvent(size_t &global_clock, size_t event_time, LinkedQueueOfCars *road);
+    RoadExchangeEvent(size_t &global_clock, size_t event_time, EntryRoad *road);
     ~RoadExchangeEvent();
 
-    virtual bool task(LinkedList<Event>& get_events);
+    EntryRoad* road();
+    virtual bool task(LinkedList<Event*>& get_events);
+
+  private:
+    typedef std::size_t size_t;
+    EntryRoad *_road;
   };
 
   RoadExchangeEvent::RoadExchangeEvent(
                      size_t &global_clock,
                      size_t event_time,
-                     LinkedQueueOfCars *road):
-  Event::Event(global_clock, event_time, road)
+                     EntryRoad *road):
+  Event::Event(global_clock, event_time),
+  _road{road}
   {
     Event::_type = 'r';
   }
@@ -34,13 +40,16 @@ namespace structures {
     Event::~Event();
   }
 
-  bool RoadExchangeEvent::task(LinkedList<Event>& get_events) {
-    EntryRoad* road = (EntryRoad*) Event::road();
-    Car* car = road->front();
-    size_t wait == car->size()/(road->speed()/3.6);
+  EntryRoad* RoadExchangeEvent::road() {
+    return _road;
+  }
+
+  bool RoadExchangeEvent::task(LinkedList<Event*>& get_events) {
+    Car* car = _road->front();
+    size_t wait == car->size()/(_road->speed()/3.6);
     this->_global_clock += wait > 0? wait : 1;
     try {
-      road->change_road_car(get_events);
+      _road->change_road_car(get_events);
       return true;
     } catch(std::out_of_range error) {
       return false;

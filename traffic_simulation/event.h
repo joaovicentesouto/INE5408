@@ -10,17 +10,14 @@
 
 namespace structures {
 
-  class LinkedQueueOfCars;
-
   class Event {
   public:
-    Event(size_t &global_clock, size_t event_time, LinkedQueueOfCars *road);
+    Event(size_t &global_clock, size_t event_time);
     ~Event();
 
     size_t event_time() const;
-    LinkedQueueOfCars* road() const;
     char type() const;
-    virtual bool task(LinkedList<Event>& get_events);
+    virtual bool task(LinkedList<Event*>& get_events);
 
     bool operator<(const Event& other_event) const;
     bool operator>(const Event& other_event) const;
@@ -29,7 +26,6 @@ namespace structures {
     typedef std::size_t size_t;
 
     size_t &_global_clock, _event_time{0u};
-    LinkedQueueOfCars *_road{nullptr};
     char _type{'e'};
   };
 
@@ -40,11 +36,9 @@ namespace structures {
    *  \param road estrada fonte do evento
    */
   Event::Event(size_t &global_clock,
-               size_t event_time,
-               LinkedQueueOfCars *road) :
+               size_t event_time) :
   _global_clock{global_clock},
-  _event_time{event_time},
-  _road{road}
+  _event_time{event_time}
   {}
 
   //! Destrutor
@@ -60,14 +54,6 @@ namespace structures {
     return _event_time;
   }
 
-  //! Estrada fonte do evento
-  /*! Retorna a estrada que deve ser alterada pelo evento
-   *  \return LinkedQueueOfCars* Estrada do evento
-   */
-  LinkedQueueOfCars* Event::road() const {
-    return _road;
-  }
-
   //! Tipo do evento
   /*! Retorna o tipo do evento
    *  \return char tipo do evento
@@ -80,7 +66,7 @@ namespace structures {
   /*! Tarefa que cada tipo de evento irá executar
    *  \return bool Sucesso na hora de executar a tarefa.
    */
-  bool Event::task(LinkedList<Event>& get_events) {
+  bool Event::task(LinkedList<Event*>& get_events) {
     return false;
   }
 

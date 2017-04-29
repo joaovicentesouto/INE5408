@@ -16,11 +16,11 @@ class Event;
 
 class LinkedQueueOfCars : private LinkedQueue<Car*> {
  public:
-    LinkedQueueOfCars(size_t speed, size_t max_size);
+    LinkedQueueOfCars(size_t &global_clock, size_t speed, size_t max_size);
     ~LinkedQueueOfCars();
 
     void clear();
-    virtual void enqueue(Car* data, LinkedList<Event>& get_events);
+    virtual void enqueue(Car* data, LinkedList<Event*>& get_events);
     Car* dequeue();
     Car* front() const;
     Car* back() const;
@@ -38,12 +38,13 @@ class LinkedQueueOfCars : private LinkedQueue<Car*> {
 
  protected:
     typedef std::size_t size_t;
-    size_t _speed, _max_size;
+    size_t &_global_clock, _speed, _max_size;
     size_t _size{0u}, _input_counter{0u}, _output_counter{0u};
 };
 
-LinkedQueueOfCars::LinkedQueueOfCars(size_t speed, size_t max_size) :
+LinkedQueueOfCars::LinkedQueueOfCars(size_t &global_clock, size_t speed, size_t max_size) :
 LinkedQueue<Car*>::LinkedQueue(),
+_global_clock{global_clock},
 _speed{speed},
 _max_size{max_size}
 {}
@@ -56,7 +57,7 @@ void LinkedQueueOfCars::clear() {
     LinkedQueue<Car*>::clear();
 }
 
-void LinkedQueueOfCars::enqueue(Car* data, LinkedList<Event>& get_events) {
+void LinkedQueueOfCars::enqueue(Car* data, LinkedList<Event*>& get_events) {
     if (full(data))
         throw std::out_of_range("Full queue!");
     LinkedQueue<Car*>::enqueue(data);

@@ -13,26 +13,27 @@
 
 namespace structures {
 
-  class car;
-
   class InputEvent : public Event {
   public:
     InputEvent(size_t &global_clock,
                size_t event_time,
-               LinkedQueueOfCars *road);
+               EntryRoad *road);
     ~InputEvent();
 
-    virtual bool task(LinkedList<Event>& get_events);
+    EntryRoad* road();
+    virtual bool task(LinkedList<Event*>& get_events);
 
   private:
     typedef std::size_t size_t;
+    EntryRoad *_road;
   };
 
   InputEvent::InputEvent(
               size_t &global_clock,
               size_t event_time,
-              LinkedQueueOfCars *road):
-  Event::Event(global_clock, event_time, road),
+              EntryRoad *road):
+  Event::Event(global_clock, event_time),
+  _road{road}
   {
     Event::_type = 'i';
   }
@@ -41,17 +42,21 @@ namespace structures {
     Event::~Event();
   }
 
-  bool InputEvent::task(LinkedList<Event>& get_events) {
+  EntryRoad* InputEvent::road() {
+    return _road;
+  }
+
+  bool InputEvent::task(LinkedList<Event*>& get_events) {
     Car* car = new Car();
-    EntryRoad* road = (EntryRoad*) Event::road();
     try {
-      road->enqueue(car, get_events);
+      _road->enqueue(car, get_events);
     } catch(std::out_of_range error) {
       delete car;
       return false;
     }
-    size_t event_time = this->_global_clock+road->input_frequency();
-    get_events.push_back(new InputEvent(_global_clock, event_time, road));
+    size_t event_time = this->_global_clock + _road->input_frequency();
+    Event *new_event = new InputEvent(this->_global_clock, event_time, _road);
+    get_events.push_back(new_event);
     return true;
   }
 
