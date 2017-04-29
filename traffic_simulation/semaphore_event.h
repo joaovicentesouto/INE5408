@@ -19,7 +19,7 @@ namespace structures {
                    Semaphore* semaphore);
     ~SemaphoreEvent();
 
-    virtual bool task(LinkedList<Event*>& events);
+    virtual bool task(LinkedList<Event>& get_events);
 
   private:
     typedef std::size_t size_t;
@@ -40,7 +40,7 @@ namespace structures {
     Event::~Event();
   }
 
-  bool SemaphoreEvent::task(LinkedList<Event*>& events) {
+  bool SemaphoreEvent::task(LinkedList<Event>& get_events) {
     _semaphore->change();
     std::size_t sem_time = _semaphore->semaphore_time()
     this->_global_clock = this->event_time();
@@ -48,7 +48,7 @@ namespace structures {
                        this->_global_clock,
                        this->_global_clock+sem_time,
                        _semaphore);
-    events.push_back(event);
+    get_events.push_back(event);
     return true;
   }
 

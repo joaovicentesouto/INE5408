@@ -19,7 +19,7 @@ namespace structures {
                 LinkedQueueOfCars *road);
     ~OutputEvent();
 
-    virtual bool task();
+    virtual bool task(LinkedList<Event>& get_events);
 
   private:
     typedef std::size_t size_t;
@@ -38,7 +38,7 @@ namespace structures {
     Event::~Event();
   }
 
-  bool OutputEvent::task(LinkedList<Event*>& events) {
+  bool OutputEvent::task(LinkedList<Event>& get_events) {
     this->road()->dequeue();
     return true;
   }

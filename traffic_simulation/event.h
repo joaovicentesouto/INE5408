@@ -20,9 +20,9 @@ namespace structures {
     size_t event_time() const;
     LinkedQueueOfCars* road() const;
     char type() const;
-    virtual bool task(LinkedList<Event*>& events);
+    virtual bool task(LinkedList<Event>& get_events);
 
-    bool operator<(Event*& event);
+    bool operator<(const Event& other_event);
 
   protected:
     typedef std::size_t size_t;
@@ -79,7 +79,7 @@ namespace structures {
   /*! Tarefa que cada tipo de evento irá executar
    *  \return bool Sucesso na hora de executar a tarefa.
    */
-  bool Event::task(LinkedList<Event*>& events) {
+  bool Event::task(LinkedList<Event>& get_events) {
     return false;
   }
 
@@ -88,8 +88,8 @@ namespace structures {
    *  \param Event*& Evento externo para comparação.
    *  \return bool Comparação dos tempos de exec.
    */
-  bool Event::operator<(Event*& event) {
-    return this->event_time() < event->event_time();
+  bool Event::operator<(const Event& other_event) {
+    return _event_time < other_event.event_time();
   }
 
 }  //  namespace structures

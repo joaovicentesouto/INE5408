@@ -5,17 +5,19 @@
 #include <stdio.h>
 
 #include "./car.h"
+#include "./event.h"
+#include "./structures/linked_list.h"
+typedef structures::Event Event;
 
 int main(int argc, char const *argv[]) {
   srand(time(NULL));
+  std::size_t global_clock=5;
 
-  structures::Car* carro = new structures::Car();
-  printf("%lu\n", carro->size());
-  printf("%lu\n", carro->direction());
-  structures::Car* carro2 = new structures::Car();
-  printf("%lu\n", carro2->size());
-  carro2->direction(2u);
-  printf("%lu\n", carro2->direction());
+  structures::LinkedList<Event> events{};
+  structures::Event a(global_clock, 3, nullptr);
+  structures::Event b(global_clock, 7, nullptr);
+  printf("a_time:%lu < b_time:%lu ?\n", a.event_time(), b.event_time());
+  printf("%d\n", a<b);
 
   return 0;
 }

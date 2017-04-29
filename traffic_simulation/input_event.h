@@ -22,7 +22,7 @@ namespace structures {
                LinkedQueueOfCars *road);
     ~InputEvent();
 
-    virtual bool task();
+    virtual bool task(LinkedList<Event>& get_events);
 
   private:
     typedef std::size_t size_t;
@@ -41,17 +41,17 @@ namespace structures {
     Event::~Event();
   }
 
-  bool InputEvent::task(LinkedList<Event*>& events) {
+  bool InputEvent::task(LinkedList<Event>& get_events) {
     Car* car = new Car();
     EntryRoad* road = (EntryRoad*) Event::road();
     try {
-      road->enqueue(car, events);
+      road->enqueue(car, get_events);
     } catch(std::out_of_range error) {
       delete car;
       return false;
     }
     size_t event_time = this->_global_clock+road->input_frequency();
-    events.push_back(new InputEvent(_global_clock, event_time, road));
+    get_events.push_back(new InputEvent(_global_clock, event_time, road));
     return true;
   }
 

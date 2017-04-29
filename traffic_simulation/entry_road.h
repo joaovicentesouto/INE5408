@@ -35,9 +35,9 @@ namespace structures {
                     LinkedQueueOfCars *front,
                     LinkedQueueOfCars *right);
 
-    virtual void enqueue(Car* data, LinkedList<Event*>& events);
+    virtual void enqueue(Car* data, LinkedList<Event>& get_events);
 
-    void change_road_car(LinkedList<Event*>& events);
+    void change_road_car(LinkedList<Event>& get_events);
 
     size_t direction_probability();
     size_t input_frequency();
@@ -76,7 +76,7 @@ namespace structures {
    _crossroads[2] = right;
   }
 
-  void EntryRoad::enqueue(Car* data, LinkedList<Event*>& events) {
+  void EntryRoad::enqueue(Car* data, LinkedList<Event>& get_events) {
     if (LinkedQueueOfCars::full(data))
       throw std::out_of_range("Full queue!");
       // preciso verificar pra mudar a direçao do carro
@@ -84,12 +84,12 @@ namespace structures {
     LinkedQueueOfCars::enqueue(data);
     size_t time_event = this->_global_time+time_of_route();
     Event* event = new RoadExchangeEvent(this->_global_time, time_event, this);
-    events.push_back(event);
+    get_events.push_back(event);
   }
 
-  void EntryRoad::change_road_car(LinkedList<Event*>& events) {
+  void EntryRoad::change_road_car(LinkedList<Event>& get_events) {
       Car* car = this->front();
-      _crossroads[car->direction()]->enqueue(car, events); //pode dar erro
+      _crossroads[car->direction()]->enqueue(car, get_events); //pode dar erro
       LinkedQueueOfCars::dequeue();
   }
 

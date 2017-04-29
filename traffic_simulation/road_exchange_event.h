@@ -18,7 +18,7 @@ namespace structures {
     RoadExchangeEvent(size_t &global_clock, size_t event_time, LinkedQueueOfCars *road);
     ~RoadExchangeEvent();
 
-    virtual bool task(LinkedList<Event*>& events);
+    virtual bool task(LinkedList<Event>& get_events);
   };
 
   RoadExchangeEvent::RoadExchangeEvent(
@@ -34,13 +34,13 @@ namespace structures {
     Event::~Event();
   }
 
-  bool RoadExchangeEvent::task(LinkedList<Event*>& events) {
+  bool RoadExchangeEvent::task(LinkedList<Event>& get_events) {
     EntryRoad* road = (EntryRoad*) Event::road();
     Car* car = road->front();
     size_t wait == car->size()/(road->speed()/3.6);
     this->_global_clock += wait > 0? wait : 1;
     try {
-      road->change_road_car(events);
+      road->change_road_car(get_events);
       return true;
     } catch(std::out_of_range error) {
       return false;

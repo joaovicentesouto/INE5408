@@ -35,8 +35,8 @@ namespace structures {
                 _global_clock{0u},
                 _input_counter{0u},
                 _output_counter{0u};
-    LinkedList<Event*> _system_events{},
-                       _crossroads_events{};
+    LinkedList<Event> _system_events{},
+                      _crossroads_events{};
     ArrayList<EntryRoad*> _entry_roads{8u};
     ArrayList<ExitRoad*> _exit_roads{6u};
     Semaphore* _semaphore;
