@@ -141,34 +141,48 @@ namespace structures {
       // input
       // crossroads
       int i = 0;
-      Event &event = _events->at(i);
-      while (event.event_time() < _global_clock) {
+      Event *current_event = &_events->at(i);
+      while (current_event->event_time() < _global_clock) {
 
-        switch (event.type()) {
+        switch (current_event->type()) {
           // semaforo
-          case 's':
+          case 's': {
+            _semaphore->change();
+            _global_clock = current_event->event_time();
+            _events->pop(i);
 
+            std::size_t event_time = _global_clock + _semaphore_time;
+            Event *change = new Event('s', event_time, _semaphore);
+            _events->insert_sorted(*change);
             break;
+          }
 
           // output
-          case 'o':
-
+          case 'o': {
+            ExitRoad* road = (ExitRoad*) current_event->source();
+            road->dequeue();
+            _events->pop(i);
             break;
+          }
 
           // input
-          case 'i':
+          case 'i': {
 
             break;
+          }
 
           // crossroads
-          case 'c':
-          
-            break;
+          case 'c': {
 
-          default:
             break;
+          }
+
+          default: {
+            break;
+          }
         }
 
+        current_event = &_events->at(i);
       }
 
       if (last_clock == _global_clock)
