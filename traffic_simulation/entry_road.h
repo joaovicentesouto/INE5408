@@ -72,7 +72,7 @@ namespace structures {
   }
 
   void EntryRoad::enqueue(Car* data) {
-      if (full(data))
+      if (LinkedQueueOfCars::full(data))
           throw std::out_of_range("Full queue!");
       data->direction(direction_probability());
       LinkedQueueOfCars::enqueue(data);

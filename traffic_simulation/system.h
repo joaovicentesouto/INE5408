@@ -4,8 +4,10 @@
 
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
-#include <string>
+#include <cstdlib>
+#include <stdlib.h>
 
+#include "./car.h"
 #include "./event.h"
 #include "./entry_road.h"
 #include "./exit_road.h"
@@ -151,6 +153,7 @@ namespace structures {
             _global_clock = current_event->event_time();
             _events->pop(i);
 
+            // Cria novo evento de semáforo
             std::size_t event_time = _global_clock + _semaphore_time;
             Event *change = new Event('s', event_time, _semaphore);
             _events->insert_sorted(*change);
@@ -167,7 +170,22 @@ namespace structures {
 
           // input
           case 'i': {
+            Car* new_car = new Car();
+            EntryRoad* road = (EntryRoad*) current_event->source();
+            try {
+              road->enqueue(new_car);
+              _events->pop(i);
 
+              // Cria evento de saída
+              std::size_t event_time = _global_clock + road->time_of_route();
+              Event *out = new Event('o', event_time, road);
+              _events->insert_sorted(*out);
+
+            } catch(std::out_of_range error) {
+              printf("%s\n", error.what());
+              delete new_car;
+              ++i;
+            }
             break;
           }
 
