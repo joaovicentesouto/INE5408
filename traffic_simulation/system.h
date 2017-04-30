@@ -144,7 +144,7 @@ namespace structures {
       // crossroads
       int i = 0;
       Event *current_event = &_events->at(i);
-      while (current_event->event_time() < _global_clock) {
+      while (current_event->event_time() <= _global_clock) {
 
         switch (current_event->type()) {
           // semaforo
@@ -192,6 +192,10 @@ namespace structures {
           // crossroads
           case 'c': {
             EntryRoad* road = (EntryRoad*) current_event->source();
+            if (_semaphore->open(road)) {
+              ++i
+              break;  // semaforo fechado;
+            }
             Car* first_car = road->front();
 
             std::size_t direction = first_car->direction();
@@ -238,7 +242,11 @@ namespace structures {
           }
         }
 
-        current_event = &_events->at(i);
+        try {
+            current_event = &_events->at(i);
+        } catch(std::out_of_range error) {
+            break;
+        }
       }
 
       if (last_clock == _global_clock)

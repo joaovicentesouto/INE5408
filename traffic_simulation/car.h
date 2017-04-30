@@ -13,12 +13,12 @@ namespace structures {
     ~Car();
 
     std::size_t size() const;
-    char direction() const;
-    void direction(char direction);
+    std::size_t direction() const;
+    void direction(std::size_t direction);
 
   private:
     std::size_t size_;
-    char direction_{'l'};
+    std::size_t direction_{0u};
   };
 
   //! Construtor padrão
@@ -39,11 +39,11 @@ namespace structures {
     return size_;
   }
 
-  char Car::direction() const {
+  std::size_t Car::direction() const {
     return direction_;
   }
 
-  void Car::direction(char direction) {
+  void Car::direction(std::size_t direction) {
     direction_ = direction;
   }
 
