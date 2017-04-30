@@ -9,16 +9,11 @@
 
 // objects
 #include "./car.h"
-#include "./event.h"
-#include "./road_exchange_event.h"
 // structures
 #include "./structures/array_list.h"
-#include "./structures/linked_list.h"
 #include "./linked_queue_of_cars.h"
 
 namespace structures {
-
-  class Event;
 
   class EntryRoad : public LinkedQueueOfCars {
   public:
@@ -63,7 +58,7 @@ namespace structures {
   _prob_front{prob_front},
   _prob_right{prob_right}
   {
-    LinkedQueueOfCars::_type = 'a';
+    LinkedQueueOfCars::_type = "entry";
   }
 
   void EntryRoad::crossroads(void *left, void *front, void *right) {
@@ -90,7 +85,6 @@ namespace structures {
       return 1u;
     else if (yesOrNo(_prob_right))
       return 2u;
-    return 0u;
   }
 
   size_t EntryRoad::input_frequency() {

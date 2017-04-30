@@ -4,17 +4,18 @@
 
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
+#include <string> // Strings
 
 namespace structures {
 
   class Event {
   public:
-    Event(size_t event_time, void* polymorph);
+    Event(std::string type, size_t event_time, void* source);
     ~Event();
 
-    char type() const;
+    std::string type() const;
     size_t event_time() const;
-    void* polymorph() const;
+    void* source() const;
 
     bool operator<(const Event& other_event) const;
     bool operator>(const Event& other_event) const;
@@ -22,9 +23,9 @@ namespace structures {
   protected:
     typedef std::size_t size_t;
 
-    char _type;
+    std::string _type;
     size_t _event_time{0u};
-    void* _polymorph;
+    void* _source;
   };
 
   //! Construtor
@@ -33,10 +34,10 @@ namespace structures {
    *  \param event_time hora da execução
    *  \param road estrada fonte do evento
    */
-  Event::Event(char type, size_t event_time, void* polymorph):
+  Event::Event(std::string type, size_t event_time, void* source):
   _type{type},
   _event_time{event_time},
-  _polymorph{polymorph}
+  _source{source}
   {}
 
   //! Destrutor
@@ -48,7 +49,7 @@ namespace structures {
   /*! Retorna a hora que o evento deve ocorrer.
    *  \return size_t Horário de execução
    */
-  char Event::type() const {
+  std::string Event::type() const {
     return _type;
   }
 
@@ -64,8 +65,8 @@ namespace structures {
   /*! Tarefa que cada tipo de evento irá executar
    *  \return bool Sucesso na hora de executar a tarefa.
    */
-  void* polymorph() const {
-      return _polymorph;
+  void* Event::source() const {
+      return _source;
   }
 
   //! Sobrecarga do operador <

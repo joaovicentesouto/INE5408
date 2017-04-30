@@ -4,15 +4,11 @@
 
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
+#include <string>
 
 #include "./event.h"
-#include "./input_event.h"
-#include "./output_event.h"
-#include "./road_exchange_event.h"
-#include "./semaphore_event.h"
-
-#include "./exit_road.h"
 #include "./entry_road.h"
+#include "./exit_road.h"
 #include "./semaphore.h"
 
 #include "./structures/linked_list.h"
@@ -36,13 +32,9 @@ namespace structures {
                 _input_counter{0u},
                 _output_counter{0u};
 
-    LinkedList<InputEvent>* _input_events;
-    LinkedList<OutputEvent>* _output_events;
-    LinkedList<SemaphoreEvent>* _semaphore_events;
-    LinkedList<RoadExchangeEvent>* _crossroads_events;
-
-    ArrayList<EntryRoad*> _entry_roads{8u};
-    ArrayList<ExitRoad*> _exit_roads{6u};
+    LinkedList<Event>* _events;  //< Estradas
+    ArrayList<EntryRoad*> _entry_roads{8u};  //< Estradas aferentes
+    ArrayList<ExitRoad*> _exit_roads{6u};  //< Estradas eferentes
 
     Semaphore* _semaphore;
   };
@@ -56,20 +48,14 @@ namespace structures {
   _execution_time{execution_time},
   _semaphore_time{semaphore_time}
   {
-    _input_events = new LinkedList<InputEvent>();
-    _output_events = new LinkedList<OutputEvent>();
-    _semaphore_events = new LinkedList<SemaphoreEvent>();
-    _crossroads_events = new LinkedList<RoadExchangeEvent>();
+    _events = new LinkedList<Event>();
   }
 
   //! Destrutor
   /*! Deleta o sistema
    */
   System::~System() {
-    delete _input_events;
-    delete _output_events;
-    delete _semaphore_events;
-    delete _crossroads_events;
+    delete _events;
     delete _semaphore;
   }
 
@@ -77,8 +63,6 @@ namespace structures {
   /*! Executa uma série e passos antes de rodar o sistema.
    */
   void System::init() {
-
-
 
     // Criando as ruas
     // AFERENTES
@@ -121,7 +105,6 @@ namespace structures {
     _entry_roads.push_back(C1_LESTE);
     _entry_roads.push_back(C1_OESTE);
 
-
     // EFERENTES
     _exit_roads.push_back(N1_NORTE);
     _exit_roads.push_back(N2_NORTE);
@@ -133,17 +116,16 @@ namespace structures {
     // Inputs iniciais
     for (auto i = 0u; i<6; ++i) {
       std::size_t event_time = _global_clock + _entry_roads[i]->input_frequency();
-      InputEvent *input = new InputEvent(event_time, _entry_roads[i]);
-      _input_events->insert_sorted(*input);
+      Event *input = new Event("input", event_time, _entry_roads[i]);
+      _events->insert_sorted(*input);
       ++_input_counter;
     }
-
 
     // Primeiro evento de troca de semáforo
     _semaphore = new Semaphore(_semaphore_time, _entry_roads);
     std::size_t event_time = _global_clock + _semaphore_time;
-    SemaphoreEvent *change = new SemaphoreEvent(event_time, _semaphore);
-    _semaphore_events->insert_sorted(*change);
+    Event *change = new Event("semaphore", event_time, _semaphore);
+    _events->insert_sorted(*change);
 
   }
 

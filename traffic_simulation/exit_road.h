@@ -23,7 +23,7 @@ namespace structures {
   ExitRoad::ExitRoad(size_t speed, size_t max_size) :
   LinkedQueueOfCars::LinkedQueueOfCars(speed, max_size)
   {
-    LinkedQueueOfCars::_type = 'e';
+    LinkedQueueOfCars::_type = "exit";
   }
 
   void ExitRoad::enqueue(Car* data) {

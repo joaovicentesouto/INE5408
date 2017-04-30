@@ -4,15 +4,12 @@
 
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
+#include <string>
+
 #include "./car.h"
-#include "./event.h"
 #include "./structures/linked_queue.h"
-#include "./structures/linked_list.h"
-#include "./structures/array_list.h"
 
 namespace structures {
-
-class Event;
 
 class LinkedQueueOfCars : private LinkedQueue<Car*> {
  public:
@@ -27,7 +24,7 @@ class LinkedQueueOfCars : private LinkedQueue<Car*> {
 
     size_t time_of_route();
 
-    char type();
+    std::string type();
     size_t speed() const;
     size_t size() const;
     size_t max_size() const;
@@ -39,7 +36,7 @@ class LinkedQueueOfCars : private LinkedQueue<Car*> {
 
  protected:
     typedef std::size_t size_t;
-    char _type{'r'};
+    std::string _type{"base"};
     size_t _speed, _max_size;
     size_t _size{0u}, _input_counter{0u}, _output_counter{0u};
 };
@@ -85,7 +82,7 @@ size_t LinkedQueueOfCars::time_of_route() {
   return (size_t) _max_size/(_speed/3.6);  //< km/h => m/s
 }
 
-char LinkedQueueOfCars::type() {
+std::string LinkedQueueOfCars::type() {
   return _type;
 }
 
