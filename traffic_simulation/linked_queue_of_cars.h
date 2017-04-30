@@ -23,7 +23,6 @@ class LinkedQueueOfCars : private LinkedQueue<Car*> {
     Car* back() const;
 
     size_t time_of_route();
-    size_t time_in_out(Car* data);
 
     char type() const;
     char* name() const;
@@ -83,11 +82,6 @@ Car* LinkedQueueOfCars::back() const {
 
 size_t LinkedQueueOfCars::time_of_route() {
   return (size_t) _max_size/(_speed/3.6);  //< km/h => m/s
-}
-
-size_t LinkedQueueOfCars::time_in_out(Car* data) {
-  double duration = data->size()/(_speed/3.6);
-  return (size_t) duration > 0? duration : 1;
 }
 
 char LinkedQueueOfCars::type() const {

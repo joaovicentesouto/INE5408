@@ -33,7 +33,9 @@ namespace structures {
   _roads{roads},
   _S1{roads[0]},
   _S2{roads[4]}
-  {}
+  {
+    //printf("Abertos: S1: %s, S2: %s\n", _S1->name(), _S2->name());
+  }
 
   Semaphore::~Semaphore() {}
 
@@ -45,6 +47,7 @@ namespace structures {
     _semaphore = (_semaphore+1) % 4;
     _S1 = _roads[_semaphore];
     _S2 = _roads[_semaphore+4];
+    //printf("Abertos: S1: %s, S2: %s\n", _S1->name(), _S2->name());
   }
 
   bool Semaphore::open(const EntryRoad* road) const {

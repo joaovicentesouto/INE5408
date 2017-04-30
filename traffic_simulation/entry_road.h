@@ -21,7 +21,7 @@ namespace structures {
     EntryRoad(char* name,
               size_t speed,
               size_t max_size,
-              size_t input_range,
+              size_t average,
               size_t lower_input,
               size_t prob_left,
               size_t prob_front,
@@ -41,20 +41,20 @@ namespace structures {
 
     typedef std::size_t size_t;
 
-    size_t _input_range, _lower_input, _prob_left, _prob_front, _prob_right;
+    size_t _average, _lower_input, _prob_left, _prob_front, _prob_right;
     ArrayList<void*> _crossroads{3u};
   };
 
   EntryRoad::EntryRoad(char* name,
                        size_t speed,
                        size_t max_size,
-                       size_t input_range,
+                       size_t average,
                        size_t lower_input,
                        size_t prob_left,
                        size_t prob_front,
                        size_t prob_right) :
   LinkedQueueOfCars::LinkedQueueOfCars(speed, max_size),
-  _input_range{input_range},
+  _average{average},
   _lower_input{lower_input},
   _prob_left{prob_left},
   _prob_front{prob_front},
@@ -93,7 +93,7 @@ namespace structures {
 
   size_t EntryRoad::input_frequency() {
     double tmp = (double) rand()/RAND_MAX;
-    return tmp*_input_range + _lower_input;
+    return tmp*(_average-_lower_input) + _lower_input;
   }
 
 }  // namespace structures

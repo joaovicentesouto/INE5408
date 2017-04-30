@@ -9,8 +9,8 @@ using namespace structures;
 
 int main(int argc, char const *argv[]) {
   srand(time(NULL));
-  std::size_t global_clock=100;
-  std::size_t sema=30;
+  std::size_t global_clock=28800;
+  std::size_t sema=80;
 
   System sys{global_clock, sema};
   sys.init();
