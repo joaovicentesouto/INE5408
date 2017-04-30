@@ -125,22 +125,6 @@ namespace structures {
       _events->insert_sorted(input);
     }
 
-    // for (auto i = 0; i<100; i++) {
-    //     Car *car = new Car();
-    //     try {
-    //       _exit_roads[0]->enqueue(car);
-    //       _exit_roads[1]->enqueue(car);
-    //       _exit_roads[2]->enqueue(car);
-    //       _exit_roads[3]->enqueue(car);
-    //       _exit_roads[4]->enqueue(car);
-    //       _exit_roads[5]->enqueue(car);
-    //     } catch(std::out_of_range error) {
-    //       delete car;
-    //       printf("cheio\n");
-    //       break;
-    //     }
-    // }
-
     // Primeiro evento de troca de semáforo
     _semaphore = new Semaphore(_semaphore_time, _entry_roads);
     std::size_t event_time = _global_clock + _semaphore_time;
@@ -152,7 +136,6 @@ namespace structures {
   void System::run() {
 
     while (_global_clock < _execution_time) {
-      //printf("\n*************** %lu ***************\n", _global_clock);
       std::size_t count_events = 0;
 
       // Prioridades
@@ -168,16 +151,14 @@ namespace structures {
           // semaforo
           case 's': {
             count_events++;
-            //printf("=========== Semáforos trocados ===========\n");
             _semaphore->change();
             ++_semaphore_change_counter;
 
-            // Cria novo evento de semáforo
             std::size_t event_time = _global_clock + _semaphore_time;
             Event semaphore('s', event_time, _semaphore);
             _events->insert_sorted(semaphore);
 
-
+            // Elimina evento completado
             _events->pop(i);
             break;
           }
@@ -204,13 +185,10 @@ namespace structures {
               road->enqueue(new_car);
               ++_input_counter;
 
-              // Cria evento de troca de pista
               std::size_t event_time = _global_clock + road->time_of_route();
               Event change('c', event_time, road);
               _events->insert_sorted(change);
 
-              // Cria novo evento de input
-              //printf("Rua:%s / novo carro em:%lu\n", road->name(), event_time);
               event_time = current_event.event_time() + road->input_frequency();
               Event input('i', event_time, road);
               _events->insert_sorted(input);
@@ -219,10 +197,9 @@ namespace structures {
               _events->pop(i);
 
             } catch(std::out_of_range error) {
-              printf("Inserir falhou: Rua:%s cheia. #%s... i: %d\n", road->name(), error.what(), i);
+              printf("Entrada falhou: Rua: %s engarrafada.\n", road->name());
               ++i;
             }
-
             break;
           }
 
@@ -236,7 +213,6 @@ namespace structures {
             }
 
             Car* first_car = road->front();
-
             std::size_t direction = first_car->direction();
             LinkedQueueOfCars* temp = (LinkedQueueOfCars*) road->crossroads(direction);
 
@@ -244,33 +220,27 @@ namespace structures {
               EntryRoad* aferente = (EntryRoad*) road->crossroads(direction);
               try {
                 aferente->enqueue(first_car);
-                //printf("Tentei tirar\n");
                 road->dequeue();
-                //printf("Consegui tirar\n");
                 ++_change_road_counter;
 
-                // Cria evento de troca de pista
                 std::size_t event_time = _global_clock + aferente->time_of_route();
                 Event change('c', event_time, aferente);
                 _events->insert_sorted(change);
 
                 // Elimina evento completado
-                _events->pop(i); // elimina evento
+                _events->pop(i);
 
               } catch(std::out_of_range error) {
-                printf("Troca falhou: Rua:%s cheia. #%s\n", aferente->name(), error.what());
+                printf("Troca de pista falhou: Rua: %s engarrafada.\n", aferente->name());
                 ++i;
               }
             } else {
               ExitRoad* eferente = (ExitRoad*) road->crossroads(direction);
               try {
                 eferente->enqueue(first_car);
-                //printf("Tentei tirar\n");
                 road->dequeue();
-                //printf("Consegui tirar\n");
                 ++_change_road_counter;
 
-                // Cria evento de troca de pista
                 std::size_t event_time = _global_clock + eferente->time_of_route();
                 Event out('o', event_time, eferente);
                 _events->insert_sorted(out);
@@ -279,7 +249,7 @@ namespace structures {
                 _events->pop(i);
 
               } catch(std::out_of_range error) {
-                printf("Troca falhou: Rua:%s cheia. #%s\n", eferente->name(), error.what());
+                printf("Troca de pista falhou: Rua: %s engarrafada.\n", eferente->name());
                 ++i;
               }
             }
@@ -294,22 +264,35 @@ namespace structures {
         current_event = _events->at(i);
       }
 
-      //result();
       ++_global_clock;
-      if (count_events == 0) {
+      if (count_events == 0)
         _global_clock = current_event.event_time();
-      }
     }
 
   }
 
   void System::result() {
-    printf("Resultados:\n");
-    printf("Quantos veículos entraram: %lu\n", _input_counter);
-    printf("Quantos veículos saíram: %lu\n", _output_counter);
-    printf("Quantos veículos trocaram de pista: %lu\n", _change_road_counter);
-    printf("Quantas vezes o semaforo trocou: %lu\n", _semaphore_change_counter);
+    printf("\nResultados gerais:\n");
+    printf("Operação             |  Quant.\n");
+    printf("Entrada de veículos  |  %lu\n", _input_counter);
+    printf("Saída de  veíulos    |  %lu\n", _output_counter);
+    printf("Troca de pista       |  %lu\n", _change_road_counter);
+    printf("Troca de semáforo    |  %lu\n", _semaphore_change_counter);
 
+    printf("\nResultados por rua:\n");
+    printf("Rua / input / output\n");
+    printf("\nEntradas e centrais:\n");
+    for(auto i = 0; i < _entry_roads.size(); ++i) {
+      auto in = _entry_roads[i]->input_counter();
+      auto out = _entry_roads[i]->output_counter();
+      printf("%s / %lu / %lu\n", _entry_roads[i]->name(), in, out);
+    }
+    printf("\nSaídas:\n");
+    for(auto i = 0; i < _exit_roads.size(); ++i) {
+      auto in = _exit_roads[i]->input_counter();
+      auto out = _exit_roads[i]->output_counter();
+      printf("%s / %lu / %lu\n", _exit_roads[i]->name(), in, out);
+    }
   }
 
 }  //  namespace structures
