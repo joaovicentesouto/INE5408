@@ -5,18 +5,16 @@
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
 
-#include "./linked_queue_of_cars.h"
-#include "./structures/linked_list.h"
-
 namespace structures {
 
   class Event {
   public:
-    Event(size_t event_time);
+    Event(size_t event_time, void* polymorph);
     ~Event();
 
+    char type() const;
     size_t event_time() const;
-    virtual bool task();
+    void* polymorph() const;
 
     bool operator<(const Event& other_event) const;
     bool operator>(const Event& other_event) const;
@@ -24,7 +22,9 @@ namespace structures {
   protected:
     typedef std::size_t size_t;
 
+    char _type;
     size_t _event_time{0u};
+    void* _polymorph;
   };
 
   //! Construtor
@@ -33,14 +33,24 @@ namespace structures {
    *  \param event_time hora da execução
    *  \param road estrada fonte do evento
    */
-  Event::Event(size_t event_time) :
-  _event_time{event_time}
+  Event::Event(char type, size_t event_time, void* polymorph):
+  _type{type},
+  _event_time{event_time},
+  _polymorph{polymorph}
   {}
 
   //! Destrutor
   /*! Destrutor padrão
    */
   Event::~Event() {}
+
+  //! Horário de execução
+  /*! Retorna a hora que o evento deve ocorrer.
+   *  \return size_t Horário de execução
+   */
+  char Event::type() const {
+    return _type;
+  }
 
   //! Horário de execução
   /*! Retorna a hora que o evento deve ocorrer.
@@ -54,8 +64,8 @@ namespace structures {
   /*! Tarefa que cada tipo de evento irá executar
    *  \return bool Sucesso na hora de executar a tarefa.
    */
-  bool Event::task() {
-    return false;
+  void* polymorph() const {
+      return _polymorph;
   }
 
   //! Sobrecarga do operador <
