@@ -6,6 +6,7 @@
 #include <stdexcept>  // C++ exceptions
 #include <cstdlib>
 #include <stdlib.h>
+#include <string>
 
 // objects
 #include "./car.h"
@@ -17,13 +18,14 @@ namespace structures {
 
   class EntryRoad : public LinkedQueueOfCars {
   public:
-    EntryRoad(size_t speed,
+    EntryRoad(char* name,
+              size_t speed,
               size_t max_size,
               size_t input_range,
               size_t lower_input,
-              float prob_left,
-              float prob_front,
-              float prob_right);
+              size_t prob_left,
+              size_t prob_front,
+              size_t prob_right);
     ~EntryRoad();
 
     void crossroads(void *left, void *front, void *right);
@@ -39,18 +41,18 @@ namespace structures {
 
     typedef std::size_t size_t;
 
-    size_t _input_range, _lower_input;
-    float _prob_left, _prob_front, _prob_right;
+    size_t _input_range, _lower_input, _prob_left, _prob_front, _prob_right;
     ArrayList<void*> _crossroads{3u};
   };
 
-  EntryRoad::EntryRoad(size_t speed,
+  EntryRoad::EntryRoad(char* name,
+                       size_t speed,
                        size_t max_size,
                        size_t input_range,
                        size_t lower_input,
-                       float prob_left,
-                       float prob_front,
-                       float prob_right) :
+                       size_t prob_left,
+                       size_t prob_front,
+                       size_t prob_right) :
   LinkedQueueOfCars::LinkedQueueOfCars(speed, max_size),
   _input_range{input_range},
   _lower_input{lower_input},
@@ -58,6 +60,7 @@ namespace structures {
   _prob_front{prob_front},
   _prob_right{prob_right}
   {
+    LinkedQueueOfCars::_name = name;
     LinkedQueueOfCars::_type = 'a';
   }
 
@@ -79,24 +82,18 @@ namespace structures {
   }
 
   size_t EntryRoad::direction_probability() {
-    if (yesOrNo(_prob_left))
+    size_t prob = rand()%100;
+    if (prob < _prob_left)
       return 0u;
-    else if (yesOrNo(_prob_front))
+    else if (prob < _prob_left+_prob_front)
       return 1u;
-    else if (yesOrNo(_prob_right))
-      return 2u;
-    return 0u;
+    else
+      return 0u;
   }
 
   size_t EntryRoad::input_frequency() {
     double tmp = (double) rand()/RAND_MAX;
     return tmp*_input_range + _lower_input;
-  }
-
-  bool EntryRoad::yesOrNo(float probabilityOfYes) {
-    //  fonte: http://stackoverflow.com/ ->
-    //  -> questions/12885356/random-numbers-with-different-probabilities
-    return rand()%100 < (probabilityOfYes * 100);
   }
 
 }  // namespace structures

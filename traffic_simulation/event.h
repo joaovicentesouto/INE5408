@@ -19,6 +19,7 @@ namespace structures {
 
     bool operator<(const Event& other_event) const;
     bool operator>(const Event& other_event) const;
+    bool operator==(const Event& other_event) const;
 
   protected:
     typedef std::size_t size_t;
@@ -80,6 +81,10 @@ namespace structures {
 
   bool Event::operator>(const Event& other_event) const {
     return _event_time > other_event.event_time();
+  }
+
+  bool Event::operator==(const Event& other_event) const {
+    return this == &other_event;
   }
 
 }  //  namespace structures

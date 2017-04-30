@@ -6,6 +6,7 @@
 #include <stdexcept>  // C++ exceptions
 #include <cstdlib>
 #include <stdlib.h>
+#include <string>
 
 #include "./car.h"
 #include "./event.h"
@@ -68,22 +69,22 @@ namespace structures {
 
     // Criando as ruas
     // AFERENTES
-    EntryRoad* N1_SUL = new EntryRoad(60, 500, 20, 5, 0.8, 0.1, 0.1);      //N1_S  (60, 500, 20+/-5)
-    EntryRoad* S1_NORTE = new EntryRoad(60, 500, 30, 7, 0.1, 0.1, 0.8);    //S1_N  (60, 500, 30+/-7)
-    EntryRoad* O1_LESTE = new EntryRoad(80, 2000, 10, 2, 0.1, 0.8, 0.1);   //O1_L  (80, 2000, 10+/-2)
-    EntryRoad* L1_OESTE = new EntryRoad(30, 400, 10, 2, 0.3, 0.3, 0.4);    //L1_O  (30, 400, 10+/-2)
-    EntryRoad* N2_SUL = new EntryRoad(40, 500, 20, 5, 0.4, 0.3, 0.3);      //N2_S  (40, 500, 20+/-5)
-    EntryRoad* S2_NORTE = new EntryRoad(40, 500, 60, 15, 0.3, 0.3, 0.4);   //S2_N  (40, 500, 60+/-15)
+    EntryRoad* N1_SUL = new EntryRoad((char*)"N1_SUL\0", 60, 500, 20, 5, 80, 10, 10);      //N1_S  (60, 500, 20+/-5)
+    EntryRoad* S1_NORTE = new EntryRoad((char*)"S1_NORTE\0", 60, 500, 30, 7, 10, 10, 80);    //S1_N  (60, 500, 30+/-7)
+    EntryRoad* O1_LESTE = new EntryRoad((char*)"O1_LESTE\0", 80, 2000, 10, 2, 10, 80, 10);   //O1_L  (80, 2000, 10+/-2)
+    EntryRoad* L1_OESTE = new EntryRoad((char*)"L1_OESTE\0", 30, 400, 10, 2, 30, 30, 40);    //L1_O  (30, 400, 10+/-2)
+    EntryRoad* N2_SUL = new EntryRoad((char*)"N2_SUL\0", 40, 500, 20, 5, 40, 30, 30);      //N2_S  (40, 500, 20+/-5)
+    EntryRoad* S2_NORTE = new EntryRoad((char*)"S2_NORTE\0", 40, 500, 60, 15, 30, 30, 40);   //S2_N  (40, 500, 60+/-15)
     // CENTRAIS
-    EntryRoad* C1_LESTE = new EntryRoad(60, 300, 0, 0, 0.3, 0.4, 0.3);     //C1_L  (60, 300)
-    EntryRoad* C1_OESTE = new EntryRoad(60, 300, 0, 0, 0.3, 0.4, 0.3);     //C1_O  (60, 300)
+    EntryRoad* C1_LESTE = new EntryRoad((char*)"C1_LESTE\0", 60, 300, 0, 0, 30, 40, 30);     //C1_L  (60, 300)
+    EntryRoad* C1_OESTE = new EntryRoad((char*)"C1_OESTE\0", 60, 300, 0, 0, 30, 40, 30);     //C1_O  (60, 300)
     // EFERENTES
-    ExitRoad* N1_NORTE = new ExitRoad(60, 500);  // N1_N  (60, 500)
-    ExitRoad* N2_NORTE = new ExitRoad(40, 500);  // N2_N  (40, 500)
-    ExitRoad* O1_OESTE = new ExitRoad(80, 2000); // O1_O  (80, 2000)
-    ExitRoad* L1_LESTE = new ExitRoad(60, 500);  // L1_L  (30, 400)
-    ExitRoad* S1_SUL = new ExitRoad(60, 500);    // S1_S  (60, 500)
-    ExitRoad* S2_SUL = new ExitRoad(40, 500);    // S2_S  (40, 500)
+    ExitRoad* N1_NORTE = new ExitRoad((char*)"N1_NORTE\0", 60, 500);  // N1_N  (60, 500)
+    ExitRoad* N2_NORTE = new ExitRoad((char*)"N2_NORTE\0", 40, 500);  // N2_N  (40, 500)
+    ExitRoad* O1_OESTE = new ExitRoad((char*)"O1_OESTE\0", 80, 2000); // O1_O  (80, 2000)
+    ExitRoad* L1_LESTE = new ExitRoad((char*)"L1_LESTE\0", 60, 500);  // L1_L  (30, 400)
+    ExitRoad* S1_SUL = new ExitRoad((char*)"S1_SUL\0", 60, 500);    // S1_S  (60, 500)
+    ExitRoad* S2_SUL = new ExitRoad((char*)"S2_SUL\0", 40, 500);    // S2_S  (40, 500)
 
     // Interligando os cruzamentos : estrada->cruzamento(left, front, right)
     N1_SUL->crossroads(C1_LESTE, S1_SUL, O1_OESTE);
@@ -118,6 +119,7 @@ namespace structures {
     // Inputs iniciais
     for (auto i = 0u; i<6; ++i) {
       std::size_t event_time = _global_clock + _entry_roads[i]->input_frequency();
+      //printf("Rua:%s / novo carro em:%lu\n", _entry_roads[i]->name(), _entry_roads[i]->input_frequency());
       Event *input = new Event('i', event_time, _entry_roads[i]);
       _events->insert_sorted(*input);
       ++_input_counter;
@@ -143,7 +145,12 @@ namespace structures {
       // input
       // crossroads
       int i = 0;
-      Event *current_event = &_events->at(i);
+      Event *current_event = nullptr;
+      if (!_events->empty())
+        current_event = &_events->at(i);
+      else
+        break;
+
       while (current_event->event_time() <= _global_clock) {
 
         switch (current_event->type()) {
@@ -151,18 +158,20 @@ namespace structures {
           case 's': {
             _semaphore->change();
             _global_clock = current_event->event_time();
-            _events->pop(i);
 
             // Cria novo evento de semáforo
             std::size_t event_time = _global_clock + _semaphore_time;
             Event *semaphore = new Event('s', event_time, _semaphore);
             _events->insert_sorted(*semaphore);
+            _events->pop(i);
+            printf("Semaforo trocados =============================================\n");
             break;
           }
 
           // output
           case 'o': {
             ExitRoad* road = (ExitRoad*) current_event->source();
+            printf("Vai sair: nome: %s e tam: %lu. tipo:%c\n", road->name(), road->size(), road->type());
             road->dequeue();
             _events->pop(i);
             break;
@@ -175,38 +184,49 @@ namespace structures {
             try {
               road->enqueue(new_car);
               _events->pop(i);
+              printf("inseri: tam%lu em tua: %s\n", road->size(), road->name());
 
               // Cria evento de troca de pista
               std::size_t event_time = _global_clock + road->time_of_route();
-              Event *out = new Event('c', event_time, road);
-              _events->insert_sorted(*out);
+              Event *change = new Event('c', event_time, road);
+              _events->insert_sorted(*change);
 
             } catch(std::out_of_range error) {
               printf("%s\n", error.what());
               delete new_car;
               ++i;
             }
+
+            // Cria novo evento de input
+            std::size_t event_time = current_event->event_time() + road->input_frequency();
+            //printf("Rua:%s / novo carro em:%lu\n", road->name(), event_time);
+            Event *in = new Event('c', event_time, road);
+            _events->insert_sorted(*in);
             break;
           }
 
           // crossroads
           case 'c': {
             EntryRoad* road = (EntryRoad*) current_event->source();
-            if (_semaphore->open(road)) {
-              ++i
+            if (_semaphore->open(road) || road->size() == 0) {
+              printf("Fechado para: %s com tam:%lu\n", road->name(), road->size());
+              ++i;
               break;  // semaforo fechado;
             }
+
+            printf("nome: %s e tam: %lu\n", road->name(), road->size());
             Car* first_car = road->front();
 
             std::size_t direction = first_car->direction();
             LinkedQueueOfCars* temp = (LinkedQueueOfCars*) road->crossroads(direction);
+            printf("nome: %s e tam: %lu ... tipo:%c\n", temp->name(), temp->size(), temp->type());
 
             if (temp->type() == 'a') {
               EntryRoad* aferente = (EntryRoad*) road->crossroads(direction);
               try {
                 aferente->enqueue(first_car);
                 road->dequeue();
-                _events->pop(i);
+                _events->pop(i); // elimina evento
 
                 // Cria evento de troca de pista
                 std::size_t event_time = _global_clock + aferente->time_of_route();
@@ -222,7 +242,7 @@ namespace structures {
               try {
                 eferente->enqueue(first_car);
                 road->dequeue();
-                _events->pop(i);
+                _events->pop(i); // elimina evento
 
                 // Cria evento de troca de pista
                 std::size_t event_time = _global_clock + eferente->time_of_route();
@@ -234,6 +254,7 @@ namespace structures {
                 ++i;
               }
             }
+
             break;
           }
 
@@ -242,11 +263,10 @@ namespace structures {
           }
         }
 
-        try {
+        if (!_events->empty() && i < _events->size())
             current_event = &_events->at(i);
-        } catch(std::out_of_range error) {
+        else
             break;
-        }
       }
 
       if (last_clock == _global_clock)
