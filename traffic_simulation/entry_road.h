@@ -58,7 +58,7 @@ namespace structures {
   _prob_front{prob_front},
   _prob_right{prob_right}
   {
-    LinkedQueueOfCars::_type = "entry";
+    LinkedQueueOfCars::_type = 'a';
   }
 
   void EntryRoad::crossroads(void *left, void *front, void *right) {
@@ -85,6 +85,7 @@ namespace structures {
       return 1u;
     else if (yesOrNo(_prob_right))
       return 2u;
+    return 0u;
   }
 
   size_t EntryRoad::input_frequency() {

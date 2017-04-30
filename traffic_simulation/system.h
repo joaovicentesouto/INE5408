@@ -116,7 +116,7 @@ namespace structures {
     // Inputs iniciais
     for (auto i = 0u; i<6; ++i) {
       std::size_t event_time = _global_clock + _entry_roads[i]->input_frequency();
-      Event *input = new Event("input", event_time, _entry_roads[i]);
+      Event *input = new Event('i', event_time, _entry_roads[i]);
       _events->insert_sorted(*input);
       ++_input_counter;
     }
@@ -124,7 +124,7 @@ namespace structures {
     // Primeiro evento de troca de semáforo
     _semaphore = new Semaphore(_semaphore_time, _entry_roads);
     std::size_t event_time = _global_clock + _semaphore_time;
-    Event *change = new Event("semaphore", event_time, _semaphore);
+    Event *change = new Event('s', event_time, _semaphore);
     _events->insert_sorted(*change);
 
   }
@@ -133,89 +133,43 @@ namespace structures {
 
     while (_global_clock < _execution_time) {
 
-      int last_clock = _global_clock;
+      std::size_t last_clock = _global_clock;
 
-      SemaphoreEvent *sem = &_semaphore_events->at(0);
-      if (sem->event_time() < _global_clock) {
-        sem->task(); // troca semaforo
-        _global_clock = sem->event_time();
-        _semaphore_events->pop_front(); // elimina evento
-
-        // cria outro evento de semaforo
-        std::size_t event_time = _global_clock + _semaphore_time;
-        SemaphoreEvent change_sem(event_time, _semaphore);
-        _semaphore_events->insert_sorted(change_sem);
-      }
-
-      if (!_output_events->empty()) {
-          OutputEvent *out = &_output_events->at(0);
-          while (out->event_time() < _global_clock) {
-            out->task(); // tira carro da pista
-            _output_events->pop_front();
-            ++_output_counter;
-
-            if (!_output_events->empty())
-              out = &_output_events->at(0);
-          }
-      }
-
-      if (!_input_events->empty()) {
-        int i = 0;
-        InputEvent *in = &_input_events->at(i);
-        while (in->event_time() < _global_clock) {
-          if (in->task()) {// tenta executar input
-            std::size_t event_time = in->event_time() + in->road()->input_frequency();
-            InputEvent input(event_time, in->road());
-            _input_events->insert_sorted(input);
-            _input_events->pop(i);
-            ++_input_counter;
-          } else {
-            ++i;
-          }
-
-          if (!_input_events->empty())
-            in = &_input_events->at(i);
-        }
-      }
-
-      if (!_crossroads_events->empty()) {
-        int i = 0;
-        RoadExchangeEvent *exchange = &_crossroads_events->at(i);
-        while (exchange->event_time() < _global_clock && _semaphore->open(exchange->road())) {
-          try {
-            std::size_t event_time;
-            Car* car = exchange->road()->front();
-            void* tmp = exchange->road()->crossroads(car->direction());
-            printf("Tipo da rua que vai ser trocado: %c\n", ((LinkedQueueOfCars*)tmp)->type());
-            if (((LinkedQueueOfCars*)tmp)->type() == 'a') {
-              EntryRoad* next_road = (EntryRoad*) tmp;
-              next_road->enqueue(car); //pode dar erro
-              _crossroads_events->pop(i);
-              event_time = exchange->event_time() + next_road->time_of_route();
-              RoadExchangeEvent change(event_time, next_road);
-              _crossroads_events->insert_sorted(change);
-            } else {
-              ExitRoad* next_road = (ExitRoad*) tmp;
-              next_road->enqueue(car); //pode dar erro
-              _crossroads_events->pop(i);
-              event_time = exchange->event_time() + next_road->time_of_route();
-              OutputEvent out(event_time, next_road);
-              _output_events->insert_sorted(out);
-            }
-          } catch(std::out_of_range error) {
-            ++i;
-          }
-
-          ++_global_clock;
-          if (!_crossroads_events->empty())
-            exchange = &_crossroads_events->at(i);
-        }
-      }
       // Prioridades
-      // _semaphore_events{};
-      // _output_events{};
-      // _input_events{};
-      // _crossroads_events{};
+      // semaforo
+      // output
+      // input
+      // crossroads
+      int i = 0;
+      Event &event = _events->at(i);
+      while (event.event_time() < _global_clock) {
+
+        switch (event.type()) {
+          // semaforo
+          case 's':
+
+            break;
+
+          // output
+          case 'o':
+
+            break;
+
+          // input
+          case 'i':
+
+            break;
+
+          // crossroads
+          case 'c':
+          
+            break;
+
+          default:
+            break;
+        }
+
+      }
 
       if (last_clock == _global_clock)
         ++_global_clock;

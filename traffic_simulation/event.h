@@ -10,10 +10,10 @@ namespace structures {
 
   class Event {
   public:
-    Event(std::string type, size_t event_time, void* source);
+    Event(char type, size_t event_time, void* source);
     ~Event();
 
-    std::string type() const;
+    char type() const;
     size_t event_time() const;
     void* source() const;
 
@@ -23,7 +23,7 @@ namespace structures {
   protected:
     typedef std::size_t size_t;
 
-    std::string _type;
+    char _type;
     size_t _event_time{0u};
     void* _source;
   };
@@ -34,7 +34,7 @@ namespace structures {
    *  \param event_time hora da execução
    *  \param road estrada fonte do evento
    */
-  Event::Event(std::string type, size_t event_time, void* source):
+  Event::Event(char type, size_t event_time, void* source):
   _type{type},
   _event_time{event_time},
   _source{source}
@@ -49,7 +49,7 @@ namespace structures {
   /*! Retorna a hora que o evento deve ocorrer.
    *  \return size_t Horário de execução
    */
-  std::string Event::type() const {
+  char Event::type() const {
     return _type;
   }
 

@@ -1,7 +1,6 @@
 //!  Copyright [2017] <João Vicente Souto>
 #include <cstdint> // std::size_t
 #include <stdexcept> // C++ exceptions
-#include <string> // Strings
 #include <stdio.h>
 
 #include "./system.h"
