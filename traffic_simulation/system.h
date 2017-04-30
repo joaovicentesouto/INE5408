@@ -126,8 +126,8 @@ namespace structures {
     // Primeiro evento de troca de semáforo
     _semaphore = new Semaphore(_semaphore_time, _entry_roads);
     std::size_t event_time = _global_clock + _semaphore_time;
-    Event *change = new Event('s', event_time, _semaphore);
-    _events->insert_sorted(*change);
+    Event *semaphore = new Event('s', event_time, _semaphore);
+    _events->insert_sorted(*semaphore);
 
   }
 
@@ -155,8 +155,8 @@ namespace structures {
 
             // Cria novo evento de semáforo
             std::size_t event_time = _global_clock + _semaphore_time;
-            Event *change = new Event('s', event_time, _semaphore);
-            _events->insert_sorted(*change);
+            Event *semaphore = new Event('s', event_time, _semaphore);
+            _events->insert_sorted(*semaphore);
             break;
           }
 
@@ -176,9 +176,9 @@ namespace structures {
               road->enqueue(new_car);
               _events->pop(i);
 
-              // Cria evento de saída
+              // Cria evento de troca de pista
               std::size_t event_time = _global_clock + road->time_of_route();
-              Event *out = new Event('o', event_time, road);
+              Event *out = new Event('c', event_time, road);
               _events->insert_sorted(*out);
 
             } catch(std::out_of_range error) {
@@ -191,7 +191,45 @@ namespace structures {
 
           // crossroads
           case 'c': {
+            EntryRoad* road = (EntryRoad*) current_event->source();
+            Car* first_car = road->front();
 
+            std::size_t direction = first_car->direction();
+            LinkedQueueOfCars* temp = (LinkedQueueOfCars*) road->crossroads(direction);
+
+            if (temp->type() == 'a') {
+              EntryRoad* aferente = (EntryRoad*) road->crossroads(direction);
+              try {
+                aferente->enqueue(first_car);
+                road->dequeue();
+                _events->pop(i);
+
+                // Cria evento de troca de pista
+                std::size_t event_time = _global_clock + aferente->time_of_route();
+                Event *change = new Event('c', event_time, road);
+                _events->insert_sorted(*change);
+
+              } catch(std::out_of_range error) {
+                printf("%s\n", error.what());
+                ++i;
+              }
+            } else {
+              ExitRoad* eferente = (ExitRoad*) road->crossroads(direction);
+              try {
+                eferente->enqueue(first_car);
+                road->dequeue();
+                _events->pop(i);
+
+                // Cria evento de troca de pista
+                std::size_t event_time = _global_clock + eferente->time_of_route();
+                Event *out = new Event('o', event_time, road);
+                _events->insert_sorted(*out);
+
+              } catch(std::out_of_range error) {
+                printf("%s\n", error.what());
+                ++i;
+              }
+            }
             break;
           }
 
