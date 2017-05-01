@@ -1,6 +1,6 @@
 //!  Copyright [2017] <João Vicente Souto>
-#ifndef STRUCTURES_CAR_H
-#define STRUCTURES_CAR_H
+#ifndef STRUCTURES_VEHICLE_H
+#define STRUCTURES_VEHICLE_H
 
 #include <cstdint>
 #include <stdlib.h>
