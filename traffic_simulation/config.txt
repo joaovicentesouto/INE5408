@@ -2,5 +2,5 @@
 # - Tempo, em segundos, de execução da simulação.
 # - Tempo, em segundos, em que um semáforo ficará aberto.
 Fim dos comentários
-1000
-30
+10000
+50

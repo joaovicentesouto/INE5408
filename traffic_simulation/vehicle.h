@@ -11,11 +11,11 @@ class Vehicle {
  public:
     Vehicle();
     ~Vehicle();
-    
+
     std::size_t size() const;
     std::size_t direction() const;
     void direction(std::size_t direction);
-    
+
  private:
     std::size_t size_;  //!< Tamanho
     std::size_t direction_{0u};  //!< Direção
@@ -26,8 +26,8 @@ class Vehicle {
  *  Tamanho: tamanho do carro [2:6] metros + 2 metros a frente e 1 atrás.
  */
 Vehicle::Vehicle() {
-    double tmp = (double) rand()/RAND_MAX;
-    size_ = tmp*5 + 5;
+    double tmp = ((double) rand() / (RAND_MAX));
+    size_ = (std::size_t) tmp*5 + 5;
 }
 
 //! Destrutor padrão

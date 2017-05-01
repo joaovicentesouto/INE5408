@@ -192,7 +192,7 @@ void System::run() {
                         event_time = current_event.event_time() + road->input_frequency();
                         Event input('i', event_time, road);
                         _events->insert_sorted(input);
-                        
+
                         // Elimina evento completado
                         _events->pop(i);
 
@@ -261,7 +261,7 @@ void System::run() {
                     }
                     break;
                 }
-                    
+
                 default: {
                     break;
                 }

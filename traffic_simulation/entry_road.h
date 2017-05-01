@@ -25,7 +25,7 @@ class EntryRoad : public LinkedQueueOfVehicles {
               size_t speed,
               size_t max_size,
               size_t average,
-              size_t lower_input,
+              size_t variation,
               size_t prob_left,
               size_t prob_front,
               size_t prob_right);
@@ -43,7 +43,7 @@ class EntryRoad : public LinkedQueueOfVehicles {
     typedef std::size_t size_t;
 
     size_t _average,      //!< Tamanho do intervalo de tempo de entrada
-           _lower_input,  //!< Menor valor no intervalo
+           _variation,  //!< Menor valor no intervalo
            _prob_left,    //!< Probabilidade de virar a esquerda
            _prob_front,   //!< Probabilidade de seguir em frente
            _prob_right;   //!< Probabilidade de virar a direita
@@ -56,7 +56,7 @@ class EntryRoad : public LinkedQueueOfVehicles {
  *  \param speed Velocidade
  *  \param max_size Tamanho máximo
  *  \param average Tamanho do intervalo de entrada
- *  \param lower_input Menor valor no intervalo
+ *  \param variation Menor valor no intervalo
  *  \param prob_left Probabilidade de virar a esquerda
  *  \param prob_front Probabilidade de seguir em frente
  *  \param prob_right Probabilidade de virar a direita
@@ -65,13 +65,13 @@ EntryRoad::EntryRoad(char* name,
                      size_t speed,
                      size_t max_size,
                      size_t average,
-                     size_t lower_input,
+                     size_t variation,
                      size_t prob_left,
                      size_t prob_front,
                      size_t prob_right) :
 LinkedQueueOfVehicles::LinkedQueueOfVehicles(speed, max_size),
 _average{average},
-_lower_input{lower_input},
+_variation{variation},
 _prob_left{prob_left},
 _prob_front{prob_front},
 _prob_right{prob_right}
@@ -143,8 +143,8 @@ size_t EntryRoad::direction_probability() {
  *  \return size_t Tempo de entrada
  */
 size_t EntryRoad::input_frequency() {
-    double tmp = (double) rand()/RAND_MAX;
-    return tmp*(_average-_lower_input) + _lower_input;
+    double tmp = ((double) rand() / (RAND_MAX));
+    return (size_t) tmp*(2*_variation+1) + _average-_variation;
 }
 
 }  // namespace structures
