@@ -7,6 +7,14 @@
 
 namespace structures {
 
+  //! Classe Event
+  /*! Classe base para o funcionamento de uma simulação contendo um tipo,
+   *  um horário de execução e a fonte, onde será feita a execução de tal
+   *  evento.
+   *  \author João Vicente Souto.
+   *  \since 25/04/17
+   *  \version 1.0
+   */
   class Event {
   public:
     Event(char type, size_t event_time, void* source);
@@ -17,22 +25,21 @@ namespace structures {
     void* source() const;
 
     bool operator<(const Event& other_event) const;
-    bool operator>(const Event& other_event) const;
     bool operator==(const Event& other_event) const;
 
   protected:
     typedef std::size_t size_t;
 
-    char _type;
-    size_t _event_time{0u};
-    void* _source;
+    char _type;  //!< Tipo do evento
+    size_t _event_time{0u};  //!< Hora da execução do evento.
+    void* _source;  //!< Fonte do evento.
   };
 
   //! Construtor
   /*! Construtor usando apenas o dado recebido para a criação.
-   *  \param global_clock Relógio global
+   *  \param type Tipo do evento
    *  \param event_time hora da execução
-   *  \param road estrada fonte do evento
+   *  \param source fonte do evento
    */
   Event::Event(char type, size_t event_time, void* source):
   _type{type},
@@ -41,13 +48,17 @@ namespace structures {
   {}
 
   //! Destrutor
-  /*! Destrutor padrão
+  /*! Nada alocado dinamicamente
    */
   Event::~Event() {}
 
-  //! Horário de execução
-  /*! Retorna a hora que o evento deve ocorrer.
-   *  \return size_t Horário de execução
+  //! Tipo do evento
+  /*! Retorna o tipo do evento:
+   *    - 's' : semáforo
+   *    - 'i' : entrada de veículo
+   *    - 'o' : saída de veículo
+   *    - 'c' : troca de pista
+   *  \return char Tipo do evento
    */
   char Event::type() const {
     return _type;
@@ -61,9 +72,9 @@ namespace structures {
     return _event_time;
   }
 
-  //! Tarefa que deve ser executada
-  /*! Tarefa que cada tipo de evento irá executar
-   *  \return bool Sucesso na hora de executar a tarefa.
+  //! Fonte do evento
+  /*! Quem sofrerá o evento
+   *  \return void* Fonte do evento.
    */
   void* Event::source() const {
       return _source;
@@ -78,10 +89,11 @@ namespace structures {
     return _event_time < other_event.event_time();
   }
 
-  bool Event::operator>(const Event& other_event) const {
-    return _event_time > other_event.event_time();
-  }
-
+  //! Sobrecarga do operador ==
+  /*! Comparando dois eventos se tem o mesmo endereço de memória.
+   *  \param Event& Evento externo para comparação.
+   *  \return bool Comparação
+   */
   bool Event::operator==(const Event& other_event) const {
     return this == &other_event;
   }

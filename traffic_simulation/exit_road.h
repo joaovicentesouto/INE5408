@@ -10,6 +10,12 @@
 
 namespace structures {
 
+  //! Classe ExitRoad
+  /*! Especialização da LinkedQueueOfVehicles.
+   *  \author João Vicente Souto.
+   *  \since 25/04/17
+   *  \version 1.0
+   */
   class ExitRoad : public LinkedQueueOfVehicles {
   public:
     ExitRoad(char* name, size_t speed, size_t max_size);
@@ -21,6 +27,12 @@ namespace structures {
     typedef std::size_t size_t;
   };
 
+  //! Construtor
+  /*! Construtor padrão
+   *  \param name Nome da estrada
+   *  \param speed Velocidade
+   *  \param max_size Tamanho máximo
+   */
   ExitRoad::ExitRoad(char* name, size_t speed, size_t max_size) :
   LinkedQueueOfVehicles::LinkedQueueOfVehicles(speed, max_size)
   {
@@ -28,6 +40,17 @@ namespace structures {
     LinkedQueueOfVehicles::_type = 'e';
   }
 
+  //! Destrutor
+  /*! Nada alocado dinamicamente
+   */
+  ExitRoad::~ExitRoad() {
+    LinkedQueueOfVehicles::~LinkedQueueOfVehicles();
+  }
+
+  //! Método de enqueue
+  /*! Coloca um veículo no final da estrada
+   *  \param data Veículo que será inserido.
+   */
   void ExitRoad::enqueue(Vehicle* data) {
     LinkedQueueOfVehicles::enqueue(data);
   }
