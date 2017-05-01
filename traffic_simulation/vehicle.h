@@ -7,10 +7,10 @@
 
 namespace structures {
 
-  class Car {
+  class Vehicle {
   public:
-    Car();
-    ~Car();
+    Vehicle();
+    ~Vehicle();
 
     std::size_t size() const;
     std::size_t direction() const;
@@ -25,7 +25,7 @@ namespace structures {
   /*  Construtor onde se define o tamanho do veículo em sua criação.
    *  Tamanho: tamanho do carro [2:6] metros + 2 metros a frente e 1 atrás.
    */
-  Car::Car() {
+  Vehicle::Vehicle() {
     double tmp = (double) rand()/RAND_MAX;
     size_ = tmp*5 + 5;
   }
@@ -33,17 +33,17 @@ namespace structures {
   //! Destrutor padrão
   /*  Nada alocado dinamicamente.
    */
-  Car::~Car() {}
+  Vehicle::~Vehicle() {}
 
-  std::size_t Car::size() const {
+  std::size_t Vehicle::size() const {
     return size_;
   }
 
-  std::size_t Car::direction() const {
+  std::size_t Vehicle::direction() const {
     return direction_;
   }
 
-  void Car::direction(std::size_t direction) {
+  void Vehicle::direction(std::size_t direction) {
     direction_ = direction;
   }
 

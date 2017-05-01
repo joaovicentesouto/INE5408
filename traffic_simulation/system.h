@@ -6,14 +6,14 @@
 #include <stdexcept>  // C++ exceptions
 #include <cstdlib>
 #include <stdlib.h>
-#include <string>
 
-#include "./car.h"
+#include "./vehicle.h"
 #include "./event.h"
 #include "./entry_road.h"
 #include "./exit_road.h"
 #include "./semaphore.h"
 
+#include "./linked_queue_of_vehicles.h"
 #include "./structures/linked_list.h"
 #include "./structures/array_list.h"
 
@@ -37,10 +37,11 @@ namespace structures {
                 _semaphore_change_counter{0u},
                 _change_road_counter{0u};
 
-    LinkedList<Event>* _events;  //< Estradas
     ArrayList<EntryRoad*> _entry_roads{8u};  //< Estradas aferentes
     ArrayList<ExitRoad*> _exit_roads{6u};  //< Estradas eferentes
 
+    LinkedList<Event>* _events;  //< Eventos
+    Event* _semaphore_event;  //< Evento semáforo
     Semaphore* _semaphore;
   };
 
@@ -62,6 +63,7 @@ namespace structures {
   System::~System() {
     delete _events;
     delete _semaphore;
+    delete _semaphore_event;
   }
 
   //! Inícia todas as estradas e eventos iniciais
@@ -128,8 +130,7 @@ namespace structures {
     // Primeiro evento de troca de semáforo
     _semaphore = new Semaphore(_semaphore_time, _entry_roads);
     std::size_t event_time = _global_clock + _semaphore_time;
-    Event semaphore('s', event_time, _semaphore);
-    _events->insert_sorted(semaphore);
+    _semaphore_event = new Event('s', event_time, _semaphore);
 
   }
 
@@ -147,21 +148,18 @@ namespace structures {
       Event current_event = _events->at(i);
       while (current_event.event_time() <= _global_clock) {
 
+        // semaforo
+        if (_semaphore_event->event_time() <= _global_clock) {
+          count_events++;
+          _semaphore->change();
+          ++_semaphore_change_counter;
+
+          delete _semaphore_event;
+          std::size_t event_time = _global_clock + _semaphore_time;
+          _semaphore_event = new Event('s', event_time, _semaphore);
+        }
+
         switch (current_event.type()) {
-          // semaforo
-          case 's': {
-            count_events++;
-            _semaphore->change();
-            ++_semaphore_change_counter;
-
-            std::size_t event_time = _global_clock + _semaphore_time;
-            Event semaphore('s', event_time, _semaphore);
-            _events->insert_sorted(semaphore);
-
-            // Elimina evento completado
-            _events->pop(i);
-            break;
-          }
 
           // output
           case 'o': {
@@ -178,11 +176,11 @@ namespace structures {
           // input
           case 'i': {
             count_events++;
-            Car* new_car = new Car();
+            Vehicle* new_vehicle = new Vehicle();
             EntryRoad* road = (EntryRoad*) current_event.source();
 
             try {
-              road->enqueue(new_car);
+              road->enqueue(new_vehicle);
               ++_input_counter;
 
               std::size_t event_time = _global_clock + road->time_of_route();
@@ -212,14 +210,14 @@ namespace structures {
               break;  // semaforo fechado;
             }
 
-            Car* first_car = road->front();
-            std::size_t direction = first_car->direction();
-            LinkedQueueOfCars* temp = (LinkedQueueOfCars*) road->crossroads(direction);
+            Vehicle* first_vehicle = road->front();
+            std::size_t direction = first_vehicle->direction();
+            LinkedQueueOfVehicles* temp = (LinkedQueueOfVehicles*) road->crossroads(direction);
 
             if (temp->type() == 'a') {
               EntryRoad* aferente = (EntryRoad*) road->crossroads(direction);
               try {
-                aferente->enqueue(first_car);
+                aferente->enqueue(first_vehicle);
                 road->dequeue();
                 ++_change_road_counter;
 
@@ -228,6 +226,7 @@ namespace structures {
                 _events->insert_sorted(change);
 
                 // Elimina evento completado
+                ++_global_clock;
                 _events->pop(i);
 
               } catch(std::out_of_range error) {
@@ -237,7 +236,7 @@ namespace structures {
             } else {
               ExitRoad* eferente = (ExitRoad*) road->crossroads(direction);
               try {
-                eferente->enqueue(first_car);
+                eferente->enqueue(first_vehicle);
                 road->dequeue();
                 ++_change_road_counter;
 
@@ -246,6 +245,7 @@ namespace structures {
                 _events->insert_sorted(out);
 
                 // Elimina evento completado
+                ++_global_clock;
                 _events->pop(i);
 
               } catch(std::out_of_range error) {
@@ -278,6 +278,7 @@ namespace structures {
     printf("Saída de  veíulos    |  %lu\n", _output_counter);
     printf("Troca de pista       |  %lu\n", _change_road_counter);
     printf("Troca de semáforo    |  %lu\n", _semaphore_change_counter);
+    printf("Eventos restantes    |  %lu\n", _events->size());
 
     printf("\nResultados por rua:\n");
     printf("Rua / input / output\n");

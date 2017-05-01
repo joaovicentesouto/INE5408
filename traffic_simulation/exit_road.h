@@ -4,32 +4,32 @@
 
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
-#include <string>
-#include "./car.h"
+#include "./vehicle.h"
 #include "./structures/linked_list.h"
+#include "./linked_queue_of_vehicles.h"
 
 namespace structures {
 
-  class ExitRoad : public LinkedQueueOfCars {
+  class ExitRoad : public LinkedQueueOfVehicles {
   public:
     ExitRoad(char* name, size_t speed, size_t max_size);
     ~ExitRoad();
 
-    virtual void enqueue(Car* data);
+    virtual void enqueue(Vehicle* data);
 
   private:
     typedef std::size_t size_t;
   };
 
   ExitRoad::ExitRoad(char* name, size_t speed, size_t max_size) :
-  LinkedQueueOfCars::LinkedQueueOfCars(speed, max_size)
+  LinkedQueueOfVehicles::LinkedQueueOfVehicles(speed, max_size)
   {
-    LinkedQueueOfCars::_name = name;
-    LinkedQueueOfCars::_type = 'e';
+    LinkedQueueOfVehicles::_name = name;
+    LinkedQueueOfVehicles::_type = 'e';
   }
 
-  void ExitRoad::enqueue(Car* data) {
-    LinkedQueueOfCars::enqueue(data);
+  void ExitRoad::enqueue(Vehicle* data) {
+    LinkedQueueOfVehicles::enqueue(data);
   }
 
 }  // namespace structures

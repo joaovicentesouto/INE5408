@@ -4,7 +4,6 @@
 
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
-#include <string> // Strings
 
 namespace structures {
 

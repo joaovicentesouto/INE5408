@@ -6,17 +6,14 @@
 #include <stdexcept>  // C++ exceptions
 #include <cstdlib>
 #include <stdlib.h>
-#include <string>
 
-// objects
-#include "./car.h"
-// structures
+#include "./vehicle.h"
 #include "./structures/array_list.h"
-#include "./linked_queue_of_cars.h"
+#include "./linked_queue_of_vehicles.h"
 
 namespace structures {
 
-  class EntryRoad : public LinkedQueueOfCars {
+  class EntryRoad : public LinkedQueueOfVehicles {
   public:
     EntryRoad(char* name,
               size_t speed,
@@ -31,7 +28,7 @@ namespace structures {
     void crossroads(void *left, void *front, void *right);
     void* crossroads(size_t index);
 
-    virtual void enqueue(Car* data);
+    virtual void enqueue(Vehicle* data);
 
     size_t direction_probability();
     size_t input_frequency();
@@ -53,15 +50,15 @@ namespace structures {
                        size_t prob_left,
                        size_t prob_front,
                        size_t prob_right) :
-  LinkedQueueOfCars::LinkedQueueOfCars(speed, max_size),
+  LinkedQueueOfVehicles::LinkedQueueOfVehicles(speed, max_size),
   _average{average},
   _lower_input{lower_input},
   _prob_left{prob_left},
   _prob_front{prob_front},
   _prob_right{prob_right}
   {
-    LinkedQueueOfCars::_name = name;
-    LinkedQueueOfCars::_type = 'a';
+    LinkedQueueOfVehicles::_name = name;
+    LinkedQueueOfVehicles::_type = 'a';
   }
 
   void EntryRoad::crossroads(void *left, void *front, void *right) {
@@ -74,11 +71,11 @@ namespace structures {
     return _crossroads[index];
   }
 
-  void EntryRoad::enqueue(Car* data) {
-      if (LinkedQueueOfCars::full(data))
+  void EntryRoad::enqueue(Vehicle* data) {
+      if (LinkedQueueOfVehicles::full(data))
           throw std::out_of_range("Full queue!");
       data->direction(direction_probability());
-      LinkedQueueOfCars::enqueue(data);
+      LinkedQueueOfVehicles::enqueue(data);
   }
 
   size_t EntryRoad::direction_probability() {
