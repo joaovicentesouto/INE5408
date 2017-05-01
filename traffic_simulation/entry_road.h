@@ -132,7 +132,7 @@ size_t EntryRoad::direction_probability() {
     size_t prob = rand()%100;
     if (prob < _prob_left)
         return 0u;
-    else if (prob-_prob_left < +_prob_front)
+    else if (prob-_prob_left < _prob_front)
         return 1u;
     else
         return 2u;
