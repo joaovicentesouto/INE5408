@@ -4,19 +4,18 @@
 
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
-
 #include "./vehicle.h"
 #include "./structures/linked_queue.h"
 
 namespace structures {
 
-  //! Classe LinkedQueueOfVehicles
-  /*! Classe pai com as características básicas das estradas da
-   *  simulação.
-   *  \author João Vicente Souto.
-   *  \since 25/04/17
-   *  \version 1.0
-   */
+//! Classe Fila de veículos
+/*! Classe pai com as características básicas das estradas da
+ *  simulação.
+ *  \author João Vicente Souto.
+ *  \since 25/04/17
+ *  \version 1.0
+ */
 class LinkedQueueOfVehicles : private LinkedQueue<Vehicle*> {
  public:
     LinkedQueueOfVehicles(size_t speed, size_t max_size);
@@ -43,13 +42,14 @@ class LinkedQueueOfVehicles : private LinkedQueue<Vehicle*> {
 
  protected:
     typedef std::size_t size_t;    //!< Conveniência
+
     char _type{'b'};    //!< Tipo da rua
     char* _name{(char*)"base\0"};    //!< Nome da rua
     size_t _speed,  //!< Velocidade
-           _max_size,    //!< Tamanho máximo
-           _size{0u},  //!< Tamanho atual
-           _input_counter{0u},  //!< Entrada de veículos
-           _output_counter{0u};  //!< Saída de veículos
+    _max_size,    //!< Tamanho máximo
+    _size{0u},  //!< Tamanho atual
+    _input_counter{0u},  //!< Entrada de veículos
+    _output_counter{0u};  //!< Saída de veículos
 };
 
 //! Construtor
@@ -63,9 +63,9 @@ _speed{speed},
 _max_size{max_size}
 {}
 
-  //! Destrutor
-  /*! Nada alocado dinamicamente
-   */
+//! Destrutor
+/*! Nada alocado dinamicamente
+ */
 LinkedQueueOfVehicles::~LinkedQueueOfVehicles() {
     LinkedQueue<Vehicle*>::~LinkedQueue();
 }
@@ -83,7 +83,8 @@ void LinkedQueueOfVehicles::clear() {
  */
 void LinkedQueueOfVehicles::enqueue(Vehicle* data) {
     if (full(data))
-        throw std::out_of_range("Full queue!");
+        throw std::out_of_range("Full road!");
+
     LinkedQueue<Vehicle*>::enqueue(data);
     _size += data->size();
     ++_input_counter;
@@ -121,7 +122,7 @@ Vehicle* LinkedQueueOfVehicles::back() const {
  *  \return size_t Tempo de percurso
  */
 size_t LinkedQueueOfVehicles::time_of_route() {
-  return (size_t) _max_size/(_speed/3.6);  //< km/h => m/s
+    return (size_t) _max_size/(_speed/3.6);  //< km/h => m/s
 }
 
 //! Tipo da estrada
@@ -132,7 +133,7 @@ size_t LinkedQueueOfVehicles::time_of_route() {
  *  \return char Tipo da estrada.
  */
 char LinkedQueueOfVehicles::type() const {
-  return _type;
+    return _type;
 }
 
 //! O nome da estrada
@@ -140,7 +141,7 @@ char LinkedQueueOfVehicles::type() const {
  *  \return char* nome da estrada
  */
 char* LinkedQueueOfVehicles::name() const {
-  return _name;
+    return _name;
 }
 
 //! Velocidade da estrada
@@ -172,7 +173,7 @@ size_t LinkedQueueOfVehicles::max_size() const {
  *  \return size_t quantidade de entradas
  */
 size_t LinkedQueueOfVehicles::input_counter() const {
-  return _input_counter;
+    return _input_counter;
 }
 
 //! Contador de saídas
@@ -180,7 +181,7 @@ size_t LinkedQueueOfVehicles::input_counter() const {
  *  \return size_t quantidade de saídas
  */
 size_t LinkedQueueOfVehicles::output_counter() const {
-  return _output_counter;
+    return _output_counter;
 }
 
 //! Estrada vazia?
@@ -197,7 +198,7 @@ bool LinkedQueueOfVehicles::empty() const {
  *  \return size_t Verifica se tem espaço pra outro carro.
  */
 bool LinkedQueueOfVehicles::full(const Vehicle* data) const {
-  return max_size() < data->size()+size();
+    return max_size() < data->size()+size();
 }
 
 }  // namespace structures

@@ -7,45 +7,57 @@
 
 namespace structures {
 
-  class Vehicle {
-  public:
+class Vehicle {
+ public:
     Vehicle();
     ~Vehicle();
-
+    
     std::size_t size() const;
     std::size_t direction() const;
     void direction(std::size_t direction);
+    
+ private:
+    std::size_t size_;  //!< Tamanho
+    std::size_t direction_{0u};  //!< Direção
+};
 
-  private:
-    std::size_t size_;
-    std::size_t direction_{0u};
-  };
-
-  //! Construtor padrão
-  /*  Construtor onde se define o tamanho do veículo em sua criação.
-   *  Tamanho: tamanho do carro [2:6] metros + 2 metros a frente e 1 atrás.
-   */
-  Vehicle::Vehicle() {
+//! Construtor padrão
+/*  Construtor onde se define o tamanho do veículo em sua criação.
+ *  Tamanho: tamanho do carro [2:6] metros + 2 metros a frente e 1 atrás.
+ */
+Vehicle::Vehicle() {
     double tmp = (double) rand()/RAND_MAX;
     size_ = tmp*5 + 5;
-  }
+}
 
-  //! Destrutor padrão
-  /*  Nada alocado dinamicamente.
-   */
-  Vehicle::~Vehicle() {}
+//! Destrutor padrão
+/*  Nada alocado dinamicamente.
+ */
+Vehicle::~Vehicle() {}
 
-  std::size_t Vehicle::size() const {
+//! Tamanho do veículo
+/*  Retorna o tamanho do veículo.
+ *  \return size_t Tamanho do veículo
+ */
+std::size_t Vehicle::size() const {
     return size_;
-  }
+}
 
-  std::size_t Vehicle::direction() const {
+//! Direção do veículo
+/*  Retorna a direção do veículo.
+ *  \return size_t Direção
+ */
+std::size_t Vehicle::direction() const {
     return direction_;
-  }
+}
 
-  void Vehicle::direction(std::size_t direction) {
+//! Muda a direção do veículo
+/*  Muda para onde ele vai quando chegar em um semáforo
+ *  \param direction Nova direção
+ */
+void Vehicle::direction(std::size_t direction) {
     direction_ = direction;
-  }
+}
 
 }  //  namespace structures
 
