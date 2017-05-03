@@ -8,7 +8,7 @@
 #include "./structures/array_list.h"
 
 namespace structures {
-    
+
 //! Forward
 /*! Para uso do tipo EntryRoad
  */
@@ -76,6 +76,7 @@ void Semaphore::change() {
 
 //! Sinal do semáforo
 /*! Verifica se uma estrada está com o semáforo aberto
+ *  \param EntryRoad* Ponteiro da rua para verificação
  *  \return bool Verifica se o semáforo está aberto.
  */
 bool Semaphore::open(const EntryRoad* road) const {

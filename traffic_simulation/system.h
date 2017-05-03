@@ -145,7 +145,7 @@ void System::run() {
     while (_global_clock < _execution_time) {
         auto events_made = 0;
 
-        int i = 0;  //!< Incrementa caso não consiga realizar um evento
+        int i = 0;  // Incrementa caso não consiga realizar um evento
         Event current_event = _events->at(i);
         while (current_event.event_time() <= _global_clock) {
 

@@ -10,6 +10,12 @@
 
 using namespace structures;
 
+//! Função main
+/*! Inicio do programa
+ *  \param argc Quantidade de argumentos
+ *  \param argv Argumentos de entrada
+ *  \return int : 0 sucesso / != erro
+ */
 int main(int argc, char const *argv[]) {
     srand(time(NULL));
     std::size_t _execution_time=28800;  // 8h
