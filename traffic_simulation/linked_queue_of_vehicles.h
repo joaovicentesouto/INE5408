@@ -2,7 +2,7 @@
 #ifndef STRUCTURES_LINKED_QUEUE_OF_VEHICLES_H
 #define STRUCTURES_LINKED_QUEUE_OF_VEHICLES_H
 
-#include <cstdint>  // std::size_t
+#include <cstdint>  // std::std::size_t
 #include <stdexcept>  // C++ exceptions
 #include "./vehicle.h"
 #include "./structures/linked_queue.h"
@@ -18,7 +18,7 @@ namespace structures {
  */
 class LinkedQueueOfVehicles : private LinkedQueue<Vehicle*> {
  public:
-    LinkedQueueOfVehicles(size_t speed, size_t max_size);
+    LinkedQueueOfVehicles(std::size_t speed, std::size_t max_size);
     ~LinkedQueueOfVehicles();
 
     void clear();
@@ -27,25 +27,23 @@ class LinkedQueueOfVehicles : private LinkedQueue<Vehicle*> {
     Vehicle* front() const;
     Vehicle* back() const;
 
-    size_t time_of_route();
+    std::size_t time_of_route();
 
     char type() const;
     char* name() const;
-    size_t speed() const;
-    size_t size() const;
-    size_t max_size() const;
-    size_t input_counter() const;
-    size_t output_counter() const;
+    std::size_t speed() const;
+    std::size_t size() const;
+    std::size_t max_size() const;
+    std::size_t input_counter() const;
+    std::size_t output_counter() const;
 
     bool empty() const;
     bool full(const Vehicle* data) const;
 
  protected:
-    typedef std::size_t size_t;    //!< Conveniência
-
     char _type{'b'};    //!< Tipo da rua
     char* _name{(char*)"base\0"};    //!< Nome da rua
-    size_t _speed,  //!< Velocidade
+    std::size_t _speed,  //!< Velocidade
     _max_size,    //!< Tamanho máximo
     _size{0u},  //!< Tamanho atual
     _input_counter{0u},  //!< Entrada de veículos
@@ -57,7 +55,7 @@ class LinkedQueueOfVehicles : private LinkedQueue<Vehicle*> {
  *  \param speed Velocidade
  *  \param max_size Tamanho máximo
  */
-LinkedQueueOfVehicles::LinkedQueueOfVehicles(size_t speed, size_t max_size) :
+LinkedQueueOfVehicles::LinkedQueueOfVehicles(std::size_t speed, std::size_t max_size) :
 LinkedQueue<Vehicle*>::LinkedQueue(),
 _speed{speed},
 _max_size{max_size}
@@ -119,10 +117,10 @@ Vehicle* LinkedQueueOfVehicles::back() const {
 
 //! Tempo de percurso
 /*! Baseado no tamanho máximo e Velocidade.
- *  \return size_t Tempo de percurso
+ *  \return std::size_t Tempo de percurso
  */
-size_t LinkedQueueOfVehicles::time_of_route() {
-    return (size_t) _max_size/(_speed/3.6);  //< km/h => m/s
+std::size_t LinkedQueueOfVehicles::time_of_route() {
+    return (std::size_t) _max_size/(_speed/3.6);  //< km/h => m/s
 }
 
 //! Tipo da estrada
@@ -146,47 +144,47 @@ char* LinkedQueueOfVehicles::name() const {
 
 //! Velocidade da estrada
 /*! Retorna a velocidade da estrada
- *  \return size_t velocidade
+ *  \return std::size_t velocidade
  */
-size_t LinkedQueueOfVehicles::speed() const {
+std::size_t LinkedQueueOfVehicles::speed() const {
     return _speed;
 }
 
 //! Tamanho atual
 /*! Retorna o tamanho atual da estrada.
- *  \return size_t tamanho
+ *  \return std::size_t tamanho
  */
-size_t LinkedQueueOfVehicles::size() const {
+std::size_t LinkedQueueOfVehicles::size() const {
     return _size;
 }
 
 //! Tamanho máximo
 /*! Retorna o tamanho máximo da estrada.
- *  \return size_t Tamanho máximo
+ *  \return std::size_t Tamanho máximo
  */
-size_t LinkedQueueOfVehicles::max_size() const {
+std::size_t LinkedQueueOfVehicles::max_size() const {
     return _max_size;
 }
 
 //! Contador de entradas
 /*! Retorna a quantidade de entradas que ocorreram
- *  \return size_t quantidade de entradas
+ *  \return std::size_t quantidade de entradas
  */
-size_t LinkedQueueOfVehicles::input_counter() const {
+std::size_t LinkedQueueOfVehicles::input_counter() const {
     return _input_counter;
 }
 
 //! Contador de saídas
 /*! Retorna a quantidade de saídas que ocorreram
- *  \return size_t quantidade de saídas
+ *  \return std::size_t quantidade de saídas
  */
-size_t LinkedQueueOfVehicles::output_counter() const {
+std::size_t LinkedQueueOfVehicles::output_counter() const {
     return _output_counter;
 }
 
 //! Estrada vazia?
 /*! Retorna verdadeiro se a estrada está vazia
- *  \return size_t Verifica se está vazia
+ *  \return std::size_t Verifica se está vazia
  */
 bool LinkedQueueOfVehicles::empty() const {
     return _size == 0u;
@@ -195,7 +193,7 @@ bool LinkedQueueOfVehicles::empty() const {
 //! Estrada cheia?
 /*! Retorna verdadeiro se a estrada está vazia se baseando
  *  no tamanho do veículo e se ele consegue entrar na estrada.
- *  \return size_t Verifica se tem espaço pra outro carro.
+ *  \return std::size_t Verifica se tem espaço pra outro carro.
  */
 bool LinkedQueueOfVehicles::full(const Vehicle* data) const {
     return max_size() < data->size()+size();

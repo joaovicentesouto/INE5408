@@ -2,7 +2,7 @@
 #ifndef STRUCTURES_SYSTEM_H
 #define STRUCTURES_SYSTEM_H
 
-#include <cstdint>  // std::size_t
+#include <cstdint>  // std::std::size_t
 #include <stdexcept>  // C++ exceptions
 #include <cstdlib>
 #include <stdlib.h>
@@ -27,7 +27,7 @@ namespace structures {
  */
 class System {
  public:
-    System(size_t execution_time, size_t semaphore_time);
+    System(std::size_t execution_time, std::size_t semaphore_time);
     ~System();
 
     void init();
@@ -35,9 +35,7 @@ class System {
     void result();
 
  private:
-    typedef std::size_t size_t;
-
-    size_t _execution_time,  //!< Tempo de execução
+    std::size_t _execution_time,  //!< Tempo de execução
     _semaphore_time,  //!< Tempo de troca de sinal
     _global_clock{0u},  //!< Relógio
     _input_counter{0u},  //!< Contador de entrada
@@ -58,7 +56,7 @@ class System {
  *  \param execution_time Tempo de execução
  *  \param semaphore_time Tempo de um semáforo
  */
-System::System(size_t execution_time, size_t semaphore_time):
+System::System(std::size_t execution_time, std::size_t semaphore_time):
 _execution_time{execution_time},
 _semaphore_time{semaphore_time}
 {
@@ -126,14 +124,14 @@ void System::init() {
 
     // Inputs iniciais
     for (auto i = 0u; i<6; ++i) {
-        size_t event_time = _global_clock + _entry_roads[i]->input_frequency();
+        std::size_t event_time = _global_clock + _entry_roads[i]->input_frequency();
         Event input('i', event_time, _entry_roads[i]);
         _events->insert_sorted(input);
     }
 
     // Primeiro evento de troca de semáforo
     _semaphore = new Semaphore(_semaphore_time, _entry_roads);
-    size_t event_time = _global_clock + _semaphore_time;
+    std::size_t event_time = _global_clock + _semaphore_time;
     _semaphore_event = new Event('s', event_time, _semaphore);
 }
 
@@ -167,7 +165,7 @@ void System::run() {
                 case 'o': {
                     events_made++;
                     ExitRoad* road = (ExitRoad*) current_event.source();
-                    road->dequeue();
+                    delete road->dequeue();
                     ++_output_counter;
 
                     // Elimina evento completado

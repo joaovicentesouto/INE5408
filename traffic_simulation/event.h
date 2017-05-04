@@ -2,7 +2,7 @@
 #ifndef STRUCTURES_EVENT_H
 #define STRUCTURES_EVENT_H
 
-#include <cstdint>  // std::size_t
+#include <cstdint>  // std::std::size_t
 #include <stdexcept>  // C++ exceptions
 
 namespace structures {
@@ -17,21 +17,19 @@ namespace structures {
  */
 class Event {
  public:
-    Event(char type, size_t event_time, void* source);
+    Event(char type, std::size_t event_time, void* source);
     ~Event();
 
     char type() const;
-    size_t event_time() const;
+    std::size_t event_time() const;
     void* source() const;
 
     bool operator<(const Event& other_event) const;
     bool operator==(const Event& other_event) const;
 
  protected:
-    typedef std::size_t size_t;
-
     char _type;  //!< Tipo do evento
-    size_t _event_time{0u};  //!< Hora da execução do evento.
+    std::size_t _event_time{0u};  //!< Hora da execução do evento.
     void* _source;  //!< Fonte do evento.
 };
 
@@ -41,7 +39,7 @@ class Event {
  *  \param event_time hora da execução
  *  \param source fonte do evento
  */
-Event::Event(char type, size_t event_time, void* source):
+Event::Event(char type, std::size_t event_time, void* source):
 _type{type},
 _event_time{event_time},
 _source{source}
@@ -66,9 +64,9 @@ char Event::type() const {
 
 //! Horário de execução
 /*! Retorna a hora que o evento deve ocorrer.
- *  \return size_t Horário de execução
+ *  \return std::size_t Horário de execução
  */
-size_t Event::event_time() const {
+std::size_t Event::event_time() const {
     return _event_time;
 }
 

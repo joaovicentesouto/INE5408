@@ -2,7 +2,7 @@
 #ifndef STRUCTURES_ENTRY_ROAD_H
 #define STRUCTURES_ENTRY_ROAD_H
 
-#include <cstdint>  // std::size_t
+#include <cstdint>  // std::std::size_t
 #include <stdexcept>  // C++ exceptions
 #include <cstdlib>
 #include <stdlib.h>
@@ -22,27 +22,25 @@ namespace structures {
 class EntryRoad : public LinkedQueueOfVehicles {
  public:
     EntryRoad(char* name,
-              size_t speed,
-              size_t max_size,
-              size_t average,
-              size_t variation,
-              size_t prob_left,
-              size_t prob_front,
-              size_t prob_right);
+              std::size_t speed,
+              std::size_t max_size,
+              std::size_t average,
+              std::size_t variation,
+              std::size_t prob_left,
+              std::size_t prob_front,
+              std::size_t prob_right);
     ~EntryRoad();
 
     void crossroads(void *left, void *front, void *right);
-    void* crossroads(size_t index);
+    void* crossroads(std::size_t index);
 
     virtual void enqueue(Vehicle* data);
 
-    size_t direction_probability();
-    size_t input_frequency();
+    std::size_t direction_probability();
+    std::size_t input_frequency();
 
  private:
-    typedef std::size_t size_t;
-
-    size_t _average,      //!< Tamanho do intervalo de tempo de entrada
+    std::size_t _average,      //!< Tamanho do intervalo de tempo de entrada
            _variation,  //!< Menor valor no intervalo
            _prob_left,    //!< Probabilidade de virar a esquerda
            _prob_front,   //!< Probabilidade de seguir em frente
@@ -62,13 +60,13 @@ class EntryRoad : public LinkedQueueOfVehicles {
  *  \param prob_right Probabilidade de virar a direita
  */
 EntryRoad::EntryRoad(char* name,
-                     size_t speed,
-                     size_t max_size,
-                     size_t average,
-                     size_t variation,
-                     size_t prob_left,
-                     size_t prob_front,
-                     size_t prob_right) :
+                     std::size_t speed,
+                     std::size_t max_size,
+                     std::size_t average,
+                     std::size_t variation,
+                     std::size_t prob_left,
+                     std::size_t prob_front,
+                     std::size_t prob_right) :
 LinkedQueueOfVehicles::LinkedQueueOfVehicles(speed, max_size),
 _average{average},
 _variation{variation},
@@ -107,7 +105,7 @@ void EntryRoad::crossroads(void *left, void *front, void *right) {
  *    - 2 : direita
  *  \return void* estrada do destino
  */
-void* EntryRoad::crossroads(size_t destination) {
+void* EntryRoad::crossroads(std::size_t destination) {
     return _crossroads[destination];
 }
 
@@ -126,10 +124,10 @@ void EntryRoad::enqueue(Vehicle* data) {
 
 //! Probabilidade de destino
 /*! Gera o destino segundo a probabilidade da estrada.
- *  \return size_t Destino
+ *  \return std::size_t Destino
  */
-size_t EntryRoad::direction_probability() {
-    size_t prob = rand()%100;
+std::size_t EntryRoad::direction_probability() {
+    std::size_t prob = rand()%100;
     if (prob < _prob_left)
         return 0u;
     else if (prob-_prob_left < _prob_front)
@@ -140,11 +138,11 @@ size_t EntryRoad::direction_probability() {
 
 //! Tempo de entrada variável
 /*! Gera um tempo aleatório de entrada na estrada.
- *  \return size_t Tempo de entrada
+ *  \return std::size_t Tempo de entrada
  */
-size_t EntryRoad::input_frequency() {
+std::size_t EntryRoad::input_frequency() {
     double tmp = ((double) rand() / (RAND_MAX));
-    return (size_t) tmp*(2*_variation+1) + _average-_variation;
+    return (std::size_t) tmp*(2*_variation+1) + _average-_variation;
 }
 
 }  // namespace structures

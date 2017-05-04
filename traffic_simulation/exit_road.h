@@ -2,7 +2,7 @@
 #ifndef STRUCTURES_EXIT_ROAD_H
 #define STRUCTURES_EXIT_ROAD_H
 
-#include <cstdint>  // std::size_t
+#include <cstdint>  // std::std::size_t
 #include <stdexcept>  // C++ exceptions
 #include "./vehicle.h"
 #include "./structures/linked_list.h"
@@ -18,13 +18,10 @@ namespace structures {
  */
 class ExitRoad : public LinkedQueueOfVehicles {
  public:
-    ExitRoad(char* name, size_t speed, size_t max_size);
+    ExitRoad(char* name, std::size_t speed, std::size_t max_size);
     ~ExitRoad();
 
     virtual void enqueue(Vehicle* data);
-
- private:
-    typedef std::size_t size_t;
 };
 
 //! Construtor
@@ -33,7 +30,7 @@ class ExitRoad : public LinkedQueueOfVehicles {
  *  \param speed Velocidade
  *  \param max_size Tamanho máximo
  */
-ExitRoad::ExitRoad(char* name, size_t speed, size_t max_size) :
+ExitRoad::ExitRoad(char* name, std::size_t speed, std::size_t max_size) :
 LinkedQueueOfVehicles::LinkedQueueOfVehicles(speed, max_size)
 {
     LinkedQueueOfVehicles::_name = name;
