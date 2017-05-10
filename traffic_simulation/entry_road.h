@@ -82,7 +82,7 @@ _prob_right{prob_right}
 /*! Nada alocado dinamicamente
  */
 EntryRoad::~EntryRoad(){
-    LinkedQueueOfVehicles::~LinkedQueueOfVehicles();
+    LinkedQueueOfVehicles::clear();
 }
 
 //! Resolvendo o cruzamento
@@ -127,7 +127,7 @@ void EntryRoad::enqueue(Vehicle* data) {
  *  \return std::size_t Destino
  */
 std::size_t EntryRoad::direction_probability() {
-    std::size_t prob = rand()%100;
+    std::size_t prob = (std::size_t) rand()%100;
     if (prob < _prob_left)
         return 0u;
     else if (prob-_prob_left < _prob_front)

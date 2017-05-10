@@ -12,6 +12,7 @@ namespace structures {
 //! Classe Fila de veículos
 /*! Classe pai com as características básicas das estradas da
  *  simulação.
+ *  Programa compilado no SO: Mac Os Sierra
  *  \author João Vicente Souto.
  *  \since 25/04/17
  *  \version 1.0
@@ -33,6 +34,7 @@ class LinkedQueueOfVehicles : private LinkedQueue<Vehicle*> {
     char* name() const;
     std::size_t speed() const;
     std::size_t size() const;
+    std::size_t cars_on_the_road() const;
     std::size_t max_size() const;
     std::size_t input_counter() const;
     std::size_t output_counter() const;
@@ -65,7 +67,7 @@ _max_size{max_size}
 /*! Nada alocado dinamicamente
  */
 LinkedQueueOfVehicles::~LinkedQueueOfVehicles() {
-    LinkedQueue<Vehicle*>::~LinkedQueue();
+    LinkedQueue<Vehicle*>::clear();
 }
 
 //! Limpa estrada
@@ -156,6 +158,14 @@ std::size_t LinkedQueueOfVehicles::speed() const {
  */
 std::size_t LinkedQueueOfVehicles::size() const {
     return _size;
+}
+
+//! Quantidade de veículos na rua
+/*! Retorna a quantidade de carros atual da estrada.
+ *  \return std::size_t quantidade
+ */
+std::size_t LinkedQueueOfVehicles::cars_on_the_road() const {
+    return LinkedQueue<Vehicle*>::size();
 }
 
 //! Tamanho máximo

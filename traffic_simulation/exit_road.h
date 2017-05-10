@@ -41,7 +41,7 @@ LinkedQueueOfVehicles::LinkedQueueOfVehicles(speed, max_size)
 /*! Nada alocado dinamicamente
  */
 ExitRoad::~ExitRoad() {
-    LinkedQueueOfVehicles::~LinkedQueueOfVehicles();
+  LinkedQueueOfVehicles::clear();
 }
 
 //! Método de enqueue

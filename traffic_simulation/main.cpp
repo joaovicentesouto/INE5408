@@ -8,7 +8,7 @@
 
 #include "./system.h"
 
-using namespace structures;
+//using namespace structures;
 
 //! Função main
 /*! Inicio do programa
@@ -27,7 +27,6 @@ int main(int argc, char const *argv[]) {
 
     if (file.is_open()) {
         char line[200];
-
         file.getline(line, 200);
         while (line[0]=='#')
             file.getline(line, 200);
@@ -43,7 +42,7 @@ int main(int argc, char const *argv[]) {
         std::cin >> _semaphore_time;
     }
 
-    System sys{_execution_time, _semaphore_time};
+    structures::System sys{_execution_time, _semaphore_time};
     sys.init();
     sys.run();
     sys.result();
