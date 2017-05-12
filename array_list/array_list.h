@@ -138,7 +138,6 @@ template<typename T>
 void ArrayList<T>::insert(const T& data, std::size_t index) {
     if (index > size_)
         throw std::out_of_range("Posição não existe!");
-
     if (full())
         throw std::out_of_range("Lista cheia!");
 

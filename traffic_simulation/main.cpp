@@ -22,8 +22,8 @@ int main(int argc, char const *argv[]) {
     std::size_t _semaphore_time=30;     // 30s
 
     std::ifstream file;
-    //file.open("./naoexiste.txt");
-    file.open("./config.txt");
+    file.open("./naoexiste.txt");
+    //file.open("./config.txt");
 
     if (file.is_open()) {
         char line[200];
