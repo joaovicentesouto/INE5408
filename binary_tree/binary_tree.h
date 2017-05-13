@@ -217,9 +217,9 @@ class BinaryTree {
          *  \return Node* Node com menor valor em data
          */
         Node* minimum() {
-            if (right_ == nullptr)
+            if (left_ == nullptr)
                 return this;
-            return right_->minimum();
+            return left_->minimum();
         }
     };
 
