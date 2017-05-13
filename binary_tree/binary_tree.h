@@ -63,47 +63,6 @@ class BinaryTree {
             }
         }
 
-        /*! Sem o uso de uma segunda função
-        bool remove(const T& data) {
-            // Go to left
-            if (data < data_) {
-                if (left_ != nullptr)
-                    return left_->remove(data);
-                return false;
-            }
-            // Go to right
-            if (data > data_) {
-                if (right_ != nullptr)
-                    return right_->remove(data);
-                return false;
-            }
-            // I found
-            // Two sons
-            if (right_ != nullptr && left_ != nullptr) {
-                data_ = right_->minimum()->data_;
-                return right_->remove(data_);
-            }
-            // One son or leaf
-            if (right_ != nullptr) {
-                data_ = right_->data_;
-                if (right_->right_ != nullptr || right_->left_ != nullptr)
-                    return right_->remove(data_);
-                // Son is a leaf
-                delete right_;
-                right_ = nullptr;
-                return true;
-            } else {
-                data_ = left_->data_;
-                if (left_->right_ != nullptr || left_->left_ != nullptr)
-                    return left_->remove(data_);
-                // Son is a leaf
-                delete left_;
-                left_ = nullptr;
-                return true;
-            }
-            // PROBLEMA SE FOR FOLHA, NÃO CONSEGUE DELETAR A SI MESMA
-        } */
-
         //! uso dos slides
         bool remove(const T& data) {
             bool deleted = false;
@@ -271,9 +230,6 @@ std::size_t BinaryTree<T>::size() const {
 //! Doc
 template<typename T>
 ArrayList<T> BinaryTree<T>::pre_order() const {
-    if (empty())
-        return ArrayList<T>();
-
     ArrayList<T> *v = new ArrayList<T>{size()};
     root_->pre_order(*v);
     return *v;
@@ -282,9 +238,6 @@ ArrayList<T> BinaryTree<T>::pre_order() const {
 //! Doc
 template<typename T>
 ArrayList<T> BinaryTree<T>::in_order() const {
-    if (empty())
-        return ArrayList<T>();
-
     ArrayList<T> *v = new ArrayList<T>{size()};
     root_->in_order(*v);
     return *v;
@@ -293,9 +246,6 @@ ArrayList<T> BinaryTree<T>::in_order() const {
 //! Doc
 template<typename T>
 ArrayList<T> BinaryTree<T>::post_order() const {
-    if (empty())
-        return ArrayList<T>();
-
     ArrayList<T> *v = new ArrayList<T>{size()};
     root_->post_order(*v);
     return *v;
