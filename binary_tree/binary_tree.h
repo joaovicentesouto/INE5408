@@ -33,6 +33,11 @@ class BinaryTree {
         data_{data}
         {}
 
+        ~Node() {
+            delete left_;
+            delete right_;
+        }
+
         T data_;
         Node* left_{nullptr};
         Node* right_{nullptr};
@@ -140,6 +145,8 @@ class BinaryTree {
             else
                 temp = arv->left_;
 
+            arv->left_ = nullptr;
+            arv->right_ = nullptr;
             delete arv;
             deleted = true;
             return temp;
@@ -158,21 +165,27 @@ class BinaryTree {
         //! Doc
         void pre_order(ArrayList<T>& v) const {
             v.push_back(data_);
-            left_->pre_order(v);
-            right_->pre_order(v);
+            if (left_ != nullptr)
+                left_->pre_order(v);
+            if (right_ != nullptr)
+                right_->pre_order(v);
         }
 
         //! Doc
         void in_order(ArrayList<T>& v) const {
-            left_->in_order(v);
+            if (left_ != nullptr)
+                left_->in_order(v);
             v.push_back(data_);
-            right_->in_order(v);
+            if (right_ != nullptr)
+                right_->in_order(v);
         }
 
         //! Doc
         void post_order(ArrayList<T>& v) const {
-            left_->post_order(v);
-            right_->post_order(v);
+            if (left_ != nullptr)
+                left_->post_order(v);
+            if (right_ != nullptr)
+                right_->post_order(v);
             v.push_back(data_);
         }
 
@@ -199,8 +212,9 @@ BinaryTree<T>::BinaryTree()
 
 //! Doc
 template<typename T>
-BinaryTree<T>::~BinaryTree()
-{}
+BinaryTree<T>::~BinaryTree() {
+    delete root_;
+}
 
 //! Doc
 template<typename T>
@@ -257,66 +271,36 @@ std::size_t BinaryTree<T>::size() const {
 //! Doc
 template<typename T>
 ArrayList<T> BinaryTree<T>::pre_order() const {
-    ArrayList<T> v{size()};
     if (empty())
-        return v;
-    root_->pre_order(v);
-    return v;
+        return ArrayList<T>();
+
+    ArrayList<T> *v = new ArrayList<T>{size()};
+    root_->pre_order(*v);
+    return *v;
 }
 
 //! Doc
 template<typename T>
 ArrayList<T> BinaryTree<T>::in_order() const {
-    ArrayList<T> v{size()};
     if (empty())
-        return v;
-    root_->in_order(v);
-    return v;
+        return ArrayList<T>();
+
+    ArrayList<T> *v = new ArrayList<T>{size()};
+    root_->in_order(*v);
+    return *v;
 }
 
 //! Doc
 template<typename T>
 ArrayList<T> BinaryTree<T>::post_order() const {
-    ArrayList<T> v{size()};
     if (empty())
-        return v;
-    root_->post_order(v);
-    return v;
+        return ArrayList<T>();
+
+    ArrayList<T> *v = new ArrayList<T>{size()};
+    root_->post_order(*v);
+    return *v;
 }
 
-/* metodo removeção dos slides
-        Node* remove(const T& data, Node* arv) {
-            if (arv == nullptr)
-                return arv;
-            // Go to left
-            if (data < arv->data_) {
-                arv->left_ = remove(data, arv->left_);
-                return arv;
-            }
-            // Go to right
-            if (data > arv->data_) {
-                arv->right_ = remove(data, arv->right_);
-                return arv;
-            }
-            // I found
-            // Two sons
-            if (arv->right_ != nullptr && arv->left_ != nullptr) {
-                Node* temp = arv->right_->minimum();
-                arv->data_ = temp->data_;
-                arv->right_ = remove(data, arv->right_);
-                return arv;
-            }
-            // One son or leaf
-            Node* temp = nullptr;
-            if (arv->right_ != nullptr)
-                temp = arv->right_;
-            else
-                temp = arv->left_;
-
-            delete arv;
-            return temp;
-        }
-*/
 }  // namespace structures
 
 #endif
