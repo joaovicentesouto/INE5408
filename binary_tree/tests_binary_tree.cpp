@@ -232,7 +232,7 @@ TEST_F(BinaryTreeTest, Remove) {
         ASSERT_FALSE(int_list.contains(-15));
         ASSERT_EQ(size-1, int_list.size());
     }
-    
+
     {
         multiple_insertion(string_list, string_values);
         auto size = string_list.size();
@@ -241,13 +241,13 @@ TEST_F(BinaryTreeTest, Remove) {
         ASSERT_FALSE(string_list.contains("Hello, World!"));
         ASSERT_EQ(size-1, string_list.size());
     }
-    
+
     {
         multiple_insertion(dummy_list, dummy_values);
         auto size = dummy_list.size();
-        
+
         auto dummy = Dummy{4.2};
-        
+
         ASSERT_TRUE(dummy_list.contains(dummy));
         dummy_list.remove(dummy);
         ASSERT_FALSE(dummy_list.contains(dummy));
@@ -262,7 +262,7 @@ TEST_F(BinaryTreeTest, PreOrder) {
     {
         multiple_insertion(int_list, int_values);
         auto preordered = int_list.pre_order();
-        
+
         auto expected = {10, 5, -5, -10, -15, 8, 20, 15, 25, 30};
         auto i = 0u;
         for (auto& value: expected) {
@@ -270,11 +270,11 @@ TEST_F(BinaryTreeTest, PreOrder) {
             ++i;
         }
     }
-    
+
     {
         multiple_insertion(string_list, string_values);
         auto preordered = string_list.pre_order();
-        
+
         auto expected = {"AAA", "123", "BBB", "Hello, World!", "Goodbye, World!"};
         auto i = 0u;
         for (auto& value: expected) {
@@ -282,11 +282,11 @@ TEST_F(BinaryTreeTest, PreOrder) {
             ++i;
         }
     }
-    
+
     {
         multiple_insertion(dummy_list, dummy_values);
         auto preordered = dummy_list.pre_order();
-        
+
         auto expected = {0., -5., -5.5, -10., 10., 7.5, 3.1415, 4.2};
         auto i = 0u;
         for (auto& value: expected) {
@@ -303,7 +303,7 @@ TEST_F(BinaryTreeTest, InOrder) {
     {
         multiple_insertion(int_list, int_values);
         auto inordered = int_list.in_order();
-        
+
         auto expected = {-15, -10, -5, 5, 8, 10, 15, 20, 25, 30};
         auto i = 0u;
         for (auto& value: expected) {
@@ -311,11 +311,11 @@ TEST_F(BinaryTreeTest, InOrder) {
             ++i;
         }
     }
-    
+
     {
         multiple_insertion(string_list, string_values);
         auto inordered = string_list.in_order();
-        
+
         auto expected = {"123", "AAA", "BBB", "Goodbye, World!", "Hello, World!"};
         auto i = 0u;
         for (auto& value: expected) {
@@ -323,11 +323,11 @@ TEST_F(BinaryTreeTest, InOrder) {
             ++i;
         }
     }
-    
+
     {
         multiple_insertion(dummy_list, dummy_values);
         auto inordered = dummy_list.in_order();
-        
+
         auto expected = {-10., -5.5, -5., 0., 3.1415, 4.2, 7.5, 10.};
         auto i = 0u;
         for (auto& value: expected) {
@@ -345,7 +345,7 @@ TEST_F(BinaryTreeTest, PostOrder) {
     {
         multiple_insertion(int_list, int_values);
         auto postordered = int_list.post_order();
-        
+
         auto expected = {-15, -10, -5, 8, 5, 15, 30, 25, 20, 10};
         auto i = 0u;
         for (auto& value: expected) {
@@ -353,11 +353,11 @@ TEST_F(BinaryTreeTest, PostOrder) {
             ++i;
         }
     }
-    
+
     {
         multiple_insertion(string_list, string_values);
         auto postordered = string_list.post_order();
-        
+
         auto expected = {"123", "Goodbye, World!", "Hello, World!", "BBB", "AAA"};
         auto i = 0u;
         for (auto& value: expected) {
@@ -365,11 +365,11 @@ TEST_F(BinaryTreeTest, PostOrder) {
             ++i;
         }
     }
-    
+
     {
         multiple_insertion(dummy_list, dummy_values);
         auto postordered = dummy_list.post_order();
-        
+
         auto expected = {-10., -5.5, -5., 4.2, 3.1415, 7.5, 10., 0.};
         auto i = 0u;
         for (auto& value: expected) {

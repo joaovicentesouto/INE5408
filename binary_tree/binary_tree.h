@@ -34,8 +34,8 @@ class BinaryTree {
         {}
 
         T data_;
-        Node* left_;
-        Node* right_;
+        Node* left_{nullptr};
+        Node* right_{nullptr};
 
         //! Doc
         void insert(const T& data) {
@@ -210,21 +210,21 @@ std::size_t BinaryTree<T>::size() const {
 //! Doc
 template<typename T>
 ArrayList<T> BinaryTree<T>::pre_order() const {
-    ArrayList<T> array{size()};
+    ArrayList<T> v{size()};
     if (empty())
-        return array;
-    root_->pre_order(array);
-    return array;
+        return v;
+    root_->pre_order(v);
+    return v;
 }
 
 //! Doc
 template<typename T>
 ArrayList<T> BinaryTree<T>::in_order() const {
-    ArrayList<T> array{size()};
+    ArrayList<T> v{size()};
     if (empty())
-        return array;
-    root_->in_order(array);
-    return array;
+        return v;
+    root_->in_order(v);
+    return v;
 }
 
 //! Doc
