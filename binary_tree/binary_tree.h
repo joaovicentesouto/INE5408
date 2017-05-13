@@ -230,25 +230,28 @@ std::size_t BinaryTree<T>::size() const {
 //! Doc
 template<typename T>
 ArrayList<T> BinaryTree<T>::pre_order() const {
-    ArrayList<T> *v = new ArrayList<T>{size()};
-    root_->pre_order(*v);
-    return *v;
+    ArrayList<T> v{size()};
+    if (!empty())
+        root_->pre_order(v);
+    return v;
 }
 
 //! Doc
 template<typename T>
 ArrayList<T> BinaryTree<T>::in_order() const {
-    ArrayList<T> *v = new ArrayList<T>{size()};
-    root_->in_order(*v);
-    return *v;
+    ArrayList<T> v{size_};
+    if (!empty())
+        root_->in_order(v);
+    return v;
 }
 
 //! Doc
 template<typename T>
 ArrayList<T> BinaryTree<T>::post_order() const {
-    ArrayList<T> *v = new ArrayList<T>{size()};
-    root_->post_order(*v);
-    return *v;
+    ArrayList<T> v{size_};
+    if (!empty())
+        root_->post_order(v);
+    return v;
 }
 
 }  // namespace structures
