@@ -58,7 +58,7 @@ class BinaryTree {
             }
         }
 
-        //! Sem o uso de uma segunda função
+        /*! Sem o uso de uma segunda função
         bool remove(const T& data) {
             // Go to left
             if (data < data_) {
@@ -68,7 +68,7 @@ class BinaryTree {
             }
             // Go to right
             if (data > data_) {
-                if (left_ != nullptr)
+                if (right_ != nullptr)
                     return right_->remove(data);
                 return false;
             }
@@ -96,6 +96,53 @@ class BinaryTree {
                 left_ = nullptr;
                 return true;
             }
+            // PROBLEMA SE FOR FOLHA, NÃO CONSEGUE DELETAR A SI MESMA
+        } */
+
+        //! uso dos slides
+        bool remove(const T& data) {
+            bool deleted = false;
+            if (data < data_ && left_ != nullptr)
+                left_ = remove(data, left_, deleted);
+            else if (data > data_ && right_ != nullptr)
+                right_ = remove(data, right_, deleted);
+            return deleted;
+        }
+
+        //! metodo removeção dos slides
+        Node* remove(const T& data, Node* arv, bool& deleted) {
+            deleted = false;
+            if (arv == nullptr)
+                return arv;
+
+            // Go to left
+            if (data < arv->data_) {
+                arv->left_ = remove(data, arv->left_, deleted);
+                return arv;
+            }
+            // Go to right
+            if (data > arv->data_) {
+                arv->right_ = remove(data, arv->right_, deleted);
+                return arv;
+            }
+            // I found
+            // Two sons
+            if (arv->right_ != nullptr && arv->left_ != nullptr) {
+                Node* temp = arv->right_->minimum();
+                arv->data_ = temp->data_;
+                arv->right_ = remove(data, arv->right_, deleted);
+                return arv;
+            }
+            // One son or leaf
+            Node* temp = nullptr;
+            if (arv->right_ != nullptr)
+                temp = arv->right_;
+            else
+                temp = arv->left_;
+
+            delete arv;
+            deleted = true;
+            return temp;
         }
 
         //! Doc
@@ -174,7 +221,7 @@ void BinaryTree<T>::remove(const T& data) {
     if (empty())
         throw std::out_of_range("Empty tree!");
 
-    if (root_->right_ != nullptr || root_->left_ != nullptr) {
+    if (size() != 1u) {
         if (root_->remove(data))
             --size_;
     } else {

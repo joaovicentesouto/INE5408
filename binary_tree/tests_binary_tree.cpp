@@ -1,322 +1,386 @@
-//!  Copyright [2017] <João Vicente Souto>
-#ifndef STRUCTURES_BINARY_TREE_H
-#define STRUCTURES_BINARY_TREE_H
+// Copyright 2016 João Paulo Taylor Ienczak Zanette
 
-#include <cstdint>  // std::size_t
-#include <stdexcept>  // C++ exceptions
-#include "array_list.h"
+#include <string>
 
-namespace structures {
+#include "gtest/gtest.h"
+#include "binary_tree.h"
 
-//! Doc
-template<typename T>
-class BinaryTree {
- public:
-    BinaryTree();
-    ~BinaryTree();
+namespace {
 
-    void insert(const T& data);
-    void remove(const T& data);
-    bool contains(const T& data) const;
 
-    bool empty() const;
-    std::size_t size() const;
+/**
+ * Classe com propósito de oferecer maior robustez aos testes.
+ */
+class Dummy {
+public:
+    Dummy() = default;
+    Dummy(double value):
+        value_{value}
+    {}
 
-    ArrayList<T> pre_order() const;
-    ArrayList<T> in_order() const;
-    ArrayList<T> post_order() const;
+    /**
+     * Valor encapsulado
+     */
+    double value() const {
+        return value_;
+    }
 
- private:
-    //! Doc
-    struct Node {
-        explicit Node(const T& data) :
-        data_{data}
-        {}
+    bool operator<(const Dummy& other) const {
+        return value() < other.value();
+    }
 
-        T data_;
-        Node* left_{nullptr};
-        Node* right_{nullptr};
+    bool operator<=(const Dummy& other) const {
+        return value() <= other.value();
+    }
 
-        //! Doc
-        void insert(const T& data) {
-            if (data < data_) {
-                if (left_ == nullptr) {
-                    left_ = new Node(data);
-                    if (left_ == nullptr)
-                        throw std::out_of_range("Full tree!");
-                } else {
-                    left_->insert(data);
-                }
-            } else {
-                if (right_ == nullptr) {
-                    right_ = new Node(data);
-                    if (right_ == nullptr)
-                        throw std::out_of_range("Full tree!");
-                } else {
-                    right_->insert(data);
-                }
-            }
-        }
+    bool operator>(const Dummy& other) const {
+        return value() > other.value();
+    }
 
-        /*! Sem o uso de uma segunda função
-        bool remove(const T& data) {
-            // Go to left
-            if (data < data_) {
-                if (left_ != nullptr)
-                    return left_->remove(data);
-                return false;
-            }
-            // Go to right
-            if (data > data_) {
-                if (right_ != nullptr)
-                    return right_->remove(data);
-                return false;
-            }
-            // I found
-            // Two sons
-            if (right_ != nullptr && left_ != nullptr) {
-                data_ = right_->minimum()->data_;
-                return right_->remove(data_);
-            }
-            // One son or leaf
-            if (right_ != nullptr) {
-                data_ = right_->data_;
-                if (right_->right_ != nullptr || right_->left_ != nullptr)
-                    return right_->remove(data_);
-                // Son is a leaf
-                delete right_;
-                right_ = nullptr;
-                return true;
-            } else {
-                data_ = left_->data_;
-                if (left_->right_ != nullptr || left_->left_ != nullptr)
-                    return left_->remove(data_);
-                // Son is a leaf
-                delete left_;
-                left_ = nullptr;
-                return true;
-            }
-            // PROBLEMA SE FOR FOLHA, NÃO CONSEGUE DELETAR A SI MESMA
-        } */
+    bool operator>=(const Dummy& other) const {
+        return value() >= other.value();
+    }
 
-        //! uso dos slides
-        bool remove(const T& data) {
-            bool deleted = false;
-            if (data < data_ && left_ != nullptr)
-                left_ = remove(data, left_, deleted);
-            else if (data > data_ && right_ != nullptr)
-                right_ = remove(data, right_, deleted);
-            return deleted;
-        }
-
-        //! metodo removeção dos slides
-        Node* remove(const T& data, Node* arv, bool& deleted) {
-            deleted = false;
-            if (arv == nullptr)
-                return arv;
-
-            // Go to left
-            if (data < arv->data_) {
-                arv->left_ = remove(data, arv->left_, deleted);
-                return arv;
-            }
-            // Go to right
-            if (data > arv->data_) {
-                arv->right_ = remove(data, arv->right_, deleted);
-                return arv;
-            }
-            // I found
-            // Two sons
-            if (arv->right_ != nullptr && arv->left_ != nullptr) {
-                Node* temp = arv->right_->minimum();
-                arv->data_ = temp->data_;
-                arv->right_ = remove(data, arv->right_, deleted);
-                return arv;
-            }
-            // One son or leaf
-            Node* temp = nullptr;
-            if (arv->right_ != nullptr)
-                temp = arv->right_;
-            else
-                temp = arv->left_;
-
-            delete arv;
-            deleted = true;
-            return temp;
-        }
-
-        //! Doc
-        bool contains(const T& data) const {
-            if (data < data_)
-                return left_ == nullptr? false : left_->contains(data);
-            else if (data > data_)
-                return right_ == nullptr? false : right_->contains(data);
-            else
-                return true;
-        }
-
-        //! Doc
-        void pre_order(ArrayList<T>& v) const {
-            v.push_back(data_);
-            left_->pre_order(v);
-            right_->pre_order(v);
-        }
-
-        //! Doc
-        void in_order(ArrayList<T>& v) const {
-            left_->in_order(v);
-            v.push_back(data_);
-            right_->in_order(v);
-        }
-
-        //! Doc
-        void post_order(ArrayList<T>& v) const {
-            left_->post_order(v);
-            right_->post_order(v);
-            v.push_back(data_);
-        }
-
-     private:
-        //! Doc
-        Node* minimum() {
-            if (right_ == nullptr)
-                return this;
-            return right_->minimum();
-        }
-    };
-
-    //! Doc
-    //  Node* minimum(Node* arv);
-
-    Node* root_{nullptr};
-    std::size_t size_{0};
+    bool operator==(const Dummy& other) const {
+        return value() == other.value();
+    }
+private:
+    /**
+     * Valor encapsulado
+     */
+    double value_{0.};
 };
 
-//! Doc
-template<typename T>
-BinaryTree<T>::BinaryTree()
-{}
-
-//! Doc
-template<typename T>
-BinaryTree<T>::~BinaryTree()
-{}
-
-//! Doc
-template<typename T>
-void BinaryTree<T>::insert(const T& data) {
-    if (empty()) {
-        root_ = new Node(data);
-        if (root_ == nullptr)
-            throw std::out_of_range("Full tree!");
-    } else {
-        root_->insert(data);
-    }
-    ++size_;
+/**
+ * Sobrescrita do operador std::ostream<<(Dummy) para possibilitar printar um
+ * Dummy através do std::cout.
+ */
+std::ostream& operator<<(std::ostream& os, const Dummy& dummy) {
+    os << dummy.value();
+    return os;
 }
 
-//! Doc
-template<typename T>
-void BinaryTree<T>::remove(const T& data) {
-    if (empty())
-        throw std::out_of_range("Empty tree!");
 
-    if (size() != 1u) {
-        if (root_->remove(data))
-            --size_;
-    } else {
-        // If the root to delete and no sons
-        if (root_->data_ == data) {
-            delete root_;
-            root_ = nullptr;
-            --size_;
+/**
+ * Valores a serem inseridos na árvore de inteiros.
+ */
+const auto int_values = std::vector<int>{
+    10, 5, 8, 20, 25, 15, -5, -10, 30, -15
+};
+
+/**
+ * Valores a serem inseridos na árvore de strings.
+ */
+const auto string_values = std::vector<std::string>{
+    "AAA", "BBB", "123", "Hello, World!", "Goodbye, World!"
+};
+
+/**
+ * Valores a serem inseridos na árvore de dummies.
+ */
+const auto dummy_values = std::vector<Dummy>{
+    0., -5., 10., 7.5, -5.5, 3.1415, 4.2, -10.
+};
+
+
+/**
+ * Teste unitário para árvore binária
+ */
+class BinaryTreeTest: public testing::Test {
+protected:
+    /**
+     * Lista para teste com inteiros.
+     */
+    structures::BinaryTree<int> int_list{};
+    /**
+     * Lista para teste com strings.
+     */
+    structures::BinaryTree<std::string> string_list{};
+    /**
+     * Lista para teste com dummies.
+     */
+    structures::BinaryTree<Dummy> dummy_list{};
+
+    /**
+     * Testa uma inserção simples em uma lista.
+     */
+    template <typename T, typename U>
+    void simple_insertion(T& list, U& values) {
+        ASSERT_TRUE(list.empty());
+        list.insert(values[0]);
+        ASSERT_FALSE(list.empty());
+        ASSERT_EQ(1, list.size());
+    }
+
+    /**
+     * Testa a inserção de múltiplos valores em uma lista.
+     */
+    template <typename T, typename U>
+    void multiple_insertion(T& list, const U& values) {
+        ASSERT_TRUE(list.empty());
+        for (auto& value: values) {
+            list.insert(value);
+        }
+        ASSERT_FALSE(list.empty());
+        ASSERT_EQ(values.size(), list.size());
+    }
+
+    /**
+     * Testa se todos os valores inseridos estão na lista.
+     */
+    template <typename T, typename U>
+    void contains_all(const T& list, const U& values) {
+        for (auto& value: values) {
+            ASSERT_TRUE(list.contains(value));
+        }
+    }
+};
+
+}
+
+/**
+ * Testa se a árvore informa corretamente quando está vazia.
+ */
+TEST_F(BinaryTreeTest, Empty) {
+    ASSERT_TRUE(int_list.empty());
+    ASSERT_TRUE(string_list.empty());
+    ASSERT_TRUE(dummy_list.empty());
+}
+
+/**
+ * Testa se a árvore de inteiros permite corretamente a inserção de um elemento.
+ */
+TEST_F(BinaryTreeTest, SingleIntegerInsertion) {
+    simple_insertion(int_list, int_values);
+}
+
+/**
+ * Testa se a árvore de strings permite corretamente a inserção de um elemento.
+ */
+TEST_F(BinaryTreeTest, SingleStringInsertion) {
+    simple_insertion(string_list, string_values);
+}
+
+
+/**
+ * Testa se a árvore de um tipo qualquer permite corretamente a inserção de um
+ * elemento.
+ */
+TEST_F(BinaryTreeTest, SingleDummyInsertion) {
+    simple_insertion(dummy_list, dummy_values);
+}
+
+/**
+ * Testa se a árvore de inteiros permite corretamente a inserção de vários
+ * elementos.
+ */
+TEST_F(BinaryTreeTest, MultipleIntegerInsertion) {
+    multiple_insertion(int_list, int_values);
+}
+
+/**
+ * Testa se a árvore de strings permite corretamente a inserção de vários
+ * elementos.
+ */
+TEST_F(BinaryTreeTest, MultipleStringInsertion) {
+    multiple_insertion(string_list, string_values);
+}
+
+/**
+ * Testa se a árvore de um tipo qualquer permite corretamente a inserção de
+ * vários elementos.
+ */
+TEST_F(BinaryTreeTest, MultipleDummyInsertion) {
+    multiple_insertion(dummy_list, dummy_values);
+}
+
+/**
+ * Testa se a árvore checa corretamente a presença de um elemento.
+ */
+TEST_F(BinaryTreeTest, Contains) {
+    multiple_insertion(int_list, int_values);
+    multiple_insertion(string_list, string_values);
+    multiple_insertion(dummy_list, dummy_values);
+
+    contains_all(int_list, int_values);
+    contains_all(string_list, string_values);
+    contains_all(dummy_list, dummy_values);
+}
+
+/**
+ * Testa se a árvore checa corretamente a ausência de um elemento.
+ */
+TEST_F(BinaryTreeTest, NotContains) {
+    multiple_insertion(int_list, int_values);
+    multiple_insertion(string_list, string_values);
+    multiple_insertion(dummy_list, dummy_values);
+
+    ASSERT_FALSE(int_list.contains(3));
+    ASSERT_FALSE(string_list.contains("Hallo, World!"));
+    ASSERT_FALSE(dummy_list.contains(Dummy{4.3}));
+}
+
+/**
+ * Testa se a remoção de um elemento na árvore funciona como previsto.
+ */
+TEST_F(BinaryTreeTest, Remove) {
+    {
+        multiple_insertion(int_list, int_values);
+        auto size = int_list.size();
+        ASSERT_TRUE(int_list.contains(-15));
+        int_list.remove(-15);
+        ASSERT_FALSE(int_list.contains(-15));
+        ASSERT_EQ(size-1, int_list.size());
+    }
+
+    {
+        multiple_insertion(string_list, string_values);
+        auto size = string_list.size();
+        ASSERT_TRUE(string_list.contains("Hello, World!"));
+        string_list.remove("Hello, World!");
+        ASSERT_FALSE(string_list.contains("Hello, World!"));
+        ASSERT_EQ(size-1, string_list.size());
+    }
+
+    {
+        multiple_insertion(dummy_list, dummy_values);
+        auto size = dummy_list.size();
+
+        auto dummy = Dummy{4.2};
+
+        ASSERT_TRUE(dummy_list.contains(dummy));
+        dummy_list.remove(dummy);
+        ASSERT_FALSE(dummy_list.contains(dummy));
+        ASSERT_EQ(size-1, dummy_list.size());
+    }
+}
+
+/**
+ * Testa se a árvore gera corretamente uma lista por pré-ordem.
+ */
+TEST_F(BinaryTreeTest, PreOrder) {
+    {
+        multiple_insertion(int_list, int_values);
+        auto preordered = int_list.pre_order();
+
+        auto expected = {10, 5, -5, -10, -15, 8, 20, 15, 25, 30};
+        auto i = 0u;
+        for (auto& value: expected) {
+            ASSERT_EQ(value, preordered[i]);
+            ++i;
+        }
+    }
+
+    {
+        multiple_insertion(string_list, string_values);
+        auto preordered = string_list.pre_order();
+
+        auto expected = {"AAA", "123", "BBB", "Hello, World!", "Goodbye, World!"};
+        auto i = 0u;
+        for (auto& value: expected) {
+            ASSERT_EQ(value, preordered[i]);
+            ++i;
+        }
+    }
+
+    {
+        multiple_insertion(dummy_list, dummy_values);
+        auto preordered = dummy_list.pre_order();
+
+        auto expected = {0., -5., -5.5, -10., 10., 7.5, 3.1415, 4.2};
+        auto i = 0u;
+        for (auto& value: expected) {
+            ASSERT_EQ(Dummy{value}, preordered[i]);
+            ++i;
         }
     }
 }
 
-//! Doc
-template<typename T>
-bool BinaryTree<T>::contains(const T& data) const {
-    if (empty())
-        return false;
-    return root_->contains(data);
-}
+/**
+ * Testa se a árvore gera corretamente uma lista por em-ordem.
+ */
+TEST_F(BinaryTreeTest, InOrder) {
+    {
+        multiple_insertion(int_list, int_values);
+        auto inordered = int_list.in_order();
 
-//! Doc
-template<typename T>
-bool BinaryTree<T>::empty() const {
-    return size() == 0;
-}
-
-//! Doc
-template<typename T>
-std::size_t BinaryTree<T>::size() const {
-    return size_;
-}
-
-//! Doc
-template<typename T>
-ArrayList<T> BinaryTree<T>::pre_order() const {
-    ArrayList<T> v{size()};
-    if (empty())
-        return v;
-    root_->pre_order(v);
-    return v;
-}
-
-//! Doc
-template<typename T>
-ArrayList<T> BinaryTree<T>::in_order() const {
-    ArrayList<T> v{size()};
-    if (empty())
-        return v;
-    root_->in_order(v);
-    return v;
-}
-
-//! Doc
-template<typename T>
-ArrayList<T> BinaryTree<T>::post_order() const {
-    ArrayList<T> v{size()};
-    if (empty())
-        return v;
-    root_->post_order(v);
-    return v;
-}
-
-/* metodo removeção dos slides
-        Node* remove(const T& data, Node* arv) {
-            if (arv == nullptr)
-                return arv;
-            // Go to left
-            if (data < arv->data_) {
-                arv->left_ = remove(data, arv->left_);
-                return arv;
-            }
-            // Go to right
-            if (data > arv->data_) {
-                arv->right_ = remove(data, arv->right_);
-                return arv;
-            }
-            // I found
-            // Two sons
-            if (arv->right_ != nullptr && arv->left_ != nullptr) {
-                Node* temp = arv->right_->minimum();
-                arv->data_ = temp->data_;
-                arv->right_ = remove(data, arv->right_);
-                return arv;
-            }
-            // One son or leaf
-            Node* temp = nullptr;
-            if (arv->right_ != nullptr)
-                temp = arv->right_;
-            else
-                temp = arv->left_;
-
-            delete arv;
-            return temp;
+        auto expected = {-15, -10, -5, 5, 8, 10, 15, 20, 25, 30};
+        auto i = 0u;
+        for (auto& value: expected) {
+            ASSERT_EQ(value, inordered[i]);
+            ++i;
         }
-*/
-}  // namespace structures
+    }
 
-#endif
+    {
+        multiple_insertion(string_list, string_values);
+        auto inordered = string_list.in_order();
+
+        auto expected = {"123", "AAA", "BBB", "Goodbye, World!", "Hello, World!"};
+        auto i = 0u;
+        for (auto& value: expected) {
+            ASSERT_EQ(value, inordered[i]);
+            ++i;
+        }
+    }
+
+    {
+        multiple_insertion(dummy_list, dummy_values);
+        auto inordered = dummy_list.in_order();
+
+        auto expected = {-10., -5.5, -5., 0., 3.1415, 4.2, 7.5, 10.};
+        auto i = 0u;
+        for (auto& value: expected) {
+            ASSERT_EQ(Dummy{value}, inordered[i]);
+            ++i;
+        }
+        std::cout << std::endl;
+    }
+}
+
+/**
+ * Testa se a árvore gera corretamente uma lista por pós-ordem.
+ */
+TEST_F(BinaryTreeTest, PostOrder) {
+    {
+        multiple_insertion(int_list, int_values);
+        auto postordered = int_list.post_order();
+
+        auto expected = {-15, -10, -5, 8, 5, 15, 30, 25, 20, 10};
+        auto i = 0u;
+        for (auto& value: expected) {
+            ASSERT_EQ(value, postordered[i]);
+            ++i;
+        }
+    }
+
+    {
+        multiple_insertion(string_list, string_values);
+        auto postordered = string_list.post_order();
+
+        auto expected = {"123", "Goodbye, World!", "Hello, World!", "BBB", "AAA"};
+        auto i = 0u;
+        for (auto& value: expected) {
+            ASSERT_EQ(value, postordered[i]);
+            ++i;
+        }
+    }
+
+    {
+        multiple_insertion(dummy_list, dummy_values);
+        auto postordered = dummy_list.post_order();
+
+        auto expected = {-10., -5.5, -5., 4.2, 3.1415, 7.5, 10., 0.};
+        auto i = 0u;
+        for (auto& value: expected) {
+            ASSERT_EQ(Dummy{value}, postordered[i]);
+            ++i;
+        }
+    }
+}
+
+
+int main(int argc, char* argv[]) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
