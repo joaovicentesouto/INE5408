@@ -91,7 +91,7 @@ class BinaryTree {
                 left_ = remove(data, left_, deleted);
             } else if (data > data_ && right_ != nullptr) {
                 right_ = remove(data, right_, deleted);
-            } else if (data == data_) {
+            } else {
                 if (right_ != nullptr && left_ != nullptr) {
                     Node* temp = right_->minimum();
                     data_ = temp->data_;
