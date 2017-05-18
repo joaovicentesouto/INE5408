@@ -117,8 +117,8 @@ private:
             } else {
                 // Balança o filho da esquerda
                 if (left_ != nullptr) {
+                    left_->updateHeight();
                     switch (left_->type_balance()) {
-                        left_->updateHeight();
                         case 0:  // balanceado
                             h_left = height(left_->left_);
                             h_right = height(left_->right_);
@@ -139,7 +139,8 @@ private:
                         default :
                             break;
                     }
-                } else if (right_ != nullptr) {
+                }
+                if (right_ != nullptr) {
                     right_->updateHeight();
                     switch (right_->type_balance()) {
                         case 0:  // balanceado
@@ -194,8 +195,8 @@ private:
             left_ = temp->right_;
             temp->right_ = this;
 
-            height_ = std::max(left_->height_, right_->height_ + 1);
-            temp->height_ = std::max(temp->left_->height_, height_) + 1;
+            height_ = std::max(height(left_), height(right_) + 1);
+            temp->height_ = std::max(height(temp->left_), height(this)) + 1;
 
             return temp;
         }
@@ -206,8 +207,8 @@ private:
             right_ = temp->left_;
             temp->left_ = this;
 
-            height_ = std::max(right_->height_, left_->height_ + 1);
-            temp->height_ = std::max(temp->right_->height_, height_) + 1;
+            height_ = std::max(height(right_), height(left_) + 1);
+            temp->height_ = std::max(height(temp->right_), height(this)) + 1;
 
             return temp;
         }
@@ -329,8 +330,31 @@ void AVLTree<T>::insert(const T& data) {
     } else {
         root_->insert(data);
     }
-    root_->updateHeight();
     ++size_;
+
+    int h_left, h_right;
+    root_->updateHeight();
+    switch (root_->type_balance()) {
+        case 0:  // balanceado
+            h_left = root_->height(root_->left_);
+            h_right = root_->height(root_->right_);
+            root_->height_ = std::max(h_left, h_right) + 1;
+            break;
+        case 1:  // Esquerda-esquerda
+            root_ = root_->simpleLeft();
+            break;
+        case 2:  // Esquerda-direita
+            root_ = root_->doubleLeft();
+            break;
+        case 3:  // Direita-direita
+            root_ = root_->simpleRight();
+            break;
+        case 4:  // Direita-esquerda
+            root_ = root_->doubleRight();
+            break;
+        default :
+            break;
+    }
 }
 
 //! Doc
