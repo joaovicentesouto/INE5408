@@ -5,6 +5,7 @@
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
 #include <algorithm>
+#include <cmath> // pow
 
 #include <iostream>
 #include <fstream>
@@ -64,10 +65,10 @@ private:
   private:
     char primary_[100]{"@"},
          secondary_[100]{"&"};
-    size_t depth_{0u}, offset_{0u};
+    size_t offset_{0u};
   };
 
-  void new_level();
+  void new_level(const size_t level);
 
   size_t depth_{0u}, size_{0u};
 };
@@ -79,12 +80,7 @@ KDTreeOnDisk::KDTreeOnDisk() {
   tree.close();
 }
 
-KDTreeOnDisk::~KDTreeOnDisk() {
-  if(tree_.is_open)
-    tree_.close();
-  if(manpages_.is_open)
-    manpages_.close();
-}
+KDTreeOnDisk::~KDTreeOnDisk() {}
 
 void KDTreeOnDisk::insert(const char* key_1,
                           const char* key_2,
@@ -93,7 +89,6 @@ void KDTreeOnDisk::insert(const char* key_1,
   tree.open("./tree.dat", ios::in | ios::out | ios::binary);
 
   char primary[100], secondary[100];
-  bool done = false;
   int compare_x = 0, compare_y = 0, left = false;
   size_t offset_tree = 0u, direction, level = 0u;
 
@@ -105,14 +100,15 @@ void KDTreeOnDisk::insert(const char* key_1,
     tree.read(reinterpret_cast<char*>(&secondary), sizeof(secondary));
 
     if (primary[0] == '@') {
-      Node tnode = new Node(key_1, key_2, offset);
+      Node *tnode = new Node(key_1, key_2, offset);
       if (tnode == nullptr)
-        throw std:out_of_range("Full tree!");
+        throw std::out_of_range("Full tree!");
 
+      cout << offset_tree << " " << size_ << endl;
       tree.seekp(offset_tree);
       tree.write(reinterpret_cast<char*>(tnode), sizeof(Node));
       ++size_;
-      new_level(level);
+      delete tnode;
       break;
     }
 
@@ -122,7 +118,7 @@ void KDTreeOnDisk::insert(const char* key_1,
     if (compare_x == 0 && compare_y == 0) // node ja existe
       break;
 
-    if ((profundity % 2) == 0) { // x
+    if ((level % 2) == 0) { // x
       left = (compare_x < 0 || (compare_x == 0 && compare_y < 0));
       if (left) {
         direction = 1;
@@ -141,16 +137,16 @@ void KDTreeOnDisk::insert(const char* key_1,
     tree.seekg(2*offset_tree + sizeof(Node)*direction);
     ++level;
   }
+  tree.close();
+  new_level(level);
 }
 
 void KDTreeOnDisk::new_level(const size_t level) {
   if (level == depth_) {
-    ofstream tree("./tree.dat", ios::out | ios::binary);
-    tree.seekp((2**(depth_+1)-1)*sizeof(Node));
+    fstream tree("./tree.dat", ios::out | ios::binary);
+    tree.seekp((pow(2,(depth_+1))-1)*sizeof(Node));
     Node tnode;
-    for (size_t i = 0; i < 2**(depth_+1); ++i) {
-      if (!tree.good())
-        break;
+    for (size_t i = 0; i < pow(2,(depth_+1)); ++i) {
       tree.write(reinterpret_cast<char*>(&tnode), sizeof(tnode));
     }
     depth_++;
@@ -161,6 +157,9 @@ bool KDTreeOnDisk::empty() const {
   return size_ == 0u;
 }
 size_t KDTreeOnDisk::size() const {
+  struct stat st;
+  if (stat("./tree.dat", &st) == 0)
+    cout << st.st_size << endl;
   return size_;
 }
 
