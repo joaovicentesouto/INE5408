@@ -28,7 +28,7 @@ public:
 
   void print() {
     cout << "Chave 1: " << primary_key_ << endl;
-    cout << "Chave 2: " << secondary_key_ << endl;
+    //cout << "Chave 2: " << secondary_key_ << endl;
   }
 
 private:
@@ -39,7 +39,7 @@ private:
 
 int main() {
 
-  size_t quant_nodes = 0u;
+  size_t profundidade = 3u, quant_nodes = 0u;
   fstream f;
   f.open("file.dat", ios::in | ios::out | ios::binary | ios::trunc); // open or create
 
@@ -72,19 +72,17 @@ int main() {
   cout << "\nQuantidade de nodes criados: " << quant_nodes << endl;
   cout << "Tamanho do arquivo: " << file_size() << endl;
 
-  /*
-  Node test;
-  size_t i = 0;
+  // Pegando todos os filhos da esquerda
+  int level = 0;
   f.seekg(0);
-  while (f.read(reinterpret_cast<char*>(&test), sizeof(Node))) {
-    test.print();
-    f.seekg(sizeof(Node)*(++i));
-  }*/
-
-  f.seekg(100);
-  char text[100];
-  f.read((char*)&text, sizeof(text));
-  cout << "Pegando e imprimindo só a chave 1 do node 1: " << text << endl;
+  Node temp;
+  do {
+    f.read(reinterpret_cast<char*>(&temp), sizeof(Node));
+    temp.print();
+    cout << "Ponto de leitura: " << f.tellg() << endl;
+    f.seekg(2*f.tellg() - sizeof(Node)); // Pega filho da esquerda
+    cout << "Ponto de leitura: " << f.tellg() << endl;
+  } while(level++ < 3);
 
   f.close();
   return 0;
@@ -92,6 +90,7 @@ int main() {
 
 size_t file_size() {
   // Só funciona se eu chamar tellg ou p no main duas vezes...
+  // ou da erro pq o arquivo está aberto, testar isso.
   struct stat st;
   if (stat("file.dat", &st) == 0)
     return st.st_size;
