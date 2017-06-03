@@ -60,7 +60,6 @@ int main() {
     //cout << "Ponto de leitura: " << f.tellg() << endl;
     cout << "Ponto de escrita: " << f.tellp() << endl;
     f.write(reinterpret_cast<char*>(&nod), sizeof(Node));
-
     cout << "Ponto de escrita: " << f.tellp() << endl;
     //cout << "Ponto de leitura: " << f.tellg() << endl;
 
@@ -73,23 +72,28 @@ int main() {
   cout << "\nQuantidade de nodes criados: " << quant_nodes << endl;
   cout << "Tamanho do arquivo: " << file_size() << endl;
 
-
+  /*
   Node test;
   size_t i = 0;
-
   f.seekg(0);
   while (f.read(reinterpret_cast<char*>(&test), sizeof(Node))) {
     test.print();
     f.seekg(sizeof(Node)*(++i));
-  }
+  }*/
+
+  f.seekg(100);
+  char text[100];
+  f.read((char*)&text, sizeof(text));
+  cout << "Pegando e imprimindo só a chave 1 do node 1: " << text << endl;
 
   f.close();
   return 0;
 }
 
 size_t file_size() {
-  struct stat results;
-  if (stat("file.dat", &results) == 0)
-    return results.st_size;
+  // Só funciona se eu chamar tellg ou p no main duas vezes...
+  struct stat st;
+  if (stat("file.dat", &st) == 0)
+    return st.st_size;
   return 0u;
 }
