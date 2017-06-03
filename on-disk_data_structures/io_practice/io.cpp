@@ -3,7 +3,6 @@
 #include <fstream>
 #include <cstdio>  // para gets()
 #include <sys/stat.h>
-#include <string>
 
 using namespace std;
 
