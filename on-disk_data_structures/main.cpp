@@ -25,5 +25,10 @@ int main(int argc, char const *argv[]) {
 
   cout << "Tamanho depois: " << tree.size() << endl;
 
+  ifstream fin("./tree.dat", ios::in | ios::binary);
+  char t[100];
+  fin.read(t, sizeof(t));
+  cout << "Primeira posicao da arvore depois de acabar: " << t << endl;
+
   return 0;
 }

@@ -92,12 +92,14 @@ void KDTreeOnDisk::insert(const char* key_1,
   int compare_x = 0, compare_y = 0, left = false;
   size_t offset_tree = 0u, direction, level = 0u;
 
-  tree.seekg(offset_tree);
+  tree.seekg(0);
   while (tree.good()) {
     offset_tree = tree.tellg();
 
-    tree.read(reinterpret_cast<char*>(&primary), sizeof(primary));
-    tree.read(reinterpret_cast<char*>(&secondary), sizeof(secondary));
+    tree.read(primary, sizeof(primary));
+    tree.read(secondary, sizeof(secondary));
+    tree.seekp(offset_tree);
+    cout << "p: " << primary << " s: " << secondary << endl;
 
     if (primary[0] == '@') {
       Node *tnode = new Node(key_1, key_2, offset);
@@ -105,7 +107,6 @@ void KDTreeOnDisk::insert(const char* key_1,
         throw std::out_of_range("Full tree!");
 
       cout << offset_tree << " " << size_ << endl;
-      tree.seekp(offset_tree);
       tree.write(reinterpret_cast<char*>(tnode), sizeof(Node));
       ++size_;
       delete tnode;
@@ -114,6 +115,8 @@ void KDTreeOnDisk::insert(const char* key_1,
 
     compare_x = strcmp(key_1, primary);
     compare_y = strcmp(key_2, secondary);
+
+    cout << "x: " << compare_x << " y: " << compare_y << endl;
 
     if (compare_x == 0 && compare_y == 0) // node ja existe
       break;
@@ -135,6 +138,7 @@ void KDTreeOnDisk::insert(const char* key_1,
     }
 
     tree.seekg(2*offset_tree + sizeof(Node)*direction);
+    //cout << "tellg: " << tree.tellg() << endl;
     ++level;
   }
   tree.close();
@@ -143,10 +147,12 @@ void KDTreeOnDisk::insert(const char* key_1,
 
 void KDTreeOnDisk::new_level(const size_t level) {
   if (level == depth_) {
-    fstream tree("./tree.dat", ios::out | ios::binary);
+    //ofstream tree("./tree.dat", ios::out | ios::binary);
+    ofstream tree("tree.dat", std::ios_base::app | ios::binary);
     tree.seekp((pow(2,(depth_+1))-1)*sizeof(Node));
     Node tnode;
     for (size_t i = 0; i < pow(2,(depth_+1)); ++i) {
+      //cout << "onde level vai escrever: " << tree.tellp() << endl;
       tree.write(reinterpret_cast<char*>(&tnode), sizeof(tnode));
     }
     depth_++;
