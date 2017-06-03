@@ -1,6 +1,6 @@
-## Projeto II: Utilizando Arquivos Invertidos para Suporte à Busca Textual Indexada sobre Manpages Unix
+# Projeto II: Utilizando Arquivos Invertidos para Suporte à Busca Textual Indexada sobre Manpages Unix
 
-##### Requisitos
+### Requisitos
 
 Como foi visto em aula, as formas de indexação de arquivos utilizando listas são muito úteis para indexação por chave secundária. Quando os dados se encontram na forma de arquivos-texto contendo palavras-chave ou referências por metadados, então a Lista Invertida ou Arquivo Invertido é a forma de representação de nossa escolha.
 
@@ -8,7 +8,7 @@ Neste trabalho você implementará um sistema de recuperação de informações 
 
 O software que você vai desenvolver deverá satisfazer os seguintes requisitos:
 
-##### Dados:
+### Dados:
 
 - Todo o conteúdo de todas as _MANPAGES_ será armazenadas na forma de registros em um arquivo de dados que será chamado de **manpages.dat**.
   - O texto completo de cada _MANPAGE_ será armazenado em um campo de um registro, o campo **conteudo**.
@@ -16,7 +16,7 @@ O software que você vai desenvolver deverá satisfazer os seguintes requisitos:
   - O registro poderá conter outros campos que o programador considerar necessários.
 - Todos os índices secundários referenciarão o campo texto como um todo, sem se preocupar com onde no texto esteja a palavra-chave indexada.
 
-##### Indexação
+### Indexação
 
 - Manter um índice primário em arquivo separado e que referencia as MANPAGES por nome, ex: **"fseek"**.
   - Este índice deve ser baseado em uma estrutura em árvore para indexação primária que você já programou como a **árvore-B, R-B, AVL ou K-D**.
@@ -27,7 +27,7 @@ O software que você vai desenvolver deverá satisfazer os seguintes requisitos:
   - Incluir no índice invertido toda palavra que ainda não estiver nele
   - Criar uma entrada para as palavras que já estiverem indexadas
 
-###### O software desenvolvido deverá ser capaz de realizar as seguintes buscas:
+#### O software desenvolvido deverá ser capaz de realizar as seguintes buscas:
 
 - Por chave primária, retornando o texto da MANPAGE para um nome-de-comando ou a mensagem de que uma MANPAGE com aquele nome não existe (3 pontos)
 - Busca simples por chave secundária, retornando todas as MANPAGES que contém uma determinada chave secundária, ex.: filename (4 pontos)
@@ -39,7 +39,7 @@ Não será aceito trabalho que utilizar a memória principal do computador para 
 
 Lembre-se que para a pesquisa conjuntiva você deve gerar uma tabela temporária. Esta pode ser gerada na memória como um vetor. Para realizar a pesquisa comparativa você pode usar o algoritmo de [Pesquisa de Co-Ocorrência em duas Listas Não-Ordenadas.](http://www.inf.ufsc.br/%7Eine5384-hp/Arquivos/invertido.html#Pesquisa_de_Co-Ocorr%EAncia_em_duas_Listas)
 
-###### A entrada dos dados deverá ser realizada da seguinte forma:
+#### A entrada dos dados deverá ser realizada da seguinte forma:
 
 - Cada arquivo-texto de uma MANPAGE é lido e armazenado em um registro, cujo endereço é guardado.
 - Percorre-se o texto (na memória) palavra a palavra e verifica-se, para cada palavra, se ela se encontra na lista de palavras-chave.
