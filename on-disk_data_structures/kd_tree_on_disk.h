@@ -71,6 +71,26 @@ private:
     size_t offset_{0u};
   };
 
+  class Descent {
+  public:
+    Descent() {}
+
+    Descent(const size_t offset, const size_t level) :
+    offset_{offset},
+    level_{level}
+    {}
+
+    Descent& operator=(const Descent& other) {
+        if (this != &other) { // self-assignment check expected
+            this->offset_ = other.offset_;
+            this->level_ = other.level_;
+        }
+        return *this;
+    }
+
+    size_t offset_{0u}, level_{0u};
+  };
+
   void new_level(const size_t level);
 
   size_t depth_{0u}, size_{0u};
@@ -163,39 +183,59 @@ size_t KDTreeOnDisk::file_size() const {
   return st.st_size;
 }
 
-size_t search_primary_key(const char* wanted) {
+size_t KDTreeOnDisk::search_primary_key(const char* wanted) {
   // Guardar o deslocamento (e a profundidade???) em uma pilha quando tiver
   // que descer por dois caminhos diferentes, sem recursividade, sem back-tracking
-  LinkedStack<size_t> deviations; // desvios
-  char primary[100], secondary[100];
-  size_t offset;
+  LinkedStack<Descent> deviations; // desvios
+  char primary[100];
+  size_t offset, level = 0;
   int compare;
+  bool leaf = false;
 
   ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
-
-  deviations.push(0u); // ???
+  tree.seekg(0); // inicio do arquivo
 
   do {
-    offset = deviations.pop();
-    tree.seekg("...");
+    leaf = false;
+    offset = tree.tellg();
+    cout << offset << endl;
+    //break;
     tree.read(primary, sizeof(primary));
-    compare = strcmp(primary, wanted);
 
-    if (compare == 0) {
-      tree.seekg("...");
-      tree.read(offset, sizeof(size_t));
+    if (primary[0] == '@') { // node nulo
+      try {
+        Descent desc = deviations.pop();
+        tree.seekg(desc.offset_);
+        level = desc.level_;
+        leaf = true;
+        continue;
+      } catch(std::out_of_range error) {
+        break;  // pilha vazia
+      }
+    }
+
+    compare = strcmp(wanted, primary);
+
+    if (compare == 0) {  // achei
+      tree.seekg(offset+200);  // (começo+pri+sec)_pegar o offset do node
+      tree.read(reinterpret_cast<char*>(&offset), sizeof(size_t));
+      cout << "li" << offset << endl;
       return offset;
     }
 
-    if (profundidade % 2 == 0) { // dimensao x
-      // vai para um lado apenas
+    if (level % 2 == 0) { // dimensao x
+      if (compare < 0)
+        tree.seekg(2*offset + sizeof(Node)*1);  // esquerda
+      else
+        tree.seekg(2*offset + sizeof(Node)*2);  // direita
     } else {
-      // tem que ir pros dois
+        tree.seekg(2*offset + sizeof(Node)*1);  // esquerda
+        Descent desc((2*offset + sizeof(Node)*2), level+1);
+        deviations.push(desc);
     }
 
-    profundidade++;
-    deviations.push("..."); // se nao for folha
-  } while (!deviations.empty());
+    ++level;
+  } while (!deviations.empty() || !leaf);
 
   return 0;
 }

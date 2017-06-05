@@ -17,16 +17,24 @@ int main(int argc, char const *argv[]) {
 
   cout << "Tamanho antes: " << tree.size() << endl;
 
-  tree.insert((char*)"c", (char*)"c", 0);
-  tree.insert((char*)"c", (char*)"d", 1);
-  tree.insert((char*)"d", (char*)"a", 2);
-  tree.insert((char*)"a", (char*)"b", 3);
-  tree.insert((char*)"a", (char*)"a", 4);
-  tree.insert((char*)"b", (char*)"c", 5);
-  tree.insert((char*)"b", (char*)"d", 6);
-  tree.insert((char*)"b", (char*)"b", 7);
+  tree.insert((char*)"e", (char*)"e", 0);
+  tree.insert((char*)"c", (char*)"c", 1);
+  tree.insert((char*)"g", (char*)"g", 2);
+  tree.insert((char*)"b", (char*)"b", 3);
+  tree.insert((char*)"d", (char*)"d", 4);
+  tree.insert((char*)"f", (char*)"f", 5);
+  tree.insert((char*)"h", (char*)"h", 6);
+  tree.insert((char*)"a", (char*)"a", 7);
+  tree.insert((char*)"i", (char*)"i", 8);
 
   cout << "Tamanho depois: " << tree.size() << endl;
+
+  try {
+    size_t offset = tree.search_primary_key("d");
+    cout << "O deslocamento é: " << offset << endl;
+  } catch (std::out_of_range error) {
+    cout << error.what() << endl;
+  }
 
   return 0;
 }
