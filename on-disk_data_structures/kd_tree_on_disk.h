@@ -34,7 +34,7 @@ public:
   size_t file_size() const;
 
   int search_primary_key(const char* wanted);  //!< retorna o offset
-  LinkedList<char*> search_secondary_key(const char* wanted) const;
+  LinkedList<char*>* search_secondary_key(const char* wanted) const;
   //ArrayList<T> conjunction_search(const char* w1, const char* w2) const;
   //ArrayList<T> disjunction_search(const char* w1, const char* w2) const;
 
@@ -237,6 +237,62 @@ int KDTreeOnDisk::search_primary_key(const char* wanted) { // return -1 erro
   } while (!deviations.empty() || leaf || level < depth_);
 
   return -1;
+}
+
+LinkedList<char*>* KDTreeOnDisk::search_secondary_key(const char* wanted) const {
+  LinkedStack<Descent> deviations; // desvios
+  LinkedList<char*>* list = new LinkedList<char*>();
+
+  char primary[100], secondary[100];
+  size_t offset_tree, level = 0;
+  int compare;
+  bool leaf = false;
+
+  ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
+  tree.seekg(0); // inicio do arquivo
+
+  do {
+    leaf = false;
+    offset_tree = tree.tellg();
+    //cout << offset_tree << endl; // por onde estamos indo
+    tree.seekg(offset_tree+sizeof(primary));
+    tree.read(secondary, sizeof(secondary));
+
+    if (secondary[0] == '&') { // node nulo
+      try {
+        Descent desc = deviations.pop();
+        tree.seekg(desc.offset_tree_);
+        level = desc.level_;
+        leaf = true;
+        continue;
+      } catch(std::out_of_range error) {
+        break;  // pilha vazia
+      }
+    }
+
+    compare = strcmp(wanted, secondary);
+
+    if (compare == 0) {  // achei
+      tree.seekg(offset_tree);  // (começo+pri+sec)_pegar o offset do node
+      tree.read(primary, sizeof(primary));
+      list->insert_sorted(primary);
+    }
+
+    if (level % 2 == 1 && compare != 0) { // dimensao x
+      if (compare < 0)
+        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
+      else
+        tree.seekg(2*offset_tree + sizeof(Node)*2);  // direita
+    } else {
+        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
+        Descent desc((2*offset_tree + sizeof(Node)*2), level+1);
+        deviations.push(desc);
+    }
+
+    ++level;
+  } while (!deviations.empty() || leaf || level < depth_);
+
+  return list;
 }
 
 }  //  namespace structures

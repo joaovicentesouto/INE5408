@@ -7,6 +7,8 @@
 #include <cstdio>  // para gets()
 #include <sys/stat.h>
 
+#include <typeinfo>
+
 #include "./kd_tree_on_disk.h"
 
 using namespace structures;
@@ -33,6 +35,17 @@ int main(int argc, char const *argv[]) {
 
   int offset = tree.search_primary_key("k");
   cout << "O deslocamento é: " << offset << endl;
+
+  LinkedList<char*> *list = tree.search_secondary_key("g");
+  cout << "Tamanho lista: " << list->size() << endl;
+
+  cout << "tipo da lista: " << typeid(list->at(0)).name() << endl;
+
+  char* t;
+  for (size_t i = 0; i < list->size(); i++) {
+    t = list->at(i);
+    cout << "i: " << i <<  " = " << t << endl;
+  }
 
   return 0;
 }
