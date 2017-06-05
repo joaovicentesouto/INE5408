@@ -19,22 +19,20 @@ int main(int argc, char const *argv[]) {
 
   tree.insert((char*)"e", (char*)"e", 0);
   tree.insert((char*)"c", (char*)"c", 1);
-  //tree.insert((char*)"g", (char*)"g", 2);
+  tree.insert((char*)"g", (char*)"g", 2);
   tree.insert((char*)"b", (char*)"b", 3);
   tree.insert((char*)"d", (char*)"d", 4);
-  //tree.insert((char*)"f", (char*)"f", 5);
-  //tree.insert((char*)"h", (char*)"h", 6);
+  tree.insert((char*)"f", (char*)"f", 5);
+  tree.insert((char*)"h", (char*)"h", 6);
   tree.insert((char*)"a", (char*)"a", 7);
-  //tree.insert((char*)"i", (char*)"i", 8);
+  tree.insert((char*)"i", (char*)"i", 8);
+  tree.insert((char*)"j", (char*)"a", 9);
+  tree.insert((char*)"k", (char*)"b", 10);
 
   cout << "Tamanho depois: " << tree.size() << endl;
 
-  try {
-    size_t offset = tree.search_primary_key("a");
-    cout << "O deslocamento é: " << offset << endl;
-  } catch (std::out_of_range error) {
-    cout << error.what() << endl;
-  }
+  int offset = tree.search_primary_key("k");
+  cout << "O deslocamento é: " << offset << endl;
 
   return 0;
 }

@@ -12,6 +12,7 @@
 #include <cstdio>  // para gets()
 #include <sys/stat.h>
 
+#include "./structures/linked_list.h"
 #include "./structures/linked_stack.h"
 
 using namespace std;
@@ -32,8 +33,8 @@ public:
   size_t size() const;
   size_t file_size() const;
 
-  size_t search_primary_key(const char* wanted);  //!< retorna o offset
-  //ArrayList<T> search_secondary_key(const char* wanted) const;
+  int search_primary_key(const char* wanted);  //!< retorna o offset
+  LinkedList<char*> search_secondary_key(const char* wanted) const;
   //ArrayList<T> conjunction_search(const char* w1, const char* w2) const;
   //ArrayList<T> disjunction_search(const char* w1, const char* w2) const;
 
@@ -76,19 +77,19 @@ private:
     Descent() {}
 
     Descent(const size_t offset, const size_t level) :
-    offset_{offset},
+    offset_tree_{offset},
     level_{level}
     {}
 
     Descent& operator=(const Descent& other) {
         if (this != &other) { // self-assignment check expected
-            this->offset_ = other.offset_;
+            this->offset_tree_ = other.offset_tree_;
             this->level_ = other.level_;
         }
         return *this;
     }
 
-    size_t offset_{0u}, level_{0u};
+    size_t offset_tree_{0u}, level_{0u};
   };
 
   void new_level(const size_t level);
@@ -183,13 +184,13 @@ size_t KDTreeOnDisk::file_size() const {
   return st.st_size;
 }
 
-size_t KDTreeOnDisk::search_primary_key(const char* wanted) {
-  // Guardar o deslocamento (e a profundidade???) em uma pilha quando tiver
-  // que descer por dois caminhos diferentes, sem recursividade, sem back-tracking
+int KDTreeOnDisk::search_primary_key(const char* wanted) { // return -1 erro
+  // Guardar o deslocamento e nível em uma pilha quando tiver
+  // que descer por dois caminhos diferentes.
   LinkedStack<Descent> deviations; // desvios
   char primary[100];
   size_t offset, level = 0;
-  int compare;
+  int compare, offset_tree;
   bool leaf = false;
 
   ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
@@ -197,15 +198,14 @@ size_t KDTreeOnDisk::search_primary_key(const char* wanted) {
 
   do {
     leaf = false;
-    offset = tree.tellg();
-    cout << offset << endl;
-    //break;
+    offset_tree = tree.tellg();
+    //cout << offset_tree << endl; // por onde estamos indo
     tree.read(primary, sizeof(primary));
 
     if (primary[0] == '@') { // node nulo
       try {
         Descent desc = deviations.pop();
-        tree.seekg(desc.offset_);
+        tree.seekg(desc.offset_tree_);
         level = desc.level_;
         leaf = true;
         continue;
@@ -217,27 +217,26 @@ size_t KDTreeOnDisk::search_primary_key(const char* wanted) {
     compare = strcmp(wanted, primary);
 
     if (compare == 0) {  // achei
-      tree.seekg(offset+200);  // (começo+pri+sec)_pegar o offset do node
+      tree.seekg(offset_tree+200);  // (começo+pri+sec)_pegar o offset do node
       tree.read(reinterpret_cast<char*>(&offset), sizeof(size_t));
-      cout << "li" << offset << endl;
       return offset;
     }
 
     if (level % 2 == 0) { // dimensao x
       if (compare < 0)
-        tree.seekg(2*offset + sizeof(Node)*1);  // esquerda
+        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
       else
-        tree.seekg(2*offset + sizeof(Node)*2);  // direita
+        tree.seekg(2*offset_tree + sizeof(Node)*2);  // direita
     } else {
-        tree.seekg(2*offset + sizeof(Node)*1);  // esquerda
-        Descent desc((2*offset + sizeof(Node)*2), level+1);
+        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
+        Descent desc((2*offset_tree + sizeof(Node)*2), level+1);
         deviations.push(desc);
     }
 
     ++level;
   } while (!deviations.empty() || leaf || level < depth_);
 
-  return 0;
+  return -1;
 }
 
 }  //  namespace structures

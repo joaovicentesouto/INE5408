@@ -269,10 +269,15 @@ void LinkedList<T>::insert_sorted(const T& data) {
     if (empty()) {
         push_front(data);
     } else {
+        bool duplicate = false;
         Node* current = head;
         Node* before = head;
         std::size_t position = size();
         for (auto i = 0u; i < size(); ++i) {
+            if (data == current->data()) {
+              duplicate = true;
+              break;
+            }
             if (!(data > current->data())) {
                 position = i;
                 break;
@@ -280,7 +285,8 @@ void LinkedList<T>::insert_sorted(const T& data) {
             before = current;
             current = current->next();
         }
-        position == 0? push_front(data) : insert(data, before);
+        if (!duplicate)
+          position == 0? push_front(data) : insert(data, before);
     }
 }
 
