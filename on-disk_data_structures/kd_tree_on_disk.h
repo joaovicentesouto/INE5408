@@ -12,6 +12,8 @@
 #include <cstdio>  // para gets()
 #include <sys/stat.h>
 
+#include "./structures/linked_stack.h"
+
 using namespace std;
 
 namespace structures {
@@ -30,7 +32,7 @@ public:
   size_t size() const;
   size_t file_size() const;
 
-  //size_t search_primary_key(const char* wanted) const;
+  size_t search_primary_key(const char* wanted);  //!< retorna o offset
   //ArrayList<T> search_secondary_key(const char* wanted) const;
   //ArrayList<T> conjunction_search(const char* w1, const char* w2) const;
   //ArrayList<T> disjunction_search(const char* w1, const char* w2) const;
@@ -159,6 +161,43 @@ size_t KDTreeOnDisk::file_size() const {
   if (stat("./tree.dat", &st) != 0)
     throw std::out_of_range("Erro ao verificar tamanho do arquivo.");
   return st.st_size;
+}
+
+size_t search_primary_key(const char* wanted) {
+  // Guardar o deslocamento (e a profundidade???) em uma pilha quando tiver
+  // que descer por dois caminhos diferentes, sem recursividade, sem back-tracking
+  LinkedStack<size_t> deviations; // desvios
+  char primary[100], secondary[100];
+  size_t offset;
+  int compare;
+
+  ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
+
+  deviations.push(0u); // ???
+
+  do {
+    offset = deviations.pop();
+    tree.seekg("...");
+    tree.read(primary, sizeof(primary));
+    compare = strcmp(primary, wanted);
+
+    if (compare == 0) {
+      tree.seekg("...");
+      tree.read(offset, sizeof(size_t));
+      return offset;
+    }
+
+    if (profundidade % 2 == 0) { // dimensao x
+      // vai para um lado apenas
+    } else {
+      // tem que ir pros dois
+    }
+
+    profundidade++;
+    deviations.push("..."); // se nao for folha
+  } while (!deviations.empty());
+
+  return 0;
 }
 
 }  //  namespace structures
