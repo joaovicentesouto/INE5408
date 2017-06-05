@@ -30,7 +30,7 @@ int main(int argc, char const *argv[]) {
   cout << "Tamanho depois: " << tree.size() << endl;
 
   try {
-    size_t offset = tree.search_primary_key("d");
+    size_t offset = tree.search_primary_key("i");
     cout << "O deslocamento é: " << offset << endl;
   } catch (std::out_of_range error) {
     cout << error.what() << endl;
