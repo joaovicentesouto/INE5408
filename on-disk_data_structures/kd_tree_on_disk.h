@@ -235,7 +235,7 @@ size_t KDTreeOnDisk::search_primary_key(const char* wanted) {
     }
 
     ++level;
-  } while (!deviations.empty() || leaf || level == 1);
+  } while (!deviations.empty() || leaf || level < depth_);
 
   return 0;
 }
