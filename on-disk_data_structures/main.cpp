@@ -28,16 +28,16 @@ int main(int argc, char const *argv[]) {
   tree.insert((char*)"f", (char*)"g", 5);
   tree.insert((char*)"h", (char*)"h", 6);
   tree.insert((char*)"a", (char*)"a", 7);
-  tree.insert((char*)"i", (char*)"g", 8);
-  tree.insert((char*)"j", (char*)"a", 9);
-  tree.insert((char*)"k", (char*)"b", 10);
+  tree.insert((char*)"i", (char*)"e", 8);
+  tree.insert((char*)"j", (char*)"g", 9);
+  tree.insert((char*)"k", (char*)"k", 10);
 
   cout << "Tamanho depois: " << tree.size() << endl;
 
   int offset = tree.search_primary_key("k");
-  cout << "O deslocamento é: " << offset << endl;
+  cout << "O deslocamento para 'k' é: " << offset << endl;
 
-  LinkedList<string> *list = tree.search_secondary_key("g");
+  LinkedList<string> *list = tree.conjunctive_search("g", "e");
   cout << "Tamanho lista: " << list->size() << endl;
 
   for (size_t i = 0; i < list->size(); i++)

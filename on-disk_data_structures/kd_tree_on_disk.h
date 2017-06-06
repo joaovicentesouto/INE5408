@@ -35,8 +35,8 @@ public:
 
   int search_primary_key(const char* wanted);  //!< retorna o offset
   LinkedList<string>* search_secondary_key(const char* wanted) const;
-  //ArrayList<T> conjunction_search(const char* w1, const char* w2) const;
-  //ArrayList<T> disjunction_search(const char* w1, const char* w2) const;
+  LinkedList<string>* conjunctive_search(const char* w1, const char* w2) const;
+  //LinkedList<string>* disjunctive_search(const char* w1, const char* w2) const;
 
   //ArrayList<T> pre_order() const;
   //ArrayList<T> in_order() const;
@@ -283,6 +283,70 @@ LinkedList<string>* KDTreeOnDisk::search_secondary_key(const char* wanted) const
         tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
       else
         tree.seekg(2*offset_tree + sizeof(Node)*2);  // direita
+    } else {
+        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
+        Descent desc((2*offset_tree + sizeof(Node)*2), level+1);
+        deviations.push(desc);
+    }
+
+    ++level;
+  } while (!deviations.empty() || leaf || level < depth_);
+
+  return list;
+}
+
+LinkedList<string>* KDTreeOnDisk::conjunctive_search(const char* w1,
+                                                     const char* w2) const
+{
+  LinkedStack<Descent> deviations; // desvios
+  LinkedList<string>* list = new LinkedList<string>();
+
+  char primary[100], secondary[100];
+  size_t offset_tree, level = 0;
+  int compare_one, compare_two;
+  bool leaf = false;
+
+  ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
+  tree.seekg(0); // inicio do arquivo
+
+  do {
+    leaf = false;
+    offset_tree = tree.tellg();
+    //cout << offset_tree << endl; // por onde estamos indo
+    tree.seekg(offset_tree+sizeof(primary));
+    tree.read(secondary, sizeof(secondary));
+
+    if (secondary[0] == '&') { // node nulo
+      try {
+        Descent desc = deviations.pop();
+        tree.seekg(desc.offset_tree_);
+        level = desc.level_;
+        leaf = true;
+        continue;
+      } catch(std::out_of_range error) {
+        break;  // pilha vazia
+      }
+    }
+
+    compare_one = strcmp(w1, secondary);
+    compare_two = strcmp(w2, secondary);
+
+    if (compare_one == 0 || compare_two == 0) {  // achei
+      tree.seekg(offset_tree);  // (começo+pri+sec)_pegar o offset do node
+      tree.read(primary, sizeof(primary));
+      list->insert_sorted(primary);
+    }
+
+    if (level % 2 == 1 && compare_one != 0 && compare_two == 0) { // dimensao x
+      if (compare_one < 0 && compare_two < 0) {
+        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
+      } else if (compare_one > 0 && compare_two > 0) {
+        tree.seekg(2*offset_tree + sizeof(Node)*2);  // direita
+      } else {
+        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
+        Descent desc((2*offset_tree + sizeof(Node)*2), level+1);
+        deviations.push(desc);
+      }
     } else {
         tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
         Descent desc((2*offset_tree + sizeof(Node)*2), level+1);
