@@ -34,7 +34,7 @@ public:
   size_t file_size() const;
 
   int search_primary_key(const char* wanted);  //!< retorna o offset
-  LinkedList<char*>* search_secondary_key(const char* wanted) const;
+  LinkedList<string>* search_secondary_key(const char* wanted) const;
   //ArrayList<T> conjunction_search(const char* w1, const char* w2) const;
   //ArrayList<T> disjunction_search(const char* w1, const char* w2) const;
 
@@ -239,9 +239,9 @@ int KDTreeOnDisk::search_primary_key(const char* wanted) { // return -1 erro
   return -1;
 }
 
-LinkedList<char*>* KDTreeOnDisk::search_secondary_key(const char* wanted) const {
+LinkedList<string>* KDTreeOnDisk::search_secondary_key(const char* wanted) const {
   LinkedStack<Descent> deviations; // desvios
-  LinkedList<char*>* list = new LinkedList<char*>();
+  LinkedList<string>* list = new LinkedList<string>();
 
   char primary[100], secondary[100];
   size_t offset_tree, level = 0;
