@@ -29,7 +29,7 @@ int main(int argc, char const *argv[]) {
   tree.insert((char*)"h", (char*)"h", 6);
   tree.insert((char*)"a", (char*)"a", 7);
   tree.insert((char*)"i", (char*)"e", 8);
-  tree.insert((char*)"j", (char*)"g", 9);
+  tree.insert((char*)"j", (char*)"e", 9);
   tree.insert((char*)"k", (char*)"k", 10);
 
   cout << "Tamanho depois: " << tree.size() << endl;
