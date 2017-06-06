@@ -365,6 +365,7 @@ LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,
   LinkedStack<Descent> deviations; // desvios
   LinkedList<string>* list_one = new LinkedList<string>();
   LinkedList<string>* list_two = new LinkedList<string>();
+  LinkedList<string>* list_disj = new LinkedList<string>();
 
   char primary[100], secondary[100];
   size_t offset_tree, level = 0;
@@ -425,7 +426,18 @@ LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,
     ++level;
   } while (!deviations.empty() || leaf || level < depth_);
 
-  return list_one;
+  bool cond = list_one->size() < list_two->size();
+  LinkedList<string>* minor_list = cond ? list_one : list_two;
+  LinkedList<string>* major_list = cond ? list_two : list_one;
+  string temp;
+
+  for (size_t i = 0; i < major_list->size(); i++) {
+    temp = major_list->at(i);
+    if (minor_list->contains(temp))
+      list_disj->push_back(temp);
+  }
+
+  return list_disj;
 }
 
 }  //  namespace structures
