@@ -53,21 +53,13 @@ private:
       offset_ = offset;
     }
 
-    int compare_primary_key(const char* another_key) {
-      return strcmp(primary_, another_key);
-    }
-
-    int compare_secondary_key(const char* another_key) {
-      return strcmp(secondary_, another_key);
-    }
-
     void print() {
       cout << "Chave 1: " << primary_ << endl;
       cout << "Chave 2: " << secondary_ << endl;
     }
 
   private:
-    char primary_[100]{"@"},
+    char primary_[50]{"@"},
          secondary_[100]{"&"};
     size_t offset_{0u};
   };
@@ -112,7 +104,7 @@ void KDTreeOnDisk::insert(const char* key_1,
                           const size_t offset) {
   fstream tree("./tree.dat", ios::in | ios::out | ios::binary);
 
-  char primary[100], secondary[100];
+  char primary[50], secondary[100];
   int compare_x = 0, compare_y = 0;
   size_t offset_tree = 0u, direction, level = 0u;
 
@@ -188,7 +180,7 @@ int KDTreeOnDisk::search_primary_key(const char* wanted) { // return -1 erro
   // Guardar o deslocamento e nível em uma pilha quando tiver
   // que descer por dois caminhos diferentes.
   LinkedStack<Descent> deviations; // desvios
-  char primary[100];
+  char primary[50];
   size_t offset, level = 0;
   int compare, offset_tree;
   bool leaf = false;
@@ -243,7 +235,7 @@ LinkedList<string>* KDTreeOnDisk::search_secondary_key(const char* wanted) const
   LinkedStack<Descent> deviations; // desvios
   LinkedList<string>* list = new LinkedList<string>();
 
-  char primary[100], secondary[100];
+  char primary[50], secondary[100];
   size_t offset_tree, level = 0;
   int compare;
   bool leaf = false;
@@ -301,7 +293,7 @@ LinkedList<string>* KDTreeOnDisk::conjunctive_search(const char* w1,
   LinkedStack<Descent> deviations; // desvios
   LinkedList<string>* list = new LinkedList<string>();
 
-  char primary[100], secondary[100];
+  char primary[50], secondary[100];
   size_t offset_tree, level = 0;
   int compare_one, compare_two;
   bool leaf = false;
@@ -367,7 +359,7 @@ LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,
   LinkedList<string>* list_two = new LinkedList<string>();
   LinkedList<string>* list_disj = new LinkedList<string>();
 
-  char primary[100], secondary[100];
+  char primary[50], secondary[100];
   size_t offset_tree, level = 0;
   int compare_one, compare_two;
   bool leaf = false;
@@ -434,7 +426,7 @@ LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,
   for (size_t i = 0; i < major_list->size(); i++) {
     temp = major_list->at(i);
     if (minor_list->contains(temp))
-      list_disj->push_back(temp);
+      list_disj->push_front(temp); // é push_front pra otimizar
   }
 
   return list_disj;

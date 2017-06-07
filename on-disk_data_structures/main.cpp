@@ -18,6 +18,20 @@ int main(int argc, char const *argv[]) {
 
   KDTreeOnDisk tree;
 
+  if (argc == 1)
+    return 1;
+
+    printf("\n Arquivos: %d \n", argc - 1);
+    string temp, major;
+    int x = 0, maior = 0;
+    for (auto i = 1; i < argc; i++) {
+      temp = argv[i];
+      printf("ant --> %s\n", temp.c_str());
+      temp = temp.substr(11, temp.size()-15);
+      printf("dps --> %s\n", temp.c_str());
+    }
+
+  /* TESTES REALIZADOS 06/JUNHO
   cout << "Tamanho antes: " << tree.size() << endl;
 
   tree.insert((char*)"e", (char*)"e", 0);
@@ -41,7 +55,7 @@ int main(int argc, char const *argv[]) {
   cout << "Tamanho lista: " << list->size() << endl;
 
   for (size_t i = 0; i < list->size(); i++)
-    cout << "i: " << i <<  " = " << list->at(i) << endl;
+    cout << "i: " << i <<  " = " << list->at(i) << endl; */
 
   return 0;
 }
