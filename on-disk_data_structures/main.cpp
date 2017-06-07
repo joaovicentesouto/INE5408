@@ -24,9 +24,37 @@ int main(int argc, char const *argv[]) {
   if (!file)
     cout << "Erro" << endl;
 
+
+  char * pointer;
+  char * w;
   while (file >> word) { // pega palavras separadas por espaços
+    // Separa nos caracteres especiais
+    /*cout << word << endl;
+    w = const_cast<char*>(word.c_str());
+    pointer = strtok (w, " ',.-+:<>[]()=;|_%*&$#@!?}{/^\"\\0123456789\t\r\n\f\v`");
+    while (pointer != nullptr) {
+      cout << pointer << endl;
+      pointer = strtok (NULL, " ',.-+:<>[]()=;|_%*&$#@!?}{/^\"\\0123456789\t\r\n\f\v`");
+    }*/
+    char seps[] = " '`,.-+:<>[]()=;|_%*&$#@!?}{/^0123456789\"\f\n\r\t\v\\"; //
+    char *token;
+
+    token = strtok( &word[0], seps );
+    while( token != NULL )
+    {
+       /* faz algo entre isso com a palavra*/
+       cout << word << endl;
+       cout << token << '\n' << endl;
+       /* faz algo entre isso */
+
+       // pega próxima separação e limpa
+       token = strtok( NULL, seps );
+    }
+
+
+
     // limpa caracteres especiais
-    word.erase(
+    /*word.erase(
       std::remove_if(
         word.begin(), word.end(),
         [](char c) {
@@ -34,7 +62,8 @@ int main(int argc, char const *argv[]) {
         }
       ),
       word.end());
-    cout << word << endl;
+      cout << word << endl;
+      */
   }
 
   /* TESTE NOME DE ARQUIVOS
