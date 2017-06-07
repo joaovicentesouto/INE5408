@@ -18,18 +18,37 @@ int main(int argc, char const *argv[]) {
 
   KDTreeOnDisk tree;
 
+  ifstream file("./ManPages/Intro.4.txt", ios::in);
+  file.seekg(0);
+  string word;
+  if (!file)
+    cout << "Erro" << endl;
+
+  while (file >> word) { // pega palavras separadas por espaços
+    // limpa caracteres especiais
+    word.erase(
+      std::remove_if(
+        word.begin(), word.end(),
+        [](char c) {
+          return !(std::isspace(c) || std::isalpha(c));
+        }
+      ),
+      word.end());
+    cout << word << endl;
+  }
+
+  /* TESTE NOME DE ARQUIVOS
   if (argc == 1)
     return 1;
 
     printf("\n Arquivos: %d \n", argc - 1);
-    string temp, major;
-    int x = 0, maior = 0;
+    string temp;
     for (auto i = 1; i < argc; i++) {
       temp = argv[i];
       printf("ant --> %s\n", temp.c_str());
       temp = temp.substr(11, temp.size()-15);
       printf("dps --> %s\n", temp.c_str());
-    }
+    }*/
 
   /* TESTES REALIZADOS 06/JUNHO
   cout << "Tamanho antes: " << tree.size() << endl;
