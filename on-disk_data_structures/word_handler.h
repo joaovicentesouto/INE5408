@@ -24,7 +24,7 @@ class WordHandler {
    WordHandler();
    ~WordHandler();
 
-   LinkedList<string> treatment(ifstream *file);
+   LinkedList<string> treatment(ifstream &file);
 
  private:
    LinkedList<string> ignored_words;
@@ -34,6 +34,7 @@ class WordHandler {
 
 WordHandler::WordHandler() {
   strcpy(separations, " '`^,.-+:;=<>[](){}|/_%*&$#@!?0123456789\"\f\n\r\t\v\\");
+
   ifstream file("./ignored_words.txt", ios::in);
   string word;
 
@@ -51,10 +52,31 @@ WordHandler::WordHandler() {
     }
   }
 
-  for (size_t i = 0; i < ignored_words.size(); i++) {
+  /*for (size_t i = 0; i < ignored_words.size(); i++) {
     cout << ignored_words.at(i) << endl;
+  }*/
+
+}
+
+LinkedList<string> WordHandler::treatment(ifstream &file) {
+  string word;
+  LinkedList<string> test;
+
+  file.seekg(0);
+  while (file >> word) { // pega palavras separadas por espaços
+    token = strtok(&word[0], separations);
+
+    while (token != NULL) {
+      string temp(token);
+      transform(temp.begin(), temp.end(), temp.begin(), ::tolower);
+
+      if (!ignored_words.contains(temp))
+        test.insert_sorted(temp); // não precisa ser em ordem
+      token = strtok(NULL, separations); // de alguma maneira pega o próximo
+    }
   }
 
+  return test;
 }
 
 /*char seps[] = ;

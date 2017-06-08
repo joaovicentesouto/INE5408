@@ -23,6 +23,13 @@ int main(int argc, char const *argv[]) {
   //KDTreeOnDisk tree;
 
   WordHandler *test = new WordHandler();
+  ifstream file(argv[1], ios::in);
+  LinkedList<string> palavras = test->treatment(file);
+
+  cout << "Quantidade de palavras: " << palavras.size() << endl;
+  for (size_t i = 0; i < palavras.size(); i++) {
+    cout << (i+1) << " : " << palavras.at(i) << endl;
+  }
 
   /* TESTE NOME DE ARQUIVOS
   if (argc == 1)
