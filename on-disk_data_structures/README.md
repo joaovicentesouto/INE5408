@@ -45,3 +45,7 @@ Lembre-se que para a pesquisa conjuntiva você deve gerar uma tabela temporária
 - Percorre-se o texto (na memória) palavra a palavra e verifica-se, para cada palavra, se ela se encontra na lista de palavras-chave.
 - Para cada palavra-chave encontrada, atualiza-se uma lista de endereços de chave secundária com o endereço do registro.
 - Finalmente o índice de chave primária e alimentado.
+
+#### Fontes
+
+- [Removendo caracteres especiais e separando também diretórios e comandos:](https://stackoverflow.com/questions/289347/using-strtok-with-a-stdstring)

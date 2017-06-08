@@ -11,6 +11,7 @@
 #include <string>
 
 #include "./kd_tree_on_disk.h"
+#include "./word_handler.h"
 
 // Maior chave primária: 48
 // Maior chave secundária: 58
@@ -21,30 +22,7 @@ int main(int argc, char const *argv[]) {
 
   //KDTreeOnDisk tree;
 
-  char seps[] = " '`,.-+:<>[]()=;|_%*&$#@!?}{/^0123456789\"\f\n\r\t\v\\";
-  char *token;
-  int maior_tam = 0;
-
-  // Pegando todos os arquivos e pegando a maior chave secundária
-  for (size_t i = 1; i < argc; i++) {
-    ifstream file(argv[i], ios::in);
-    file.seekg(0);
-    string word;
-    if (!file)
-      cout << "Erro" << endl;
-
-    while (file >> word) { // pega palavras separadas por espaços
-      token = strtok(&word[0], seps);
-      while (token != NULL) {
-        if (maior_tam < strlen(token))
-          maior_tam = strlen(token);
-
-         token = strtok(NULL, seps); // de alguma maneira pega o próximo
-      }
-    }
-  }
-
-  cout << maior_tam << endl;
+  WordHandler *test = new WordHandler();
 
   /* TESTE NOME DE ARQUIVOS
   if (argc == 1)
