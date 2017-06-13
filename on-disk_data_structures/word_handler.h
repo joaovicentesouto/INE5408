@@ -14,6 +14,7 @@
 
 #include "./structures/linked_list.h"
 #include "./structures/linked_stack.h"
+#include "./structures/array_list.h"
 
 using namespace std;
 
@@ -27,14 +28,13 @@ class WordHandler {
    LinkedList<string> treatment(ifstream &file);
 
  private:
-   LinkedList<string> ignored_words;
-   char *separations;
+   //LinkedList<string> ignored_words;
+   ArrayList<string> ignored_words{150};
+   string separations{" '`^,.-+:;=<>[](){}|/_%*&$#@!?0123456789\"\f\n\r\t\v\\"};
    char *token{nullptr};
 };
 
 WordHandler::WordHandler() {
-  strcpy(separations, " '`^,.-+:;=<>[](){}|/_%*&$#@!?0123456789\"\f\n\r\t\v\\");
-
   ifstream file("./ignored_words.txt", ios::in);
   string word;
 
@@ -43,12 +43,12 @@ WordHandler::WordHandler() {
 
   file.seekg(0);
   while (file >> word) { // pega palavras separadas por espaços
-    token = strtok(&word[0], separations);
+    token = strtok(&word[0], separations.c_str());
 
     while (token != NULL) {
       string temp(token);
-      ignored_words.insert_sorted(temp); // não precisa ser em ordem
-      token = strtok(NULL, separations); // de alguma maneira pega o próximo
+      ignored_words.push_back(temp); // não precisa ser em ordem
+      token = strtok(NULL, separations.c_str()); // de alguma maneira pega o próximo
     }
   }
 
@@ -60,23 +60,23 @@ WordHandler::WordHandler() {
 
 LinkedList<string> WordHandler::treatment(ifstream &file) {
   string word;
-  LinkedList<string> test;
+  LinkedList<string> list;
 
   file.seekg(0);
   while (file >> word) { // pega palavras separadas por espaços
-    token = strtok(&word[0], separations);
+    token = strtok(&word[0], separations.c_str());
 
     while (token != NULL) {
       string temp(token);
       transform(temp.begin(), temp.end(), temp.begin(), ::tolower);
 
       if (!ignored_words.contains(temp))
-        test.insert_sorted(temp); // não precisa ser em ordem
-      token = strtok(NULL, separations); // de alguma maneira pega o próximo
+        list.insert_sorted(temp); // não precisa ser em ordem
+      token = strtok(NULL, separations.c_str()); // de alguma maneira pega o próximo
     }
   }
 
-  return test;
+  return list;
 }
 
 /*char seps[] = ;
