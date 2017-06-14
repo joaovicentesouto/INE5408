@@ -56,6 +56,7 @@ System::~System() {
 void System::init(int argc, char const *argv[]) {
   size_t decrement, increment;
   string dir;
+  LinkedList<string> *words;
   counter_primary = argc-1;
 
   increment = static_cast<size_t>((argc-1)/2)+1;
@@ -63,16 +64,17 @@ void System::init(int argc, char const *argv[]) {
 
   printf("argc-1: %d\n", argc-1);
 
-  for (size_t i = 0; i < argc-1; ++i) {
+  for (size_t i = 1; i < argc; ++i) {
     dir = i % 2 == 0? argv[increment++] : argv[decrement--];
-    printf("i: %lu -> %s\n", i, dir.c_str());
-  }
-
-  printf("\n");
-
-  for (size_t i = 0; i < argc-1; ++i) {
-    dir = argv[i+1];
-    printf("i: %lu -> %s\n", i, dir.c_str());
+    cout << dir << endl;
+    ifstream file(dir.c_str(), ios::in);
+    words = handler_->treatment(file);
+    cout << words->size() << endl;
+    while (!words->empty()) {
+      cout << words->pop_front() << endl;
+    }
+    cout << endl;
+    delete words;
   }
 
 }
