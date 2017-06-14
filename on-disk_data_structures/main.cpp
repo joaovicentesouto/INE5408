@@ -24,6 +24,7 @@ int main(int argc, char const *argv[]) {
   UserInterface test;
 
   cout << test.choose_option() << endl;
+  cout << test.ask_word("Informe palavra primária: ") << endl;
 
   /* TESTES REALIZADOS 06/JUNHO
   cout << "Tamanho antes: " << tree.size() << endl;
