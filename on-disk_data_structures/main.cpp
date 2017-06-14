@@ -12,6 +12,7 @@
 
 #include "./kd_tree_on_disk.h"
 #include "./word_handler.h"
+#include "./user_interface.h"
 
 // Maior chave primária: 48
 // Maior chave secundária: 58
@@ -20,29 +21,9 @@ using namespace structures;
 
 int main(int argc, char const *argv[]) {
 
-  //KDTreeOnDisk tree;
+  UserInterface test;
 
-  WordHandler *test = new WordHandler();
-  ifstream file(argv[1], ios::in);
-  LinkedList<string> palavras = test->treatment(file);
-
-  cout << "Quantidade de palavras: " << palavras.size() << endl;
-  for (size_t i = 0; i < palavras.size(); i++) {
-    cout << (i+1) << " : " << palavras.at(i) << endl;
-  }
-
-  /* TESTE NOME DE ARQUIVOS
-  if (argc == 1)
-    return 1;
-
-    printf("\n Arquivos: %d \n", argc - 1);
-    string temp;
-    for (auto i = 1; i < argc; i++) {
-      temp = argv[i];
-      printf("ant --> %s\n", temp.c_str());
-      temp = temp.substr(11, temp.size()-15);
-      printf("dps --> %s\n", temp.c_str());
-    }*/
+  cout << test.choose_option() << endl;
 
   /* TESTES REALIZADOS 06/JUNHO
   cout << "Tamanho antes: " << tree.size() << endl;

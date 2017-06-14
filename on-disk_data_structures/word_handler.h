@@ -28,7 +28,6 @@ class WordHandler {
    LinkedList<string> treatment(ifstream &file);
 
  private:
-   //LinkedList<string> ignored_words;
    ArrayList<string> ignored_words{150};
    string separations{" '`^,.-+:;=<>[](){}|/_%*&$#@!?0123456789\"\f\n\r\t\v\\"};
    char *token{nullptr};
@@ -78,31 +77,6 @@ LinkedList<string> WordHandler::treatment(ifstream &file) {
 
   return list;
 }
-
-/*char seps[] = ;
-char *token;
-int maior_tam = 0;
-
-// Pegando todos os arquivos e pegando a maior chave secundária
-for (size_t i = 1; i < argc; i++) {
-  ifstream file(argv[i], ios::in);
-  file.seekg(0);
-  string word;
-  if (!file)
-    cout << "Erro" << endl;
-
-  while (file >> word) { // pega palavras separadas por espaços
-    token = strtok(&word[0], seps);
-    while (token != NULL) {
-      if (maior_tam < strlen(token))
-        maior_tam = strlen(token);
-
-       token = strtok(NULL, seps); // de alguma maneira pega o próximo
-       // Acho que ele pega e coloca vazio até achar \0, ou seja
-       // substitui a primeira palavra por nada.
-    }
-  }
-} */
 
 }  //  namespace structures
 
