@@ -57,6 +57,8 @@ WordHandler::WordHandler() {
 
 }
 
+WordHandler::~WordHandler() {}
+
 LinkedList<string> WordHandler::treatment(ifstream &file) {
   string word;
   LinkedList<string> list;

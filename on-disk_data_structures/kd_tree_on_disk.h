@@ -60,7 +60,7 @@ private:
 
   private:
     char primary_[50]{"@"},
-         secondary_[100]{"&"};
+         secondary_[60]{"&"};
     size_t offset_{0u};
   };
 

@@ -15,6 +15,7 @@
 #include "./structures/linked_list.h"
 #include "./structures/linked_stack.h"
 #include "./structures/array_list.h"
+#include "./word_handler.h"
 
 using namespace std;
 
@@ -32,6 +33,7 @@ class System {
  private:
    WordHandler *handler_;
    KDTreeOnDisk *tree_;
+   UserInterface *talk_;
    size_t counter_primary{0u},
           counter_secondary{0u};
 };
@@ -39,15 +41,22 @@ class System {
 System::System() {
   handler_ = new WordHandler();
   tree_ = new KDTreeOnDisk();
+  talk_ = new UserInterface();
 }
 
 System::~System() {
   delete handler_;
   delete tree_;
+  delete talk_;
 }
 
-System::init(int argc, char const *argv[]) {
-  
+void System::init(int argc, char const *argv[]) {
+  size_t increment, decrement;
+  // Idéia: começar pegando os arquivos do meio do array argv e indo
+  // para as extremidades para aproveitar e deixar a árvore k-d o mais
+  // "balanceada" possível.
+  counter_primary = argc-1;
+
 }
 
 }  //  namespace structures

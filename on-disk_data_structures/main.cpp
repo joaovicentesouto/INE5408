@@ -13,6 +13,7 @@
 #include "./kd_tree_on_disk.h"
 #include "./word_handler.h"
 #include "./user_interface.h"
+#include "./system.h"
 
 // Maior chave primária: 48
 // Maior chave secundária: 58
@@ -21,10 +22,7 @@ using namespace structures;
 
 int main(int argc, char const *argv[]) {
 
-  UserInterface test;
-
-  cout << test.choose_option() << endl;
-  cout << test.ask_word("Informe palavra primária: ") << endl;
+  System sys;
 
   /* TESTES REALIZADOS 06/JUNHO
   cout << "Tamanho antes: " << tree.size() << endl;
