@@ -47,10 +47,10 @@ private:
   public:
     Node() {}
 
-    Node(const char* primary, const char* secondary, const size_t offset) {
+    Node(const char* primary, const char* secondary, const size_t manpage) {
       strcpy(primary_, primary);
       strcpy(secondary_, secondary);
-      offset_ = offset;
+      manpage_ = manpage;
     }
 
     void print() {
@@ -59,9 +59,11 @@ private:
     }
 
   private:
-    char primary_[50]{"@"},
-         secondary_[60]{"&"};
-    size_t offset_{0u};
+    char primary_[50]{"@@"},
+         secondary_[60]{"&&"};
+    size_t left_{0u},
+           right_{0u},
+           manpage_{0u};
   };
 
   class Descent {
@@ -84,7 +86,7 @@ private:
     size_t offset_tree_{0u}, level_{0u};
   };
 
-  void new_level(const size_t level);
+  //void new_level(const size_t level);
 
   size_t depth_{0u}, size_{0u};
 };
@@ -101,23 +103,64 @@ KDTreeOnDisk::~KDTreeOnDisk() {}
 
 void KDTreeOnDisk::insert(const char* key_1,
                           const char* key_2,
-                          const size_t offset) {
+                          const size_t manpage) {
   fstream tree("./tree.dat", ios::in | ios::out | ios::binary);
 
-  char primary[50], secondary[100];
+  char primary[sizeof(primary_)], secondary[sizeof(secondary_)];
   int compare_x = 0, compare_y = 0;
-  size_t offset_tree = 0u, direction, level = 0u;
+  size_t offset = 0u, son = 0u, direction, level = 0u;
 
   tree.seekg(0);
   while (tree.good()) {
-    offset_tree = tree.tellg();
+    offset = tree.tellg();
+
+    if (level % 2 == 0) { // dimensão x
+
+      tree.read(primary, sizeof(primary));
+      compare_x = strcmp(key_1, primary);
+
+      if (compare_x > 0) { // esquerda
+        size_t aux = offset+sizeof(primary)+sizeof(secondary);
+        tree.seekg(aux);
+        tree.read(reinterpret_cast<size_t>(&son), sizeof(size_t));
+
+        if (son == 0u) { // folha
+          Node *tnode = new Node(key_1, key_2, manpage);
+          if (tnode == nullptr)
+            throw std::out_of_range("Full tree!");
+
+          // Dizendo onde esta o filho da esquerda
+          tree.seekp(0, ios::end); // fim do arquivo
+          son = tree.tellp();      // pega deslocamento pro filho
+          tree.seekp(aux);         // acha o pai
+          tree.write(reinterpret_cast<size_t>(&son), sizeof(size_t));
+
+          tree.seekp(0, ios::end); // fim do arquivo e escreve filho
+          tree.write(reinterpret_cast<char*>(tnode), sizeof(Node));
+          ++size_;
+          delete tnode;
+
+          break;
+        } else {
+          tree.seekg(son);
+        }
+
+      } else if  (compare_x < 0) { // direita
+
+      } else { // igual
+
+      }
+
+    } else {
+
+    }
 
     tree.read(primary, sizeof(primary));
     tree.read(secondary, sizeof(secondary));
-    tree.seekp(offset_tree);
+    tree.seekp(offset);
     //cout << "p: " << primary << " s: " << secondary << endl;
 
-    if (primary[0] == '@') { // inserindo
+    if (primary[0] == '@@') { // inserindo
       Node *tnode = new Node(key_1, key_2, offset);
       if (tnode == nullptr)
         throw std::out_of_range("Full tree!");
@@ -141,24 +184,11 @@ void KDTreeOnDisk::insert(const char* key_1,
       direction = compare_y < 0 || (compare_y == 0 && compare_x < 0)? 1 : 2;
 
     tree.seekg(2*offset_tree + sizeof(Node)*direction);
+    father = offset;
     ++level;
   }
   tree.close();
   new_level(level);
-}
-
-void KDTreeOnDisk::new_level(const size_t level) {
-  if (level == depth_) {
-
-    ofstream tree("./tree.dat", std::ios_base::app | ios::binary);
-    tree.seekp((pow(2,(depth_+1))-1)*sizeof(Node));
-
-    Node tnode;
-    for (size_t i = 0; i < pow(2,(depth_+1)); ++i)
-      tree.write(reinterpret_cast<char*>(&tnode), sizeof(tnode));
-
-    depth_++;
-  }
 }
 
 bool KDTreeOnDisk::empty() const {

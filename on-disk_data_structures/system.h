@@ -33,7 +33,7 @@ class System {
  private:
    WordHandler *handler_;
    KDTreeOnDisk *tree_;
-   UserInterface *talk_;
+   UserInterface *user_io_;
    size_t counter_primary{0u},
           counter_secondary{0u};
 };
@@ -41,13 +41,13 @@ class System {
 System::System() {
   handler_ = new WordHandler();
   tree_ = new KDTreeOnDisk();
-  talk_ = new UserInterface();
+  user_io_ = new UserInterface();
 }
 
 System::~System() {
   delete handler_;
   delete tree_;
-  delete talk_;
+  delete user_io_;
 }
 
 // Idéia: começar pegando os arquivos do meio do array argv e indo
@@ -62,20 +62,29 @@ void System::init(int argc, char const *argv[]) {
   increment = static_cast<size_t>((argc-1)/2)+1;
   decrement = increment-1;
 
-  printf("argc-1: %d\n", argc-1);
+  printf("\nQuantidade de arquivos indexados: %d\n", argc-1);
 
   for (size_t i = 1; i < argc; ++i) {
     dir = i % 2 == 0? argv[increment++] : argv[decrement--];
-    cout << dir << endl;
+
     ifstream file(dir.c_str(), ios::in);
     words = handler_->treatment(file);
-    cout << words->size() << endl;
+    dir = handler_->clean_primary_key(dir);
+
+    counter_secondary += words->size();
+
+    //cout << words->size() << endl;
+    string aux;
+    cout << dir << endl;
     while (!words->empty()) {
-      cout << words->pop_front() << endl;
+      aux = words->pop_front();
+      cout << "Inserindo: " << aux << endl;
+      tree_->insert(dir.c_str(), aux.c_str(), 100);
     }
-    cout << endl;
     delete words;
   }
+
+  printf("Total de nodes criados: %lu\n", counter_secondary);
 
 }
 

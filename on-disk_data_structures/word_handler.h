@@ -25,6 +25,7 @@ class WordHandler {
    WordHandler();
    ~WordHandler();
 
+   string clean_primary_key(string key);
    LinkedList<string>* treatment(ifstream &file);
 
  private:
@@ -58,6 +59,10 @@ WordHandler::WordHandler() {
 }
 
 WordHandler::~WordHandler() {}
+
+string WordHandler::clean_primary_key(string key) {
+  return key.substr(11, key.size()-15);
+}
 
 LinkedList<string>* WordHandler::treatment(ifstream &file) {
   string word;
