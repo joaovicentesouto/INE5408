@@ -23,6 +23,7 @@ using namespace structures;
 int main(int argc, char const *argv[]) {
 
   System sys;
+  sys.init(argc, argv);
 
   /* TESTES REALIZADOS 06/JUNHO
   cout << "Tamanho antes: " << tree.size() << endl;

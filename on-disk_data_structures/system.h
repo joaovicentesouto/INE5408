@@ -50,12 +50,30 @@ System::~System() {
   delete talk_;
 }
 
+// Idéia: começar pegando os arquivos do meio do array argv e indo
+// para as extremidades para aproveitar e deixar a árvore k-d o mais
+// "balanceada" possível.
 void System::init(int argc, char const *argv[]) {
-  size_t increment, decrement;
-  // Idéia: começar pegando os arquivos do meio do array argv e indo
-  // para as extremidades para aproveitar e deixar a árvore k-d o mais
-  // "balanceada" possível.
+  size_t decrement, increment;
+  string dir;
   counter_primary = argc-1;
+
+  increment = static_cast<size_t>((argc-1)/2)+1;
+  decrement = increment-1;
+
+  printf("argc-1: %d\n", argc-1);
+
+  for (size_t i = 0; i < argc-1; ++i) {
+    dir = i % 2 == 0? argv[increment++] : argv[decrement--];
+    printf("i: %lu -> %s\n", i, dir.c_str());
+  }
+
+  printf("\n");
+
+  for (size_t i = 0; i < argc-1; ++i) {
+    dir = argv[i+1];
+    printf("i: %lu -> %s\n", i, dir.c_str());
+  }
 
 }
 
