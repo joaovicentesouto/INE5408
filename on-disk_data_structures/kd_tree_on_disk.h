@@ -411,59 +411,6 @@ LinkedList<string>* KDTreeOnDisk::conjunctive_search(const char* w1,
   }
 
   return list;
-
-  /*
-  ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
-  tree.seekg(0); // inicio do arquivo
-
-  do {
-    leaf = false;
-    offset_tree = tree.tellg();
-    //cout << offset_tree << endl; // por onde estamos indo
-    tree.seekg(offset_tree+sizeof(primary));
-    tree.read(secondary, sizeof(secondary));
-
-    if (secondary[0] == '&') { // node nulo
-      try {
-        Route way = routes.pop();
-        tree.seekg(way.offset_tree_);
-        level = way.level_;
-        leaf = true;
-        continue;
-      } catch(std::out_of_range error) {
-        break;  // pilha vazia
-      }
-    }
-
-    compare_one = strcmp(w1, secondary);
-    compare_two = strcmp(w2, secondary);
-
-    if (compare_one == 0 || compare_two == 0) {  // achei
-      tree.seekg(offset_tree);  // (começo+pri+sec)_pegar o offset do node
-      tree.read(primary, sizeof(primary));
-      list->insert_sorted(primary);
-    }
-
-    if (level % 2 == 1 && compare_one != 0 && compare_two != 0) { // dimensao x
-      if (compare_one < 0 && compare_two < 0) {
-        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
-      } else if (compare_one > 0 && compare_two > 0) {
-        tree.seekg(2*offset_tree + sizeof(Node)*2);  // direita
-      } else {
-        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
-        Route way((2*offset_tree + sizeof(Node)*2), level+1);
-        routes.push(way);
-      }
-    } else {
-        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
-        Route way((2*offset_tree + sizeof(Node)*2), level+1);
-        routes.push(way);
-    }
-
-    ++level;
-  } while (!routes.empty() || leaf || level < depth_);
-
-  return list;*/
 }
 
 LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,
@@ -474,76 +421,92 @@ LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,
   LinkedList<string>* list_two = new LinkedList<string>();
   LinkedList<string>* list_disj = new LinkedList<string>();
 
-  char primary[50], secondary[100];
-  size_t offset_tree, level = 0;
-  int compare_one, compare_two;
-  bool leaf = false;
+  char primary[50], secondary[60];
+  int compare_one = 1, compare_two = 1;
+  size_t level = 0u, son = 0u, offset= 0u,
+         offset_left = 50+60+2,
+         offset_right = offset_left + sizeof(size_t);
 
   ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
   tree.seekg(0); // inicio do arquivo
 
-  do {
-    leaf = false;
-    offset_tree = tree.tellg();
-    //cout << offset_tree << endl; // por onde estamos indo
-    tree.seekg(offset_tree+sizeof(primary));
+  while (tree.good()) {
+    offset = tree.tellg();
+
+    tree.seekg(offset + sizeof(primary));
     tree.read(secondary, sizeof(secondary));
+    compare_one = strcmp(secondary, w1);
+    compare_two = strcmp(secondary, w2);
 
-    if (secondary[0] == '&') { // node nulo
-      try {
-        Route way = routes.pop();
-        tree.seekg(way.offset_tree_);
-        level = way.level_;
-        leaf = true;
-        continue;
-      } catch(std::out_of_range error) {
-        break;  // pilha vazia
-      }
-    }
-
-    compare_one = strcmp(w1, secondary);
-    compare_two = strcmp(w2, secondary);
-
-    if (compare_one == 0) {  // achei pela primeira
-      tree.seekg(offset_tree);  // (começo+pri+sec)_pegar o offset do node
+    if (compare_one == 0) {  // achei
+      tree.seekg(offset);
       tree.read(primary, sizeof(primary));
       list_one->insert_sorted(primary);
-    } else if (compare_two == 0) {  // achei pela segunda
-      tree.seekg(offset_tree);  // (começo+pri+sec)_pegar o offset do node
+    } else if (compare_two == 0) {
+      // le offset da manpage
+      tree.seekg(offset);
       tree.read(primary, sizeof(primary));
       list_two->insert_sorted(primary);
     }
 
-    if (level % 2 == 1 && compare_one != 0 && compare_two != 0) { // dimensao x
-      if (compare_one < 0 && compare_two < 0) {
-        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
+    if (level % 2 == 1 && compare_one != 0 && compare_two != 0) {  // dimensao y, divide árvore
+      if (compare_one > 0 && compare_two > 0) {
+        son = offset + offset_left;
       } else if (compare_one > 0 && compare_two > 0) {
-        tree.seekg(2*offset_tree + sizeof(Node)*2);  // direita
-      } else {
-        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
-        Route way((2*offset_tree + sizeof(Node)*2), level+1);
+        son = offset + offset_right;
+      } else {  // um == vai pros dois lados
+        tree.seekg(offset + offset_right);
+        tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
+        if (son != 0) {
+          Route way(son, level+1);
+          routes.push(way);
+        }
+        son = offset + offset_left;
+      }
+
+      tree.seekg(son);
+      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
+
+    } else {               // dimensao x, vai pros dois lados
+      tree.seekg(offset + offset_right);
+      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
+      if (son != 0) {
+        Route way(son, level+1);
         routes.push(way);
       }
-    } else {
-        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
-        Route way((2*offset_tree + sizeof(Node)*2), level+1);
-        routes.push(way);
+
+      tree.seekg(offset + offset_left);
+      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
     }
 
-    ++level;
-  } while (!routes.empty() || leaf || level < depth_);
+    if (son != 0) { // próximo node é nulo
+      tree.seekg(son);  // próxima posição
+      ++level;
+    } else {
+      try {
+        Route way = routes.pop();
+        tree.seekg(way.offset_tree_);
+        level = way.level_;
+      } catch(std::out_of_range error) {
+        break;  // pilha vazia
+      }
+    }
+  }
 
   bool cond = list_one->size() < list_two->size();
   LinkedList<string>* minor_list = cond ? list_one : list_two;
   LinkedList<string>* major_list = cond ? list_two : list_one;
-  string temp;
 
+  string temp;
   for (size_t i = 0; i < major_list->size(); i++) {
     temp = major_list->at(i);
     if (minor_list->contains(temp))
-      list_disj->push_front(temp); // é push_front pra otimizar
+      list_disj->insert_sorted(temp);
   }
 
+  delete list_one;
+  delete list_two;
+  
   return list_disj;
 }
 
