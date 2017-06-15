@@ -41,8 +41,8 @@ int main(int argc, char const *argv[]) {
 
   cout << "Tamanho depois: " << tree.size() << endl;
 
-  int offset = tree.search_primary_key("e");
-  cout << "O deslocamento para 'e' é: " << offset << endl;
+  int offset = tree.search_primary_key("h");
+  cout << "O deslocamento para 'h' é: " << offset << endl;
 
   /*int offset = tree.search_primary_key("k");
   cout << "O deslocamento para 'k' é: " << offset << endl;

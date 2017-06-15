@@ -238,7 +238,7 @@ int KDTreeOnDisk::search_primary_key(const char* wanted) { // return -1 erro
     }
 
     if (level % 2 == 0) {  // dimensao x, divide árvore
-      if (compare < 0)
+      if (compare > 0)
         son = offset + offset_left;
       else
         son = offset + offset_right;
