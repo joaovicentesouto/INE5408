@@ -23,8 +23,12 @@ using namespace structures;
 
 int main(int argc, char const *argv[]) {
 
-  KDTreeOnDisk tree;
+  System sys;
+  sys.init(argc, argv);
 
+  /* Testes kd
+
+  KDTreeOnDisk tree;
   cout << "Tamanho antes: " << tree.size() << endl;
 
   tree.insert((char*)"e", (char*)"e", 30);
@@ -36,10 +40,10 @@ int main(int argc, char const *argv[]) {
   tree.insert((char*)"a", (char*)"e", 6);
   tree.insert((char*)"d", (char*)"e", 7);
   tree.insert((char*)"a", (char*)"h", 7);
-  /*tree.insert((char*)"j", (char*)"j", 7);
+  tree.insert((char*)"j", (char*)"j", 7);
   tree.insert((char*)"j", (char*)"j", 8); //i
   tree.insert((char*)"j", (char*)"e", 9);
-  tree.insert((char*)"k", (char*)"k", 10);*/
+  tree.insert((char*)"k", (char*)"k", 10);
 
   cout << "Tamanho depois: " << tree.size() << endl;
 
@@ -53,6 +57,7 @@ int main(int argc, char const *argv[]) {
     cout << "i: " << i <<  " = " << list->at(i) << endl;
 
   delete list;
+  */
 
   return 0;
 }

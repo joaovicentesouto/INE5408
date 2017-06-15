@@ -62,7 +62,7 @@ void System::init(int argc, char const *argv[]) {
   increment = static_cast<size_t>((argc-1)/2)+1;
   decrement = increment-1;
 
-  printf("\nQuantidade de arquivos indexados: %d\n", argc-1);
+  printf("\nQuantidade de arquivos indexados: %d\n\n", argc-1);
 
   for (size_t i = 1; i < argc; ++i) {
     dir = i % 2 == 0? argv[increment++] : argv[decrement--];
@@ -82,6 +82,7 @@ void System::init(int argc, char const *argv[]) {
       tree_->insert(dir.c_str(), aux.c_str(), 100);
     }
     delete words;
+    cout << endl;
   }
 
   printf("Total de nodes criados: %lu\n", counter_secondary);
