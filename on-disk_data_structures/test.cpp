@@ -10,57 +10,46 @@
 #include <typeinfo>
 #include <string>
 
+#include "./structures/linked_list.h"
+#include "./structures/linked_stack.h"
+#include "./structures/array_list.h"
+#include "./word_handler.h"
+#include "./kd_tree_on_disk.h"
+
 using namespace std;
-
-class Node {
-public:
-  Node() {}
-
-  Node(const char* primary, const char* secondary, const size_t manpage) {
-    strcpy(primary_, primary);
-    strcpy(secondary_, secondary);
-    manpage_ = manpage;
-  }
-
-  void print() {
-    cout << "Chave 1: " << primary_ << endl;
-    cout << "Chave 2: " << secondary_ << endl;
-    cout << "Filho esquerda: " << left_ << endl;
-    cout << "Filho direita: " << right_ << endl;
-    cout << "Manpage: " << manpage_ << endl;
-  }
-
-//private:
-  char primary_[50]{"@"},
-       secondary_[60]{"&"};
-  size_t left_{1u},
-         right_{2u},
-         manpage_{3u};
-};
+using namespace structures;
 
 int main(int argc, char const *argv[]) {
 
-  fstream file("./teste.dat", ios::in | ios::out | ios::binary | ios::trunc);
+  KDTreeOnDisk tree;
+  WordHandler handler;
 
-  Node no((char*)"A", (char*)"B", 10);
-  //no.print();
-  printf("%lu\n", sizeof(no));
+  string dir;
+  LinkedList<string> *words;
+  LinkedList<string> *aux;
 
-  file.write(reinterpret_cast<char*>(&no), sizeof(no));
+  ifstream file("./ManPages/dlpi_fd.3dlpi.txt", ios::in);
+  words = handler.treatment(file);
+  cout << "Tam words: " << words->size() << endl;
 
-  file.seekg(ios::beg);
-  char pri[sizeof(Node::primary_)];
-  file.read(pri, sizeof(Node::primary_));
-  printf("%s\n", pri);
+  for (size_t i = 0; i < words->size(); i++) {
+    dir = words->at(i);
+    cout << "dlpi_fd.3dlpi -> " << dir << endl;
+    tree.insert("dlpi_fd.3dlpi", dir.c_str(), 100);
+  }
+  cout << "Tam tree: " << tree.size() << endl;
 
-  char sec[sizeof(Node::secondary_)];
-  file.seekg(sizeof(Node::primary_));
-  file.read(sec, sizeof(Node::secondary_));
-  printf("%s\n", sec);
+  for (size_t i = 0; i < words->size(); i++) {
+    dir = words->at(i);
+    aux = tree.search_secondary_key(dir.c_str());
+    cout << "tamanho achado: " << aux->size() << endl;
+    cout << dir << endl;
+    for (size_t j = 0; j < aux->size(); j++) {
+      cout << " -> " << aux->at(j) << endl;
+    }
+  }
 
-  file.seekg(0);
-  Node ddd;
-  file.read(reinterpret_cast<char*>(&ddd), sizeof(Node));
-  ddd.print();
+  delete words;
+
   return 0;
 }

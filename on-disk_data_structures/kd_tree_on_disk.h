@@ -109,7 +109,7 @@ void KDTreeOnDisk::insert(const char* key_1,
   char node_key[60];
   int compare = 1;
   size_t offset = 0u, son = 0u, level = 0u, father_son = 0u,
-         offset_left = 50+60+2,
+         offset_left = sizeof(Node::primary_)+sizeof(Node::secondary_)+2,
          offset_right = offset_left + sizeof(size_t);
 
   tree.seekg(0);
@@ -117,17 +117,17 @@ void KDTreeOnDisk::insert(const char* key_1,
     offset = tree.tellg();
 
     if (level % 2 == 0) {
-      tree.read(node_key, 50*sizeof(char));
-      compare = strcmp(node_key, key_1);
+      tree.read(node_key, sizeof(Node::primary_));
+      compare = strcmp(key_1, node_key);
     } else {
-      tree.seekg(offset);
-      tree.read(node_key, 60*sizeof(char));
-      compare = strcmp(node_key, key_2);
+      tree.seekg(offset+sizeof(Node::primary_));
+      tree.read(node_key, sizeof(Node::secondary_));
+      compare = strcmp(key_2, node_key);
     }
 
     if (compare != 0) {  // esquerda ou direita
+      father_son = compare < 0? offset + offset_left : offset + offset_right;
 
-      father_son = compare > 0? offset + offset_left : offset + offset_right;
       tree.seekg(father_son);
       tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
 
@@ -139,17 +139,19 @@ void KDTreeOnDisk::insert(const char* key_1,
     } else { // igual
 
       if (level % 2 == 0) {
-        tree.read(node_key, 60*sizeof(char));
-        compare = strcmp(node_key, key_2);
+        tree.seekg(offset+sizeof(Node::primary_));
+        tree.read(node_key, sizeof(Node::secondary_));
+        compare = strcmp(key_2, node_key);
       } else {
-        tree.read(node_key, 50*sizeof(char));
-        compare = strcmp(node_key, key_1);
+        tree.seekg(offset);
+        tree.read(node_key, sizeof(Node::primary_));
+        compare = strcmp(key_1, node_key);
       }
 
       if (compare == 0) // node ja existe
         break;
 
-      father_son = compare > 0? offset + offset_left : offset + offset_right;
+      father_son = compare < 0? offset + offset_left : offset + offset_right;
       tree.seekg(father_son);
       tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
 
@@ -223,7 +225,7 @@ int KDTreeOnDisk::search_primary_key(const char* wanted) { // return -1 erro
     offset = tree.tellg();
 
     tree.read(primary, sizeof(primary));
-    compare = strcmp(primary, wanted);
+    compare = strcmp(wanted, primary);
 
     if (compare == 0) {  // achei
       // le offset da manpage
@@ -233,7 +235,7 @@ int KDTreeOnDisk::search_primary_key(const char* wanted) { // return -1 erro
     }
 
     if (level % 2 == 0) {  // dimensao x, divide árvore
-      if (compare > 0)
+      if (compare < 0)
         son = offset + offset_left;
       else
         son = offset + offset_right;
@@ -284,22 +286,24 @@ LinkedList<string>* KDTreeOnDisk::search_secondary_key(const char* wanted) const
   ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
   tree.seekg(0); // inicio do arquivo
 
-  while (tree.good()) {
+  while (tree.good() || !routes.empty()) {
     offset = tree.tellg();
 
     tree.seekg(offset + sizeof(primary));
     tree.read(secondary, sizeof(secondary));
-    compare = strcmp(secondary, wanted);
+    //cout << "Todas as chave 2: " << secondary << endl;
+    compare = strcmp(wanted, secondary);
 
     if (compare == 0) {  // achei
-      // le offset da manpage
+      // Pega chave primaria
       tree.seekg(offset);
       tree.read(primary, sizeof(primary));
+      //cout << "Busca in achada: " << primary << endl;
       list->insert_sorted(primary);
     }
 
     if (level % 2 == 1) {  // dimensao y, divide árvore
-      if (compare > 0)
+      if (compare < 0)
         son = offset + offset_left;
       else
         son = offset + offset_right;
@@ -356,8 +360,8 @@ LinkedList<string>* KDTreeOnDisk::conjunctive_search(const char* w1,
 
     tree.seekg(offset + sizeof(primary));
     tree.read(secondary, sizeof(secondary));
-    compare_one = strcmp(secondary, w1);
-    compare_two = strcmp(secondary, w2);
+    compare_one = strcmp(w1, secondary);
+    compare_two = strcmp(w2, secondary);
 
     if (compare_one == 0 || compare_two == 0) {  // achei
       // le offset da manpage
@@ -367,7 +371,7 @@ LinkedList<string>* KDTreeOnDisk::conjunctive_search(const char* w1,
     }
 
     if (level % 2 == 1 && compare_one != 0 && compare_two != 0) {  // dimensao y, divide árvore
-      if (compare_one > 0 && compare_two > 0) {
+      if (compare_one < 0 && compare_two < 0) {
         son = offset + offset_left;
       } else if (compare_one > 0 && compare_two > 0) {
         son = offset + offset_right;
@@ -435,8 +439,8 @@ LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,
 
     tree.seekg(offset + sizeof(primary));
     tree.read(secondary, sizeof(secondary));
-    compare_one = strcmp(secondary, w1);
-    compare_two = strcmp(secondary, w2);
+    compare_one = strcmp(w1, secondary);
+    compare_two = strcmp(w2, secondary);
 
     if (compare_one == 0) {  // achei
       tree.seekg(offset);
@@ -450,7 +454,7 @@ LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,
     }
 
     if (level % 2 == 1 && compare_one != 0 && compare_two != 0) {  // dimensao y, divide árvore
-      if (compare_one > 0 && compare_two > 0) {
+      if (compare_one < 0 && compare_two < 0) {
         son = offset + offset_left;
       } else if (compare_one > 0 && compare_two > 0) {
         son = offset + offset_right;
@@ -506,7 +510,7 @@ LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,
 
   delete list_one;
   delete list_two;
-  
+
   return list_disj;
 }
 
