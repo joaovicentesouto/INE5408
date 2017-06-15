@@ -333,57 +333,6 @@ LinkedList<string>* KDTreeOnDisk::search_secondary_key(const char* wanted) const
     }
   }
 
-  /*
-
-  char primary[50], secondary[100];
-  size_t offset_tree, level = 0;
-  int compare;
-  bool leaf = false;
-
-  ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
-  tree.seekg(0); // inicio do arquivo
-
-  do {
-    leaf = false;
-    offset_tree = tree.tellg();
-    //cout << offset_tree << endl; // por onde estamos indo
-    tree.seekg(offset_tree+sizeof(primary));
-    tree.read(secondary, sizeof(secondary));
-
-    if (secondary[0] == '&') { // node nulo
-      try {
-        Route way = routes.pop();
-        tree.seekg(way.offset_tree_);
-        level = way.level_;
-        leaf = true;
-        continue;
-      } catch(std::out_of_range error) {
-        break;  // pilha vazia
-      }
-    }
-
-    compare = strcmp(wanted, secondary);
-
-    if (compare == 0) {  // achei
-      tree.seekg(offset_tree);  // (começo+pri+sec)_pegar o offset do node
-      tree.read(primary, sizeof(primary));
-      list->insert_sorted(primary);
-    }
-
-    if (level % 2 == 1 && compare != 0) { // dimensao x
-      if (compare < 0)
-        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
-      else
-        tree.seekg(2*offset_tree + sizeof(Node)*2);  // direita
-    } else {
-        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
-        Route way((2*offset_tree + sizeof(Node)*2), level+1);
-        routes.push(way);
-    }
-
-    ++level;
-  } while (!routes.empty() || leaf || level < depth_);*/
-
   return list;
 }
 
@@ -393,11 +342,77 @@ LinkedList<string>* KDTreeOnDisk::conjunctive_search(const char* w1,
   LinkedStack<Route> routes; // desvios
   LinkedList<string>* list = new LinkedList<string>();
 
-  char primary[50], secondary[100];
-  size_t offset_tree, level = 0;
-  int compare_one, compare_two;
-  bool leaf = false;
+  char primary[50], secondary[60];
+  int compare_one = 1, compare_two = 1;
+  size_t level = 0u, son = 0u, offset= 0u,
+         offset_left = 50+60+2,
+         offset_right = offset_left + sizeof(size_t);
 
+  ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
+  tree.seekg(0); // inicio do arquivo
+
+  while (tree.good()) {
+    offset = tree.tellg();
+
+    tree.seekg(offset + sizeof(primary));
+    tree.read(secondary, sizeof(secondary));
+    compare_one = strcmp(secondary, w1);
+    compare_two = strcmp(secondary, w2);
+
+    if (compare_one == 0 || compare_two == 0) {  // achei
+      // le offset da manpage
+      tree.seekg(offset);
+      tree.read(primary, sizeof(primary));
+      list->insert_sorted(primary);
+    }
+
+    if (level % 2 == 1 && compare_one != 0 && compare_two != 0) {  // dimensao y, divide árvore
+      if (compare_one > 0 && compare_two > 0) {
+        son = offset + offset_left;
+      } else if (compare_one > 0 && compare_two > 0) {
+        son = offset + offset_right;
+      } else {  // um == vai pros dois lados
+        tree.seekg(offset + offset_right);
+        tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
+        if (son != 0) {
+          Route way(son, level+1);
+          routes.push(way);
+        }
+        son = offset + offset_left;
+      }
+
+      tree.seekg(son);
+      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
+
+    } else {               // dimensao x, vai pros dois lados
+      tree.seekg(offset + offset_right);
+      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
+      if (son != 0) {
+        Route way(son, level+1);
+        routes.push(way);
+      }
+
+      tree.seekg(offset + offset_left);
+      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
+    }
+
+    if (son != 0) { // próximo node é nulo
+      tree.seekg(son);  // próxima posição
+      ++level;
+    } else {
+      try {
+        Route way = routes.pop();
+        tree.seekg(way.offset_tree_);
+        level = way.level_;
+      } catch(std::out_of_range error) {
+        break;  // pilha vazia
+      }
+    }
+  }
+
+  return list;
+
+  /*
   ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
   tree.seekg(0); // inicio do arquivo
 
@@ -448,7 +463,7 @@ LinkedList<string>* KDTreeOnDisk::conjunctive_search(const char* w1,
     ++level;
   } while (!routes.empty() || leaf || level < depth_);
 
-  return list;
+  return list;*/
 }
 
 LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,

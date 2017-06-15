@@ -32,10 +32,10 @@ int main(int argc, char const *argv[]) {
   tree.insert((char*)"g", (char*)"g", 2);
   tree.insert((char*)"b", (char*)"b", 3);
   tree.insert((char*)"d", (char*)"d", 4);
-  tree.insert((char*)"f", (char*)"e", 5); //j
-  tree.insert((char*)"h", (char*)"e", 6);
-  tree.insert((char*)"c", (char*)"g", 7);
-  tree.insert((char*)"a", (char*)"g", 7);
+  tree.insert((char*)"f", (char*)"b", 5); //j
+  tree.insert((char*)"h", (char*)"b", 6);
+  tree.insert((char*)"c", (char*)"a", 7);
+  tree.insert((char*)"a", (char*)"a", 7);
   /*tree.insert((char*)"j", (char*)"j", 7);
   tree.insert((char*)"j", (char*)"j", 8); //i
   tree.insert((char*)"j", (char*)"e", 9);
@@ -46,7 +46,7 @@ int main(int argc, char const *argv[]) {
   int offset = tree.search_primary_key("h");
   cout << "O deslocamento para 'h' é: " << offset << endl;
 
-  LinkedList<string> *list = tree.search_secondary_key("e");
+  LinkedList<string> *list = tree.conjunctive_search("a", "b");
   cout << "Tamanho lista: " << list->size() << endl;
 
   for (size_t i = 0; i < list->size(); i++)
