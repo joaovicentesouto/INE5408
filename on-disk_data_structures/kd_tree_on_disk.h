@@ -68,16 +68,16 @@ private:
            manpage_{0u};
   };
 
-  class Descent {
+  class Route {
   public:
-    Descent() {}
+    Route() {}
 
-    Descent(const size_t offset, const size_t level) :
+    Route(const size_t offset, const size_t level) :
     offset_tree_{offset},
     level_{level}
     {}
 
-    Descent& operator=(const Descent& other) {
+    Route& operator=(const Route& other) {
         if (this != &other) { // self-assignment check expected
             this->offset_tree_ = other.offset_tree_;
             this->level_ = other.level_;
@@ -131,11 +131,10 @@ void KDTreeOnDisk::insert(const char* key_1,
       tree.seekg(father_son);
       tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
 
-      if (son != 0u) {
-        tree.seekg(son);
-        ++level;
-        continue;
-      }
+      if (son == 0u) // Cheguei em um node nulo
+        break;
+
+      tree.seekg(son);
 
     } else { // igual
 
@@ -154,15 +153,14 @@ void KDTreeOnDisk::insert(const char* key_1,
       tree.seekg(father_son);
       tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
 
-      if (son != 0u) {
-        tree.seekg(son);
-        ++level;
-        continue;
-      }
+      if (son == 0u) // cheguei num node nulo
+        break;
 
+      tree.seekg(son);
     }
-    break;
+    ++level;
   }
+  ++level; // Mais um level pro node nulo
 
   if (compare != 0) {
     // Se cheguei aqui é pq vou adicionar
@@ -184,6 +182,7 @@ void KDTreeOnDisk::insert(const char* key_1,
     delete tnode;
   }
 
+  depth_ = level > depth_? level : depth_;
   tree.close();
   //new_level(level);
 }
@@ -204,13 +203,22 @@ size_t KDTreeOnDisk::file_size() const {
 }
 
 int KDTreeOnDisk::search_primary_key(const char* wanted) { // return -1 erro
+  if (empty())
+    throw std::out_of_range("Árvore vazia.");
   // Guardar o deslocamento e nível em uma pilha quando tiver
   // que descer por dois caminhos diferentes.
-  LinkedStack<Descent> deviations; // desvios
+
+  /*char node_key[60];
+  int compare = 1;
+  size_t offset = 0u, son = 0u, level = 0u, father_son = 0u,
+         offset_left = 50+60,
+         offset_right = offset_left + sizeof(size_t);*/
+
+  LinkedStack<Route> routes; // desvios
   char primary[50];
-  size_t offset, level = 0;
-  int compare, offset_tree;
-  bool leaf = false;
+  size_t level = 0, offset;
+  int compare = 1, offset_tree = -1;
+  bool leaf = 0;
 
   ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
   tree.seekg(0); // inicio do arquivo
@@ -223,9 +231,9 @@ int KDTreeOnDisk::search_primary_key(const char* wanted) { // return -1 erro
 
     if (primary[0] == '@') { // node nulo
       try {
-        Descent desc = deviations.pop();
-        tree.seekg(desc.offset_tree_);
-        level = desc.level_;
+        Route way = routes.pop();
+        tree.seekg(way.offset_tree_);
+        level = way.level_;
         leaf = true;
         continue;
       } catch(std::out_of_range error) {
@@ -248,18 +256,18 @@ int KDTreeOnDisk::search_primary_key(const char* wanted) { // return -1 erro
         tree.seekg(2*offset_tree + sizeof(Node)*2);  // direita
     } else {
         tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
-        Descent desc((2*offset_tree + sizeof(Node)*2), level+1);
-        deviations.push(desc);
+        Route way((2*offset_tree + sizeof(Node)*2), level+1);
+        routes.push(way);
     }
 
     ++level;
-  } while (!deviations.empty() || leaf || level < depth_);
+  } while (!routes.empty() || leaf || level < depth_);
 
-  return -1;
+  return -1; // não achou
 }
 
 LinkedList<string>* KDTreeOnDisk::search_secondary_key(const char* wanted) const {
-  LinkedStack<Descent> deviations; // desvios
+  LinkedStack<Route> routes; // desvios
   LinkedList<string>* list = new LinkedList<string>();
 
   char primary[50], secondary[100];
@@ -279,9 +287,9 @@ LinkedList<string>* KDTreeOnDisk::search_secondary_key(const char* wanted) const
 
     if (secondary[0] == '&') { // node nulo
       try {
-        Descent desc = deviations.pop();
-        tree.seekg(desc.offset_tree_);
-        level = desc.level_;
+        Route way = routes.pop();
+        tree.seekg(way.offset_tree_);
+        level = way.level_;
         leaf = true;
         continue;
       } catch(std::out_of_range error) {
@@ -304,12 +312,12 @@ LinkedList<string>* KDTreeOnDisk::search_secondary_key(const char* wanted) const
         tree.seekg(2*offset_tree + sizeof(Node)*2);  // direita
     } else {
         tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
-        Descent desc((2*offset_tree + sizeof(Node)*2), level+1);
-        deviations.push(desc);
+        Route way((2*offset_tree + sizeof(Node)*2), level+1);
+        routes.push(way);
     }
 
     ++level;
-  } while (!deviations.empty() || leaf || level < depth_);
+  } while (!routes.empty() || leaf || level < depth_);
 
   return list;
 }
@@ -317,7 +325,7 @@ LinkedList<string>* KDTreeOnDisk::search_secondary_key(const char* wanted) const
 LinkedList<string>* KDTreeOnDisk::conjunctive_search(const char* w1,
                                                      const char* w2) const
 {
-  LinkedStack<Descent> deviations; // desvios
+  LinkedStack<Route> routes; // desvios
   LinkedList<string>* list = new LinkedList<string>();
 
   char primary[50], secondary[100];
@@ -337,9 +345,9 @@ LinkedList<string>* KDTreeOnDisk::conjunctive_search(const char* w1,
 
     if (secondary[0] == '&') { // node nulo
       try {
-        Descent desc = deviations.pop();
-        tree.seekg(desc.offset_tree_);
-        level = desc.level_;
+        Route way = routes.pop();
+        tree.seekg(way.offset_tree_);
+        level = way.level_;
         leaf = true;
         continue;
       } catch(std::out_of_range error) {
@@ -363,17 +371,17 @@ LinkedList<string>* KDTreeOnDisk::conjunctive_search(const char* w1,
         tree.seekg(2*offset_tree + sizeof(Node)*2);  // direita
       } else {
         tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
-        Descent desc((2*offset_tree + sizeof(Node)*2), level+1);
-        deviations.push(desc);
+        Route way((2*offset_tree + sizeof(Node)*2), level+1);
+        routes.push(way);
       }
     } else {
         tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
-        Descent desc((2*offset_tree + sizeof(Node)*2), level+1);
-        deviations.push(desc);
+        Route way((2*offset_tree + sizeof(Node)*2), level+1);
+        routes.push(way);
     }
 
     ++level;
-  } while (!deviations.empty() || leaf || level < depth_);
+  } while (!routes.empty() || leaf || level < depth_);
 
   return list;
 }
@@ -381,7 +389,7 @@ LinkedList<string>* KDTreeOnDisk::conjunctive_search(const char* w1,
 LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,
                                                      const char* w2) const
 {
-  LinkedStack<Descent> deviations; // desvios
+  LinkedStack<Route> routes; // desvios
   LinkedList<string>* list_one = new LinkedList<string>();
   LinkedList<string>* list_two = new LinkedList<string>();
   LinkedList<string>* list_disj = new LinkedList<string>();
@@ -403,9 +411,9 @@ LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,
 
     if (secondary[0] == '&') { // node nulo
       try {
-        Descent desc = deviations.pop();
-        tree.seekg(desc.offset_tree_);
-        level = desc.level_;
+        Route way = routes.pop();
+        tree.seekg(way.offset_tree_);
+        level = way.level_;
         leaf = true;
         continue;
       } catch(std::out_of_range error) {
@@ -433,17 +441,17 @@ LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,
         tree.seekg(2*offset_tree + sizeof(Node)*2);  // direita
       } else {
         tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
-        Descent desc((2*offset_tree + sizeof(Node)*2), level+1);
-        deviations.push(desc);
+        Route way((2*offset_tree + sizeof(Node)*2), level+1);
+        routes.push(way);
       }
     } else {
         tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
-        Descent desc((2*offset_tree + sizeof(Node)*2), level+1);
-        deviations.push(desc);
+        Route way((2*offset_tree + sizeof(Node)*2), level+1);
+        routes.push(way);
     }
 
     ++level;
-  } while (!deviations.empty() || leaf || level < depth_);
+  } while (!routes.empty() || leaf || level < depth_);
 
   bool cond = list_one->size() < list_two->size();
   LinkedList<string>* minor_list = cond ? list_one : list_two;
