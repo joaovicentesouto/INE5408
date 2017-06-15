@@ -14,6 +14,7 @@
 #include "./word_handler.h"
 #include "./user_interface.h"
 #include "./system.h"
+#include "./structures/linked_list.h"
 
 // Maior chave primária: 48
 // Maior chave secundária: 58
@@ -31,9 +32,10 @@ int main(int argc, char const *argv[]) {
   tree.insert((char*)"g", (char*)"g", 2);
   tree.insert((char*)"b", (char*)"b", 3);
   tree.insert((char*)"d", (char*)"d", 4);
-  tree.insert((char*)"f", (char*)"f", 5); //j
-  tree.insert((char*)"h", (char*)"h", 6);
-  tree.insert((char*)"c", (char*)"d", 7);
+  tree.insert((char*)"f", (char*)"e", 5); //j
+  tree.insert((char*)"h", (char*)"e", 6);
+  tree.insert((char*)"c", (char*)"g", 7);
+  tree.insert((char*)"a", (char*)"g", 7);
   /*tree.insert((char*)"j", (char*)"j", 7);
   tree.insert((char*)"j", (char*)"j", 8); //i
   tree.insert((char*)"j", (char*)"e", 9);
@@ -44,14 +46,13 @@ int main(int argc, char const *argv[]) {
   int offset = tree.search_primary_key("h");
   cout << "O deslocamento para 'h' é: " << offset << endl;
 
-  /*int offset = tree.search_primary_key("k");
-  cout << "O deslocamento para 'k' é: " << offset << endl;
-
-  LinkedList<string> *list = tree.disjunctive_search("g", "e");
+  LinkedList<string> *list = tree.search_secondary_key("e");
   cout << "Tamanho lista: " << list->size() << endl;
 
   for (size_t i = 0; i < list->size(); i++)
-    cout << "i: " << i <<  " = " << list->at(i) << endl; */
+    cout << "i: " << i <<  " = " << list->at(i) << endl;
+
+  delete list;
 
   return 0;
 }
