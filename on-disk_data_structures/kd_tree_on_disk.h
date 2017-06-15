@@ -60,9 +60,9 @@ private:
       cout << "Filho direita: " << right_ << endl;
     }
 
-  private:
-    char primary_[50]{"@@"},
-         secondary_[60]{"&&"};
+  //private:
+    char primary_[50]{"@"},
+         secondary_[60]{"&"};
     size_t left_{0u},
            right_{0u},
            manpage_{0u};
@@ -109,7 +109,7 @@ void KDTreeOnDisk::insert(const char* key_1,
   char node_key[60];
   int compare = 1;
   size_t offset = 0u, son = 0u, level = 0u, father_son = 0u,
-         offset_left = 50+60,
+         offset_left = 50+60+2,
          offset_right = offset_left + sizeof(size_t);
 
   tree.seekg(0);
@@ -204,64 +204,73 @@ size_t KDTreeOnDisk::file_size() const {
 
 int KDTreeOnDisk::search_primary_key(const char* wanted) { // return -1 erro
   if (empty())
-    throw std::out_of_range("Árvore vazia.");
+    return -1;
   // Guardar o deslocamento e nível em uma pilha quando tiver
   // que descer por dois caminhos diferentes.
 
-  /*char node_key[60];
-  int compare = 1;
-  size_t offset = 0u, son = 0u, level = 0u, father_son = 0u,
-         offset_left = 50+60,
-         offset_right = offset_left + sizeof(size_t);*/
 
   LinkedStack<Route> routes; // desvios
   char primary[50];
-  size_t level = 0, offset;
-  int compare = 1, offset_tree = -1;
-  bool leaf = 0;
+  int compare = 1;
+  size_t level = 0u, son = 0u, offset= 0u,
+         offset_left = 50+60+2,
+         offset_right = offset_left + sizeof(size_t),
+         offset_manpage = offset_right + sizeof(size_t);
 
   ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
   tree.seekg(0); // inicio do arquivo
 
-  do {
-    leaf = false;
-    offset_tree = tree.tellg();
-    //cout << offset_tree << endl; // por onde estamos indo
-    tree.read(primary, sizeof(primary));
+  while (tree.good()) {
+    offset = tree.tellg();
 
-    if (primary[0] == '@') { // node nulo
+    tree.read(primary, sizeof(primary));
+    compare = strcmp(primary, wanted);
+
+    if (compare == 0) {  // achei
+      // le offset da manpage
+      tree.seekg(offset + offset_manpage);
+      printf("pri: %lu, sec: %lu, left: %lu, right: %lu, manpage: %lu, soma: %lu\n",
+              sizeof(Node::primary_), sizeof(Node::secondary_),
+              sizeof(Node::left_), sizeof(Node::right_),
+              sizeof(Node::manpage_), sizeof(Node));
+      tree.read(reinterpret_cast<char*>(&offset), sizeof(size_t));
+      return (int) offset;
+    }
+
+    if (level % 2 == 0) {  // dimensao x, divide árvore
+      if (compare < 0)
+        son = offset + offset_left;
+      else
+        son = offset + offset_right;
+
+      tree.seekg(son);
+      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
+
+    } else {               // dimensao y, vai pros dois lados
+      tree.seekg(offset + offset_right);
+      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
+      if (son != 0) {
+        Route way(son, level+1);
+        routes.push(way);
+      }
+
+      tree.seekg(offset + offset_left);
+      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
+    }
+
+    if (son != 0) { // próximo node é nulo
+      tree.seekg(son);  // próxima posição
+      ++level;
+    } else {
       try {
         Route way = routes.pop();
         tree.seekg(way.offset_tree_);
         level = way.level_;
-        leaf = true;
-        continue;
       } catch(std::out_of_range error) {
         break;  // pilha vazia
       }
     }
-
-    compare = strcmp(wanted, primary);
-
-    if (compare == 0) {  // achei
-      tree.seekg(offset_tree+200);  // (começo+pri+sec)_pegar o offset do node
-      tree.read(reinterpret_cast<char*>(&offset), sizeof(size_t));
-      return offset;
-    }
-
-    if (level % 2 == 0) { // dimensao x
-      if (compare < 0)
-        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
-      else
-        tree.seekg(2*offset_tree + sizeof(Node)*2);  // direita
-    } else {
-        tree.seekg(2*offset_tree + sizeof(Node)*1);  // esquerda
-        Route way((2*offset_tree + sizeof(Node)*2), level+1);
-        routes.push(way);
-    }
-
-    ++level;
-  } while (!routes.empty() || leaf || level < depth_);
+  }
 
   return -1; // não achou
 }

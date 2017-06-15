@@ -26,7 +26,7 @@ int main(int argc, char const *argv[]) {
 
   cout << "Tamanho antes: " << tree.size() << endl;
 
-  tree.insert((char*)"e", (char*)"e", 0);
+  tree.insert((char*)"e", (char*)"e", 30);
   tree.insert((char*)"c", (char*)"c", 1);
   tree.insert((char*)"g", (char*)"g", 2);
   tree.insert((char*)"b", (char*)"b", 3);
@@ -40,6 +40,9 @@ int main(int argc, char const *argv[]) {
   tree.insert((char*)"k", (char*)"k", 10);*/
 
   cout << "Tamanho depois: " << tree.size() << endl;
+
+  int offset = tree.search_primary_key("e");
+  cout << "O deslocamento para 'e' é: " << offset << endl;
 
   /*int offset = tree.search_primary_key("k");
   cout << "O deslocamento para 'k' é: " << offset << endl;
