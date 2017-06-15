@@ -25,6 +25,7 @@ int main(int argc, char const *argv[]) {
 
   System sys;
   sys.init(argc, argv);
+  sys.run();
 
   /* Testes kd
 

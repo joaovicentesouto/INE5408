@@ -33,7 +33,7 @@ class System {
  private:
    WordHandler *handler_;
    KDTreeOnDisk *tree_;
-   UserInterface *user_io_;
+   UserInterface *user_;
    size_t counter_primary{0u},
           counter_secondary{0u};
 };
@@ -41,13 +41,13 @@ class System {
 System::System() {
   handler_ = new WordHandler();
   tree_ = new KDTreeOnDisk();
-  user_io_ = new UserInterface();
+  user_ = new UserInterface();
 }
 
 System::~System() {
   delete handler_;
   delete tree_;
-  delete user_io_;
+  delete user_;
 }
 
 // Idéia: começar pegando os arquivos do meio do array argv e indo
@@ -55,14 +55,12 @@ System::~System() {
 // "balanceada" possível.
 void System::init(int argc, char const *argv[]) {
   size_t decrement, increment;
-  string dir;
+  string dir, aux;
   LinkedList<string> *words;
   counter_primary = argc-1;
 
   increment = static_cast<size_t>((argc-1)/2)+1;
   decrement = increment-1;
-
-  printf("\nQuantidade de arquivos indexados: %d\n\n", argc-1);
 
   for (size_t i = 1; i < argc; ++i) {
     dir = i % 2 == 0? argv[increment++] : argv[decrement--];
@@ -73,20 +71,50 @@ void System::init(int argc, char const *argv[]) {
 
     counter_secondary += words->size();
 
-    //cout << words->size() << endl;
-    string aux;
-    cout << dir << endl;
     while (!words->empty()) {
       aux = words->pop_front();
-      cout << "Inserindo: " << aux << endl;
-      tree_->insert(dir.c_str(), aux.c_str(), 100);
+      cout << dir << " -> " << aux << endl;
+      tree_->insert(dir.c_str(), aux.c_str(), i);
     }
     delete words;
-    cout << endl;
   }
+}
 
-  printf("Total de nodes criados: %lu\n", counter_secondary);
+void System::run() {
+  string word_one, word_two;
+  LinkedList<string> *list;
+  size_t option = 0;
+  while (option != 5) {
+    option = user_->choose_option();
+    switch (option) {
+      case 0: // Busca primária
+        word_one = user_->ask_word("\nInforme a chave primária:");
+        cout << "Offset: " << tree_->search_primary_key(word_one.c_str()) << endl;
+        break;
 
+      case 1: // Busca secundária
+        word_one = user_->ask_word("\nInforme a chave secundária:");
+        list = tree_->search_secondary_key(word_one.c_str());
+
+        cout << "Tamanho lista secundária: " << list->size() << endl;
+        for (size_t i = 0; i < list->size(); i++)
+          cout << "i: " << i <<  " = " << list->at(i) << endl;
+
+        break;
+
+      case 2: // Busca conjuntiva
+        break;
+
+      case 3: // Busca disjuntiva
+        break;
+
+      case 4: // Busca Informaçoes e estatisticas
+        break;
+
+      default: // Sair
+        break;
+    }
+  }
 }
 
 }  //  namespace structures
