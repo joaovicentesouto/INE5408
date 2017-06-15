@@ -76,8 +76,8 @@ LinkedList<string>* WordHandler::treatment(ifstream &file) {
       string temp(token);
       transform(temp.begin(), temp.end(), temp.begin(), ::tolower);
 
-      if (!ignored_words.contains(temp))
-        list->insert_sorted(temp); // não precisa ser em ordem
+      if (!ignored_words.contains(temp) && !list->contains(temp))
+        list->push_front(temp); // não precisa ser em ordem
       token = strtok(NULL, separations.c_str()); // de alguma maneira pega o próximo
     }
   }

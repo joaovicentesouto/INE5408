@@ -103,9 +103,23 @@ void System::run() {
         break;
 
       case 2: // Busca conjuntiva
+        word_one = user_->ask_word("\nInforme a 1ª chave secundária:");
+        word_two = user_->ask_word("\nInforme a 2ª chave secundária:");
+        list = tree_->conjunctive_search(word_one.c_str(), word_two.c_str());
+
+        cout << "Tamanho lista conjunt.: " << list->size() << endl;
+        for (size_t i = 0; i < list->size(); i++)
+          cout << "i: " << i <<  " = " << list->at(i) << endl;
         break;
 
       case 3: // Busca disjuntiva
+        word_one = user_->ask_word("\nInforme a 1ª chave secundária:");
+        word_two = user_->ask_word("\nInforme a 2ª chave secundária:");
+        list = tree_->disjunctive_search(word_one.c_str(), word_two.c_str());
+
+        cout << "Tamanho lista disjunt.: " << list->size() << endl;
+        for (size_t i = 0; i < list->size(); i++)
+          cout << "i: " << i <<  " = " << list->at(i) << endl;
         break;
 
       case 4: // Busca Informaçoes e estatisticas
