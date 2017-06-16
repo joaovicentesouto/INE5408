@@ -29,7 +29,7 @@ class WordHandler {
    LinkedList<string>* treatment(ifstream &file);
 
  private:
-   ArrayList<string> ignored_words{150};
+   ArrayList<string> ignored_words{250};
    string separations{" '`^,.-+:;=<>[](){}|/_%*&$#@!?0123456789\"\f\n\r\t\v\\"};
    char *token{nullptr};
 };

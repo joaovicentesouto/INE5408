@@ -28,7 +28,6 @@ class System {
 
    void init(int argc, char const *argv[]);
    void run();
-   void statistics();
 
  private:
    WordHandler *handler_;
@@ -73,7 +72,7 @@ void System::init(int argc, char const *argv[]) {
 
     while (!words->empty()) {
       aux = words->pop_front();
-      cout << dir << " -> " << aux << endl;
+      //cout << dir << " -> " << aux << endl;
       tree_->insert(dir.c_str(), aux.c_str(), i);
     }
     delete words;
@@ -93,36 +92,56 @@ void System::run() {
         break;
 
       case 1: // Busca secundária
+        cout << "\n\n===  Busca por secundária  ===" << endl;
         word_one = user_->ask_word("\nInforme a chave secundária:");
         list = tree_->search_secondary_key(word_one.c_str());
 
-        cout << "Tamanho lista secundária: " << list->size() << endl;
-        for (size_t i = 0; i < list->size(); i++)
-          cout << "i: " << i <<  " = " << list->at(i) << endl;
+        printf("\n%lu arquivos encontrados com \"%s\":\n",
+                list->size(), word_one.c_str());
 
+        for (size_t i = 0; i < list->size(); i++)
+          cout << "-> " << list->at(i) << endl;
+
+        cout << "\n===          FIM          ===\n" << endl;
         break;
 
       case 2: // Busca conjuntiva
+        cout << "\n\n===  Busca conjuntiva  ===" << endl;
         word_one = user_->ask_word("\nInforme a 1ª chave secundária:");
         word_two = user_->ask_word("\nInforme a 2ª chave secundária:");
         list = tree_->conjunctive_search(word_one.c_str(), word_two.c_str());
 
-        cout << "Tamanho lista conjunt.: " << list->size() << endl;
+        printf("\n%lu arquivos encontrados com \"%s\" OU \"%s\":\n",
+                list->size(), word_one.c_str(), word_two.c_str());
+
         for (size_t i = 0; i < list->size(); i++)
-          cout << "i: " << i <<  " = " << list->at(i) << endl;
+          cout << "-> " << list->at(i) << endl;
+
+        cout << "\n===        FIM         ===\n" << endl;
         break;
 
       case 3: // Busca disjuntiva
+      cout << "\n\n===  Busca disjuntiva  ===" << endl;
         word_one = user_->ask_word("\nInforme a 1ª chave secundária:");
         word_two = user_->ask_word("\nInforme a 2ª chave secundária:");
         list = tree_->disjunctive_search(word_one.c_str(), word_two.c_str());
 
-        cout << "Tamanho lista disjunt.: " << list->size() << endl;
+        printf("\n%lu arquivos encontrados com \"%s\" E \"%s\":\n",
+                list->size(), word_one.c_str(), word_two.c_str());
+
         for (size_t i = 0; i < list->size(); i++)
-          cout << "i: " << i <<  " = " << list->at(i) << endl;
+          cout << "-> " << list->at(i) << endl;
+
+        cout << "\n===        FIM         ===\n" << endl;
         break;
 
       case 4: // Busca Informaçoes e estatisticas
+        cout << "\n\n===  Informações  ===" << endl;
+        cout << "\nQuantidade de arquivos indexados: ";
+        cout << counter_primary << endl;
+        cout << "Quantidade de nodes criados: ";
+        cout << counter_secondary << endl;
+        cout << "\n===      FIM      ===\n" << endl;
         break;
 
       default: // Sair

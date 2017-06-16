@@ -50,7 +50,7 @@ size_t UserInterface::choose_option() {
     cout << "1 : Busca por chave secundária." << endl;
     cout << "2 : Busca conjuntiva por chave secundária." << endl;
     cout << "3 : Busca disjuntiva por chave secundária." << endl;
-    cout << "4 : Informação e estatísticas." << endl;
+    cout << "4 : Informações." << endl;
     cout << "5 : Sair." << endl;
     cout << ">> ";
     cin >> aux;

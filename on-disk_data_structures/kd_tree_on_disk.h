@@ -205,8 +205,6 @@ size_t KDTreeOnDisk::file_size() const {
 }
 
 int KDTreeOnDisk::search_primary_key(const char* wanted) { // return -1 erro
-  if (empty())
-    return -1;
   // Guardar o deslocamento e nível em uma pilha quando tiver
   // que descer por dois caminhos diferentes.
 
