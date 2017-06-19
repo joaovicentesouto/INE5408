@@ -20,7 +20,8 @@ public:
   Node(const char* primary, const size_t secondary, char* manpage) {
     strcpy(primary_, primary);
     secondary_ = secondary;
-    manpage_ = manpage;
+    manpage_ = new char[secondary_];
+    strcpy(manpage_, manpage);
   }
 
   void print() {
@@ -32,26 +33,22 @@ public:
     cout << endl;
   }
 
-  void print_size() {
-    cout << "P: "<< sizeof(primary_) << endl;
-    cout << "S: "<< sizeof(secondary_) << endl;
-    cout << "L: "<< sizeof(left_) << endl;
-    cout << "R: "<< sizeof(right_) << endl;
-    cout << "M: " << strlen(manpage_) << endl;
-    cout << endl;
+  size_t size() {
+    size_t aux = sizeof(primary_) + sizeof(secondary_)
+                 + sizeof(left_) + sizeof(right_) + strlen(manpage_);
+    return aux;
   }
 
-//private:
   char primary_[50]{"@"};
-  size_t secondary_,
-         left_{0u},
-         right_{0u};
+  size_t secondary_{0u},
+         left_{1u},
+         right_{2u};
   char *manpage_;
 };
 
 int main(int argc, char const *argv[]) {
 
-  ifstream file("./ManPages/in.rexecd.1m.txt", ios::in | ios::binary);
+  /*ifstream file("./ManPages/in.rexecd.1m.txt", ios::in | ios::binary);
 
   struct stat st;
   if (stat("./tree.dat", &st) != 0)
@@ -61,19 +58,41 @@ int main(int argc, char const *argv[]) {
   char man[st.st_size];
   file.seekg(0);
   file.read(man, st.st_size);
+  file.close();
 
-  cout << "man: " << strlen(man) << endl;
+  ofstream mantest("./mantest.dat", ios::out | ios::binary | ios::trunc);
 
-  ofstream out("./mantest.dat", ios::out | ios::binary);
-  out.write(man, strlen(man));
-
-  Node *tnode = new Node("Nome", 100, man);
+  Node *tnode = new Node("in.rexecd.1m", strlen(man), man);
   tnode->print();
-  tnode->print_size();
 
-  Node *t2 = new Node("Aaaaa", 100, "AJHASJJSJSKAKJKLAJSKLJDkskdjalksjkldfasdfsdfsdfsdfsdfsdfs");
-  t2->print();
-  t2->print_size();
+  mantest.seekp(0);
+  mantest.write(reinterpret_cast<char*>(tnode), tnode->size());
+  mantest.close();
+
+  ifstream in("./mantest.dat", ios::in | ios::binary);
+  in.seekg(0);
+  char pri[50];
+  in.read(pri, 50);
+  cout << pri << endl;
+
+  in.seekg(sizeof(Node::primary_)+6);
+  size_t tam_man;
+  in.read(reinterpret_cast<char*>(&tam_man), sizeof(Node::secondary_));
+  cout << tam_man << endl;
+
+  in.seekg(sizeof(Node::primary_)+6+sizeof(size_t));
+  size_t aux;
+  in.read(reinterpret_cast<char*>(&aux), sizeof(Node::left_));
+  cout << aux << endl;
+
+  in.seekg(sizeof(Node::primary_)+6+sizeof(size_t)*2);
+  in.read(reinterpret_cast<char*>(&aux), sizeof(Node::left_));
+  cout << aux << endl;
+
+  in.seekg(sizeof(Node::primary_)+6+sizeof(size_t)*3);
+  char man_node[tam_man];
+  in.read(reinterpret_cast<char*>(&man_node), tam_man);
+  cout << man_node << endl;*/
 
   return 0;
 }
