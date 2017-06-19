@@ -24,7 +24,7 @@ public:
   KDTreeOnDisk();
   ~KDTreeOnDisk();
 
-  void insert(const char* primary, const size_t secondary, const char* manpage);
+  void insert(const char* primary, const size_t secondary, char* manpage);
   //void remove(const char* first_key, const char* second_key);
 
   //bool contains_primary(const char* primary) const;
@@ -33,10 +33,10 @@ public:
   size_t size() const;
   size_t file_size() const;
 
-  int search_primary_key(const char* primary);  //!< retorna o offset
-  LinkedList<string>* search_secondary_key(const size_t wanted) const;
-  LinkedList<string>* conjunctive_search(const size_t w1, const size_t w2) const;
-  LinkedList<string>* disjunctive_search(const size_t w1, const size_t w2) const;
+  //int search_primary_key(const char* primary);  //!< retorna o offset
+  //LinkedList<string>* search_secondary_key(const size_t wanted) const;
+  //LinkedList<string>* conjunctive_search(const size_t w1, const size_t w2) const;
+  //LinkedList<string>* disjunctive_search(const size_t w1, const size_t w2) const;
 
 
 private:
@@ -58,8 +58,8 @@ private:
 
     char primary_[50]{"@"};
     size_t secondary_{0u},
-           left_{1u},
-           right_{2u};
+           left_{0u},
+           right_{0u};
     char manpage_[139718]{"&"};
   };
 
@@ -97,14 +97,14 @@ KDTreeOnDisk::KDTreeOnDisk() {
 KDTreeOnDisk::~KDTreeOnDisk() {}
 
 void KDTreeOnDisk::insert(const char* key_1,
-                          const size_t key_2, const char* manpage) {
+                          const size_t key_2, char* manpage) {
   fstream tree("./tree.dat", ios::in | ios::out | ios::binary);
 
   char node_key_1[50];
   size_t node_key_2;
   int compare = 1;
   size_t offset = 0u, son = 0u, level = 0u, father_son = 0u,
-         offset_secondary = sizeof(Node::primary_)+6;
+         offset_secondary = sizeof(Node::primary_)+6,
          offset_left = offset_secondary + sizeof(size_t),
          offset_right = offset_left + sizeof(size_t),
          offset_manpage = offset_right + sizeof(size_t);
@@ -118,7 +118,7 @@ void KDTreeOnDisk::insert(const char* key_1,
       compare = strcmp(key_1, node_key_1);
     } else {
       tree.seekg(offset + offset_secondary);
-      tree.read(node_key_2, sizeof(size_t));
+      tree.read(reinterpret_cast<char*>(&node_key_2), sizeof(size_t));
       compare = key_2 - node_key_2;
     }
 
@@ -137,7 +137,7 @@ void KDTreeOnDisk::insert(const char* key_1,
 
       if (level % 2 == 0) {
         tree.seekg(offset + offset_secondary);
-        tree.read(node_key_2, sizeof(size_t));
+        tree.read(reinterpret_cast<char*>(&node_key_2), sizeof(size_t));
         compare = key_2 - node_key_2;
       } else {
         tree.seekg(offset);
@@ -201,7 +201,7 @@ size_t KDTreeOnDisk::file_size() const {
   return st.st_size;
 }
 
-int KDTreeOnDisk::search_primary_key(const char* wanted) { // return -1 erro
+/*int KDTreeOnDisk::search_primary_key(const char* wanted) { // return -1 erro
   // Guardar o deslocamento e nível em uma pilha quando tiver
   // que descer por dois caminhos diferentes.
 
@@ -508,6 +508,8 @@ LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,
 
   return list_disj;
 }
+
+*/
 
 }  //  namespace structures
 
