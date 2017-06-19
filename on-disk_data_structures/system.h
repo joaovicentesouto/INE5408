@@ -58,12 +58,12 @@ void System::init(int argc, char const *argv[]) {
   //LinkedList<string> *words;
   struct stat st;
 
-  increment = static_cast<size_t>((argc-1)/2)+1;
+  increment = static_cast<size_t>(((int) ((argc-1) / 2)) + 1);
   decrement = increment-1;
 
   for (size_t i = 1; i < argc; ++i) {
     counter_primary++;
-    dir = i % 2 == 0? argv[increment++] : argv[decrement--];
+    dir = i % 2 == 1? argv[increment++] : argv[decrement--];
 
     // Chaves secundárias ainda nao implementado
     //words = handler_->treatment(file);
@@ -79,10 +79,11 @@ void System::init(int argc, char const *argv[]) {
     file.seekg(0);
     file.read(manpage, st.st_size);
 
-    cout << "Inserindo: " << dir << " Tam: " << strlen(manpage) << endl;
-    cout << manpage << endl;
+    //cout << "Inserindo: " << dir << " len: " << strlen(manpage) << " st: "<< st.st_size << endl;
+
+    manpage[st.st_size-1] = '\0';
     dir = handler_->clean_primary_key(dir);
-    tree_->insert(dir.c_str(), strlen(manpage), manpage);
+    tree_->insert(dir.c_str(), st.st_size, manpage);
 
     file.close();
     //delete words;
@@ -102,8 +103,14 @@ void System::run() {
       case 0:
         word_one = user_->ask_word("\nInforme a chave primária:");
         manpage = tree_->search_primary_key(word_one.c_str());
-        cout << word_one << endl;
-        cout << manpage << endl;
+        if (manpage != nullptr) {
+          cout << endl << word_one << endl;
+          cout << manpage << endl;
+        } else {
+          cout << "\nArquivo \"" << word_one << "\" encontrado." << endl;
+        }
+
+        delete manpage;
         break;
 
       default:
