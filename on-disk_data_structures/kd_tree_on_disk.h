@@ -33,7 +33,7 @@ public:
   size_t size() const;
   size_t file_size() const;
 
-  //int search_primary_key(const char* primary);  //!< retorna o offset
+  char* search_primary_key(const char* wanted);  //!< retorna o offset
   //LinkedList<string>* search_secondary_key(const size_t wanted) const;
   //LinkedList<string>* conjunctive_search(const size_t w1, const size_t w2) const;
   //LinkedList<string>* disjunctive_search(const size_t w1, const size_t w2) const;
@@ -106,8 +106,7 @@ void KDTreeOnDisk::insert(const char* key_1,
   size_t offset = 0u, son = 0u, level = 0u, father_son = 0u,
          offset_secondary = sizeof(Node::primary_)+6,
          offset_left = offset_secondary + sizeof(size_t),
-         offset_right = offset_left + sizeof(size_t),
-         offset_manpage = offset_right + sizeof(size_t);
+         offset_right = offset_left + sizeof(size_t);
 
   tree.seekg(0);
   while (tree.good() && size_ != 0) {
@@ -201,15 +200,17 @@ size_t KDTreeOnDisk::file_size() const {
   return st.st_size;
 }
 
-/*int KDTreeOnDisk::search_primary_key(const char* wanted) { // return -1 erro
+char* KDTreeOnDisk::search_primary_key(const char* wanted) { // return -1 erro
   // Guardar o deslocamento e nível em uma pilha quando tiver
   // que descer por dois caminhos diferentes.
 
   LinkedStack<Route> routes; // desvios
-  char primary[50];
+  char node_key_1[50];
+  size_t node_key_2;
   int compare = 1;
-  size_t level = 0u, son = 0u, offset= 0u,
-         offset_left = 50+60+2,
+  size_t offset = 0u, son = 0u, level = 0u,
+         offset_secondary = sizeof(Node::primary_)+6,
+         offset_left = offset_secondary + sizeof(size_t),
          offset_right = offset_left + sizeof(size_t),
          offset_manpage = offset_right + sizeof(size_t);
 
@@ -219,14 +220,18 @@ size_t KDTreeOnDisk::file_size() const {
   while (tree.good()) {
     offset = tree.tellg();
 
-    tree.read(primary, sizeof(primary));
-    compare = strcmp(wanted, primary);
+    tree.read(node_key_1, sizeof(Node::primary_));
+    compare = strcmp(wanted, node_key_1);
 
     if (compare == 0) {  // achei
       // le offset da manpage
+      tree.seekg(offset + offset_secondary);
+      tree.read(reinterpret_cast<char*>(&node_key_2), sizeof(size_t));
+
+      char *manpage = new char[node_key_2];
       tree.seekg(offset + offset_manpage);
-      tree.read(reinterpret_cast<char*>(&offset), sizeof(size_t));
-      return (int) offset;
+      tree.read(manpage, node_key_2);
+      return manpage;
     }
 
     if (level % 2 == 0) {  // dimensao x, divide árvore
@@ -250,7 +255,7 @@ size_t KDTreeOnDisk::file_size() const {
       tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
     }
 
-    if (son != 0) { // próximo node é nulo
+    if (son != 0) { // próximo node nao é nulo
       tree.seekg(son);  // próxima posição
       ++level;
     } else {
@@ -264,9 +269,10 @@ size_t KDTreeOnDisk::file_size() const {
     }
   }
 
-  return -1; // não achou
+  return nullptr; // não achou
 }
 
+/*
 LinkedList<string>* KDTreeOnDisk::search_secondary_key(const char* wanted) const {
 
   LinkedStack<Route> routes; // desvios

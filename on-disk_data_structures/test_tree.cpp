@@ -42,5 +42,11 @@ int main(int argc, char const *argv[]) {
     tree->insert(name[i], strlen(man[i]), man[i]);
   }
 
+  char* test = tree->search_primary_key("Rejane");
+  if (test != nullptr)
+    cout << test << endl;
+  else
+    cout << "Erro" << endl;
+
   return 0;
 }
