@@ -20,7 +20,6 @@ public:
   Node(const char* primary, const size_t secondary, char* manpage) {
     strcpy(primary_, primary);
     secondary_ = secondary;
-    manpage_ = new char[secondary_];
     strcpy(manpage_, manpage);
   }
 
@@ -35,7 +34,7 @@ public:
 
   size_t size() {
     size_t aux = sizeof(primary_) + sizeof(secondary_)
-                 + sizeof(left_) + sizeof(right_) + strlen(manpage_);
+                 + sizeof(left_) + sizeof(right_) + strlen(manpage_) + 10;
     return aux;
   }
 
@@ -43,17 +42,17 @@ public:
   size_t secondary_{0u},
          left_{1u},
          right_{2u};
-  char *manpage_;
+  char manpage_[139718]{"&"};
 };
 
 int main(int argc, char const *argv[]) {
 
-  /*ifstream file("./ManPages/in.rexecd.1m.txt", ios::in | ios::binary);
+  ifstream file("./ManPages/in.rexecd.1m.txt", ios::in | ios::binary);
 
   struct stat st;
   if (stat("./tree.dat", &st) != 0)
     throw std::out_of_range("Erro ao verificar tamanho do arquivo.");
-  cout << st.st_size << endl;
+  //cout << st.st_size << endl;
 
   char man[st.st_size];
   file.seekg(0);
@@ -63,7 +62,7 @@ int main(int argc, char const *argv[]) {
   ofstream mantest("./mantest.dat", ios::out | ios::binary | ios::trunc);
 
   Node *tnode = new Node("in.rexecd.1m", strlen(man), man);
-  tnode->print();
+  cout << tnode->size() << endl;
 
   mantest.seekp(0);
   mantest.write(reinterpret_cast<char*>(tnode), tnode->size());
@@ -92,7 +91,7 @@ int main(int argc, char const *argv[]) {
   in.seekg(sizeof(Node::primary_)+6+sizeof(size_t)*3);
   char man_node[tam_man];
   in.read(reinterpret_cast<char*>(&man_node), tam_man);
-  cout << man_node << endl;*/
+  cout << man_node << endl;
 
   return 0;
 }
