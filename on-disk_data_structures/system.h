@@ -55,96 +55,59 @@ System::~System() {
 void System::init(int argc, char const *argv[]) {
   size_t decrement, increment;
   string dir, aux;
-  LinkedList<string> *words;
-  counter_primary = argc-1;
+  //LinkedList<string> *words;
+  struct stat st;
 
   increment = static_cast<size_t>((argc-1)/2)+1;
   decrement = increment-1;
 
   for (size_t i = 1; i < argc; ++i) {
+    counter_primary++;
     dir = i % 2 == 0? argv[increment++] : argv[decrement--];
 
+    // Chaves secundárias ainda nao implementado
+    //words = handler_->treatment(file);
+    //counter_secondary += words->size();
+
+    // Chave primária e manpages
+    if (stat(dir.c_str(), &st) != 0)
+      throw std::out_of_range("Erro ao verificar tamanho do arquivo.");
+
     ifstream file(dir.c_str(), ios::in);
-    words = handler_->treatment(file);
+
+    char manpage[st.st_size];
+    file.seekg(0);
+    file.read(manpage, st.st_size);
+
+    cout << "Inserindo: " << dir << " Tam: " << strlen(manpage) << endl;
+    cout << manpage << endl;
     dir = handler_->clean_primary_key(dir);
+    tree_->insert(dir.c_str(), strlen(manpage), manpage);
 
-    counter_secondary += words->size();
-
-    while (!words->empty()) {
-      aux = words->pop_front();
-      //cout << dir << " -> " << aux << endl;
-      tree_->insert(dir.c_str(), aux.c_str(), i);
-    }
-    delete words;
+    file.close();
+    //delete words;
   }
 }
 
 void System::run() {
   string word_one, word_two;
+  char* manpage;
   LinkedList<string> *list;
   size_t option = 0;
+
   while (option != 5) {
     option = user_->choose_option();
+
     switch (option) {
-      case 0: // Busca primária
+      case 0:
         word_one = user_->ask_word("\nInforme a chave primária:");
-        cout << "Offset: " << tree_->search_primary_key(word_one.c_str()) << endl;
+        manpage = tree_->search_primary_key(word_one.c_str());
+        cout << word_one << endl;
+        cout << manpage << endl;
         break;
 
-      case 1: // Busca secundária
-        cout << "\n\n===  Busca por secundária  ===" << endl;
-        word_one = user_->ask_word("\nInforme a chave secundária:");
-        list = tree_->search_secondary_key(word_one.c_str());
-
-        printf("\n%lu arquivos encontrados com \"%s\":\n",
-                list->size(), word_one.c_str());
-
-        for (size_t i = 0; i < list->size(); i++)
-          cout << "-> " << list->at(i) << endl;
-
-        cout << "\n===          FIM          ===\n" << endl;
-        break;
-
-      case 2: // Busca conjuntiva
-        cout << "\n\n===  Busca conjuntiva  ===" << endl;
-        word_one = user_->ask_word("\nInforme a 1ª chave secundária:");
-        word_two = user_->ask_word("\nInforme a 2ª chave secundária:");
-        list = tree_->conjunctive_search(word_one.c_str(), word_two.c_str());
-
-        printf("\n%lu arquivos encontrados com \"%s\" OU \"%s\":\n",
-                list->size(), word_one.c_str(), word_two.c_str());
-
-        for (size_t i = 0; i < list->size(); i++)
-          cout << "-> " << list->at(i) << endl;
-
-        cout << "\n===        FIM         ===\n" << endl;
-        break;
-
-      case 3: // Busca disjuntiva
-      cout << "\n\n===  Busca disjuntiva  ===" << endl;
-        word_one = user_->ask_word("\nInforme a 1ª chave secundária:");
-        word_two = user_->ask_word("\nInforme a 2ª chave secundária:");
-        list = tree_->disjunctive_search(word_one.c_str(), word_two.c_str());
-
-        printf("\n%lu arquivos encontrados com \"%s\" E \"%s\":\n",
-                list->size(), word_one.c_str(), word_two.c_str());
-
-        for (size_t i = 0; i < list->size(); i++)
-          cout << "-> " << list->at(i) << endl;
-
-        cout << "\n===        FIM         ===\n" << endl;
-        break;
-
-      case 4: // Busca Informaçoes e estatisticas
-        cout << "\n\n===  Informações  ===" << endl;
-        cout << "\nQuantidade de arquivos indexados: ";
-        cout << counter_primary << endl;
-        cout << "Quantidade de nodes criados: ";
-        cout << counter_secondary << endl;
-        cout << "\n===      FIM      ===\n" << endl;
-        break;
-
-      default: // Sair
+      default:
+        cout << "FIM" << endl;
         break;
     }
   }
