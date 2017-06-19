@@ -10,46 +10,70 @@
 #include <typeinfo>
 #include <string>
 
-#include "./structures/linked_list.h"
-#include "./structures/linked_stack.h"
-#include "./structures/array_list.h"
-#include "./word_handler.h"
-#include "./kd_tree_on_disk.h"
 
 using namespace std;
-using namespace structures;
+
+class Node {
+public:
+  Node() {}
+
+  Node(const char* primary, const size_t secondary, char* manpage) {
+    strcpy(primary_, primary);
+    secondary_ = secondary;
+    manpage_ = manpage;
+  }
+
+  void print() {
+    cout << "P: "<< primary_ << endl;
+    cout << "S: "<< secondary_ << endl;
+    cout << "L: "<< left_ << endl;
+    cout << "R: "<< right_ << endl;
+    cout << "M: " << manpage_ << endl;
+    cout << endl;
+  }
+
+  void print_size() {
+    cout << "P: "<< sizeof(primary_) << endl;
+    cout << "S: "<< sizeof(secondary_) << endl;
+    cout << "L: "<< sizeof(left_) << endl;
+    cout << "R: "<< sizeof(right_) << endl;
+    cout << "M: " << strlen(manpage_) << endl;
+    cout << endl;
+  }
+
+//private:
+  char primary_[50]{"@"};
+  size_t secondary_,
+         left_{0u},
+         right_{0u};
+  char *manpage_;
+};
 
 int main(int argc, char const *argv[]) {
 
-  KDTreeOnDisk tree;
-  WordHandler handler;
+  ifstream file("./ManPages/in.rexecd.1m.txt", ios::in | ios::binary);
 
-  string dir;
-  LinkedList<string> *words;
-  LinkedList<string> *aux;
+  struct stat st;
+  if (stat("./tree.dat", &st) != 0)
+    throw std::out_of_range("Erro ao verificar tamanho do arquivo.");
+  cout << st.st_size << endl;
 
-  ifstream file("./ManPages/dlpi_fd.3dlpi.txt", ios::in);
-  words = handler.treatment(file);
-  cout << "Tam words: " << words->size() << endl;
+  char man[st.st_size];
+  file.seekg(0);
+  file.read(man, st.st_size);
 
-  for (size_t i = 0; i < words->size(); i++) {
-    dir = words->at(i);
-    cout << "dlpi_fd.3dlpi -> " << dir << endl;
-    tree.insert("dlpi_fd.3dlpi", dir.c_str(), 100);
-  }
-  cout << "Tam tree: " << tree.size() << endl;
+  cout << "man: " << strlen(man) << endl;
 
-  for (size_t i = 0; i < words->size(); i++) {
-    dir = words->at(i);
-    aux = tree.search_secondary_key(dir.c_str());
-    cout << "tamanho achado: " << aux->size() << endl;
-    cout << dir << endl;
-    for (size_t j = 0; j < aux->size(); j++) {
-      cout << " -> " << aux->at(j) << endl;
-    }
-  }
+  ofstream out("./mantest.dat", ios::out | ios::binary);
+  out.write(man, strlen(man));
 
-  delete words;
+  Node *tnode = new Node("Nome", 100, man);
+  tnode->print();
+  tnode->print_size();
+
+  Node *t2 = new Node("Aaaaa", 100, "AJHASJJSJSKAKJKLAJSKLJDkskdjalksjkldfasdfsdfsdfsdfsdfsdfs");
+  t2->print();
+  t2->print_size();
 
   return 0;
 }

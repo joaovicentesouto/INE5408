@@ -24,7 +24,7 @@ public:
   KDTreeOnDisk();
   ~KDTreeOnDisk();
 
-  void insert(const char* first_key, const char* second_key, const size_t offset);
+  void insert(const char* primary, const size_t secondary, const char* manpage);
   //void remove(const char* first_key, const char* second_key);
 
   //bool contains_primary(const char* primary) const;
@@ -33,39 +33,29 @@ public:
   size_t size() const;
   size_t file_size() const;
 
-  int search_primary_key(const char* wanted);  //!< retorna o offset
-  LinkedList<string>* search_secondary_key(const char* wanted) const;
-  LinkedList<string>* conjunctive_search(const char* w1, const char* w2) const;
-  LinkedList<string>* disjunctive_search(const char* w1, const char* w2) const;
+  int search_primary_key(const char* primary);  //!< retorna o offset
+  LinkedList<string>* search_secondary_key(const size_t wanted) const;
+  LinkedList<string>* conjunctive_search(const size_t w1, const size_t w2) const;
+  LinkedList<string>* disjunctive_search(const size_t w1, const size_t w2) const;
 
-  //ArrayList<T> pre_order() const;
-  //ArrayList<T> in_order() const;
-  //ArrayList<T> post_order() const;
 
 private:
   class Node {
   public:
     Node() {}
 
-    Node(const char* primary, const char* secondary, const size_t manpage) {
+    Node(const char* primary, const size_t secondary, const char* manpage) {
       strcpy(primary_, primary);
-      strcpy(secondary_, secondary);
-      manpage_ = manpage;
-    }
-
-    void print() {
-      cout << "Chave 1: " << primary_ << endl;
-      cout << "Chave 2: " << secondary_ << endl;
-      cout << "Filho esquerda: " << left_ << endl;
-      cout << "Filho direita: " << right_ << endl;
+      secondary_ = secondary;
+      strcpy(manpage_, manpage);
     }
 
   //private:
     char primary_[50]{"@"},
-         secondary_[60]{"&"};
-    size_t left_{0u},
+    size_t secondary_,
+           left_{0u},
            right_{0u},
-           manpage_{0u};
+    char *manpage_;
   };
 
   class Route {
@@ -101,12 +91,12 @@ KDTreeOnDisk::KDTreeOnDisk() {
 
 KDTreeOnDisk::~KDTreeOnDisk() {}
 
-void KDTreeOnDisk::insert(const char* key_1,
-                          const char* key_2,
-                          const size_t manpage) {
+void KDTreeOnDisk::insert(const char* name, const size_t size,
+                          const char* manpage) {
   fstream tree("./tree.dat", ios::in | ios::out | ios::binary);
 
-  char node_key[60];
+  char manpage_name[50];
+  size_t manpage_size
   int compare = 1;
   size_t offset = 0u, son = 0u, level = 0u, father_son = 0u,
          offset_left = sizeof(Node::primary_)+sizeof(Node::secondary_)+2,
