@@ -69,6 +69,7 @@ int main(int argc, char const *argv[]) {
   mantest.close();
 
   ifstream in("./mantest.dat", ios::in | ios::binary);
+
   in.seekg(0);
   char pri[50];
   in.read(pri, 50);

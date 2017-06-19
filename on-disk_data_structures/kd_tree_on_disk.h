@@ -44,18 +44,23 @@ private:
   public:
     Node() {}
 
-    Node(const char* primary, const size_t secondary, const char* manpage) {
+    Node(const char* primary, const size_t secondary, char* manpage) {
       strcpy(primary_, primary);
       secondary_ = secondary;
       strcpy(manpage_, manpage);
     }
 
-  //private:
-    char primary_[50]{"@"},
-    size_t secondary_,
-           left_{0u},
-           right_{0u},
-    char *manpage_;
+    size_t size() {
+      size_t aux = sizeof(primary_) + sizeof(secondary_)
+                   + sizeof(left_) + sizeof(right_) + strlen(manpage_) + 10;
+      return aux;
+    }
+
+    char primary_[50]{"@"};
+    size_t secondary_{0u},
+           left_{1u},
+           right_{2u};
+    char manpage_[139718]{"&"};
   };
 
   class Route {
@@ -91,28 +96,30 @@ KDTreeOnDisk::KDTreeOnDisk() {
 
 KDTreeOnDisk::~KDTreeOnDisk() {}
 
-void KDTreeOnDisk::insert(const char* name, const size_t size,
-                          const char* manpage) {
+void KDTreeOnDisk::insert(const char* key_1,
+                          const size_t key_2, const char* manpage) {
   fstream tree("./tree.dat", ios::in | ios::out | ios::binary);
 
-  char manpage_name[50];
-  size_t manpage_size
+  char node_key_1[50];
+  size_t node_key_2;
   int compare = 1;
   size_t offset = 0u, son = 0u, level = 0u, father_son = 0u,
-         offset_left = sizeof(Node::primary_)+sizeof(Node::secondary_)+2,
-         offset_right = offset_left + sizeof(size_t);
+         offset_secondary = sizeof(Node::primary_)+6;
+         offset_left = offset_secondary + sizeof(size_t),
+         offset_right = offset_left + sizeof(size_t),
+         offset_manpage = offset_right + sizeof(size_t);
 
   tree.seekg(0);
   while (tree.good() && size_ != 0) {
     offset = tree.tellg();
 
     if (level % 2 == 0) {
-      tree.read(node_key, sizeof(Node::primary_));
-      compare = strcmp(key_1, node_key);
+      tree.read(node_key_1, sizeof(Node::primary_));
+      compare = strcmp(key_1, node_key_1);
     } else {
-      tree.seekg(offset+sizeof(Node::primary_));
-      tree.read(node_key, sizeof(Node::secondary_));
-      compare = strcmp(key_2, node_key);
+      tree.seekg(offset + offset_secondary);
+      tree.read(node_key_2, sizeof(size_t));
+      compare = key_2 - node_key_2;
     }
 
     if (compare != 0) {  // esquerda ou direita
@@ -129,13 +136,13 @@ void KDTreeOnDisk::insert(const char* name, const size_t size,
     } else { // igual
 
       if (level % 2 == 0) {
-        tree.seekg(offset+sizeof(Node::primary_));
-        tree.read(node_key, sizeof(Node::secondary_));
-        compare = strcmp(key_2, node_key);
+        tree.seekg(offset + offset_secondary);
+        tree.read(node_key_2, sizeof(size_t));
+        compare = key_2 - node_key_2;
       } else {
         tree.seekg(offset);
-        tree.read(node_key, sizeof(Node::primary_));
-        compare = strcmp(key_1, node_key);
+        tree.read(node_key_1, sizeof(Node::primary_));
+        compare = strcmp(key_1, node_key_1);
       }
 
       if (compare == 0) // node ja existe
