@@ -48,13 +48,23 @@ private:
       strcpy(primary_, primary);
       secondary_ = secondary;
       strcpy(manpage_, manpage);
+      //manpage_ = manpage;
     }
 
     size_t size() {
       size_t aux = sizeof(primary_) + sizeof(secondary_)
-                   + sizeof(left_) + sizeof(right_) + strlen(manpage_) + 10;
+                   + sizeof(left_) + sizeof(right_) + secondary_ + 10;
       return aux;
     }
+
+    /*void write_node(ofstream &file, size_t offset) {
+      file.seekp(offset);
+      file.write(primary_, 56);
+      file.write(reinterpret_cast<char*>(&secondary_), sizeof(size_t));
+      file.write(reinterpret_cast<char*>(&left_), sizeof(size_t));
+      file.write(reinterpret_cast<char*>(&right_), sizeof(size_t));
+      file.write(manpage_, secondary_);
+    }*/
 
     char primary_[50]{"@"};
     size_t secondary_{0u},
@@ -175,7 +185,7 @@ void KDTreeOnDisk::insert(const char* key_1,
     }
 
     tree.seekp(son);            // adiciona o node
-    tree.write(reinterpret_cast<char*>(tnode), sizeof(Node));
+    tree.write(reinterpret_cast<char*>(tnode), tnode->size());
     ++size_;
     delete tnode;
   }
