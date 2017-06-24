@@ -10,89 +10,91 @@
 #include <typeinfo>
 #include <string>
 
-
 using namespace std;
 
-class Node {
+class TreeNode {
 public:
-  Node() {}
+  TreeNode() {}
 
-  Node(const char* primary, const size_t secondary, char* manpage) {
-    strcpy(primary_, primary);
-    secondary_ = secondary;
-    strcpy(manpage_, manpage);
+  explicit TreeNode(const char* key) {
+    strcpy(key_, key);
   }
 
-  void print() {
-    cout << "P: "<< primary_ << endl;
-    cout << "S: "<< secondary_ << endl;
-    cout << "L: "<< left_ << endl;
-    cout << "R: "<< right_ << endl;
-    cout << "M: " << manpage_ << endl;
-    cout << endl;
+  TreeNode(const char* key, const size_t list_head) {
+    strcpy(key_, key);
+    list_head_ = list_head;
   }
 
-  size_t size() {
-    size_t aux = sizeof(primary_) + sizeof(secondary_)
-                 + sizeof(left_) + sizeof(right_) + strlen(manpage_) + 10;
-    return aux;
-  }
+  char key_[60]{"@"};
+  size_t left_{0u},
+         right_{0u},
+         list_head_{0u};
+};
 
-  char primary_[50]{"@"};
-  size_t secondary_{0u},
-         left_{1u},
-         right_{2u};
-  char manpage_[139718]{"&"};
+class ListNode {
+public:
+  ListNode() {}
+
+  ListNode(const size_t manpage) :
+  manpage_{manpage}
+  {}
+
+  size_t manpage_{0u},
+         next{0u};
 };
 
 int main(int argc, char const *argv[]) {
 
-  ifstream file("./ManPages/in.rexecd.1m.txt", ios::in | ios::binary);
+  //ifstream file("./ManPages/in.rexecd.1m.txt", ios::in | ios::binary);
+  ofstream binary("./secondary_tree.dat", ios::out | ios::binary | ios::trunc);
 
-  struct stat st;
-  if (stat("./tree.dat", &st) != 0)
+  /*struct stat st;
+  if (stat("./secondary_tree.dat", &st) != 0)
     throw std::out_of_range("Erro ao verificar tamanho do arquivo.");
-  //cout << st.st_size << endl;
 
   char man[st.st_size];
   file.seekg(0);
   file.read(man, st.st_size);
-  file.close();
+  file.close();*/
+  char key[60];
+  size_t aux, offset = 0;
+  size_t list = offset + sizeof(TreeNode);
 
-  ofstream mantest("./mantest.dat", ios::out | ios::binary | ios::trunc);
+  TreeNode *t1 = new TreeNode("in.rexecd.1m", list);
+  ListNode *l1 = new ListNode(100);
 
-  Node *tnode = new Node("in.rexecd.1m", strlen(man), man);
-  cout << tnode->size() << endl;
+  binary.seekp(offset);
+  binary.write(reinterpret_cast<char*>(t1), sizeof(TreeNode));
+  binary.seekp(list);
+  binary.write(reinterpret_cast<char*>(l1), sizeof(ListNode));
 
-  mantest.seekp(0);
-  mantest.write(reinterpret_cast<char*>(tnode), tnode->size());
-  mantest.close();
+  //TreeNode *t2 = new TreeNode("in.rexecd.1m", sizeof(TreeNode));
 
-  ifstream in("./mantest.dat", ios::in | ios::binary);
+  binary.close();
+
+  ifstream in("./secondary_tree.dat", ios::in | ios::binary);
 
   in.seekg(0);
-  char pri[50];
-  in.read(pri, 50);
-  cout << pri << endl;
+  in.read(key, sizeof(key));
+  cout << key << endl;
 
-  in.seekg(sizeof(Node::primary_)+6);
-  size_t tam_man;
-  in.read(reinterpret_cast<char*>(&tam_man), sizeof(Node::secondary_));
-  cout << tam_man << endl;
-
-  in.seekg(sizeof(Node::primary_)+6+sizeof(size_t));
-  size_t aux;
-  in.read(reinterpret_cast<char*>(&aux), sizeof(Node::left_));
+  in.seekg(sizeof(TreeNode::key_)+4);
+  in.read(reinterpret_cast<char*>(&aux), sizeof(size_t));
+  cout << aux << endl;
+  in.read(reinterpret_cast<char*>(&aux), sizeof(size_t));
+  cout << aux << endl;
+  in.read(reinterpret_cast<char*>(&aux), sizeof(size_t));
   cout << aux << endl;
 
-  in.seekg(sizeof(Node::primary_)+6+sizeof(size_t)*2);
-  in.read(reinterpret_cast<char*>(&aux), sizeof(Node::left_));
+  // desloc. manpage
+  in.seekg(aux);
+  in.read(reinterpret_cast<char*>(&aux), sizeof(size_t));
+  cout << aux << endl;
+  // next
+  in.read(reinterpret_cast<char*>(&aux), sizeof(size_t));
   cout << aux << endl;
 
-  in.seekg(sizeof(Node::primary_)+6+sizeof(size_t)*3);
-  char man_node[tam_man];
-  in.read(reinterpret_cast<char*>(&man_node), tam_man);
-  cout << man_node << endl;
+  in.close();
 
   return 0;
 }

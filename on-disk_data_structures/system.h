@@ -78,12 +78,10 @@ void System::init(int argc, char const *argv[]) {
     char manpage[st.st_size];
     file.seekg(0);
     file.read(manpage, st.st_size);
-
-    //cout << "Inserindo: " << dir << " len: " << strlen(manpage) << " st: "<< st.st_size << endl;
-
+    
     manpage[st.st_size-1] = '\0';
     dir = handler_->clean_primary_key(dir);
-    tree_->insert(dir.c_str(), st.st_size, manpage);
+    int x = tree_->insert(dir.c_str(), st.st_size, manpage);
 
     file.close();
     //delete words;
