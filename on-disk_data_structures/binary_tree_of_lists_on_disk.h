@@ -33,10 +33,10 @@ public:
   size_t size() const;
   size_t file_size() const;
 
-  LinkedList<size_t>* search(const char* wanted);  //!< retorna o offset
+  LinkedList<size_t>* search(const char* wanted) const;  //!< retorna o offset
   //LinkedList<string>* search_secondary_key(const size_t wanted) const;
-  //LinkedList<string>* conjunctive_search(const size_t w1, const size_t w2) const;
-  //LinkedList<string>* disjunctive_search(const size_t w1, const size_t w2) const;
+  LinkedList<size_t>* conjunctive_search(const char* w1, const char* w2) const;
+  LinkedList<size_t>* disjunctive_search(const char* w1, const char* w2) const;
 
 
 private:
@@ -185,7 +185,7 @@ size_t BinaryTreeOfListOnDisk::file_size() const {
   return st.st_size;
 }
 
-LinkedList<size_t>* BinaryTreeOfListOnDisk::search(const char* wanted) {
+LinkedList<size_t>* BinaryTreeOfListOnDisk::search(const char* wanted) const {
   // Guardar o deslocamento e nível em uma pilha quando tiver
   // que descer por dois caminhos diferentes.
   fstream tree("./secondary_tree.dat", ios::in | ios::out | ios::binary);
@@ -233,6 +233,36 @@ LinkedList<size_t>* BinaryTreeOfListOnDisk::search(const char* wanted) {
   }
 
   tree.close();
+  return list;
+}
+
+LinkedList<size_t>* BinaryTreeOfListOnDisk::conjunctive_search(
+                                const char* w1, const char* w2) const {
+  LinkedList<size_t> *s1 = this->search(w1);
+  LinkedList<size_t> *s2 = this->search(w2);
+
+  while (!s2->empty())
+    s1->insert_sorted(s2->pop_front());
+
+  delete s2;
+  return s1;
+}
+
+LinkedList<size_t>* BinaryTreeOfListOnDisk::disjunctive_search(
+                                const char* w1, const char* w2) const {
+  LinkedList<size_t> *s1 = search(w1);
+  LinkedList<size_t> *s2 = search(w2);
+  LinkedList<size_t> *list = new LinkedList<size_t>();
+
+  size_t aux;
+  while (!s2->empty()) {
+    aux = s2->pop_front();
+    if (s1->contains(aux))
+      list->insert_sorted(aux);
+  }
+
+  delete s1;
+  delete s2;
   return list;
 }
 
