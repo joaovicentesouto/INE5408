@@ -39,12 +39,32 @@ int main(int argc, char const *argv[]) {
     tree->insert(name[0], i*i+10);
   }
 
-  LinkedList<size_t> *list = tree->search(name[0]);
+  for (size_t i = 0; i < 10; i++) {
+    printf("N: %s, man: %lu\n", name[4], (i%2==0? i*i+10 : i*i+13));
+    tree->insert(name[4], (i%2==0? i*i+10 : i*i+13));
+  }
 
-  printf("Quantidade de manp: %lu\n", list->size());
+  LinkedList<size_t> *list = tree->search(name[0]);
+  printf("Search joao: %lu\n", list->size());
   while (!list->empty()) {
     printf("manp: %lu\n", list->pop_front());
   }
+
+  delete list;
+  list = tree->conjunctive_search(name[0], name[4]);
+  printf("Conju joao e rejane: %lu\n", list->size());
+  while (!list->empty()) {
+    printf("manp: %lu\n", list->pop_front());
+  }
+
+  delete list;
+  list = tree->disjunctive_search(name[0], name[4]);
+  printf("Disj joao e rejane: %lu\n", list->size());
+  while (!list->empty()) {
+    printf("manp: %lu\n", list->pop_front());
+  }
+
+
 
   /*char* test = tree->search_primary_key("Rejane");
   if (test != nullptr)
