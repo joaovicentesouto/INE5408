@@ -35,7 +35,6 @@ but
 or
 yet
 so
-old
 aboard
 about
 above
@@ -49,7 +48,7 @@ amidst
 among
 around
 as
-Also
+also
 aside
 at
 athwart

@@ -25,16 +25,13 @@ public:
   ~BinaryTreeOfListOnDisk();
 
   void insert(const char* key, const size_t manpage);
-  //void remove(const char* first_key, const char* second_key);
+  //void remove(const char* key, const size_t manpage);
 
-  //bool contains_primary(const char* primary) const;
-  //bool contains_secondary(const char* secondary) const;
   bool empty() const;
   size_t size() const;
   size_t file_size() const;
 
-  LinkedList<size_t>* search(const char* wanted) const;  //!< retorna o offset
-  //LinkedList<string>* search_secondary_key(const size_t wanted) const;
+  LinkedList<size_t>* search(const char* wanted) const;
   LinkedList<size_t>* conjunctive_search(const char* w1, const char* w2) const;
   LinkedList<size_t>* disjunctive_search(const char* w1, const char* w2) const;
 
@@ -67,6 +64,11 @@ private:
     manpage_{manpage}
     {}
 
+    ListNode(const size_t manpage, const size_t next) :
+    manpage_{manpage},
+    next_{next}
+    {}
+
     size_t manpage_{0u},
            next_{0u};
   };
@@ -88,7 +90,7 @@ void BinaryTreeOfListOnDisk::insert(const char* key, const size_t manpage) {
   fstream tree("./secondary_tree.dat", ios::in | ios::out | ios::binary);
   char node_key[60];
   int compare = 1;
-  size_t man_node= -1, offset = 0u, next = 0u, current = 0u, level = 0u,
+  size_t aux = 0, offset = 0u, next = 0u, current = 0u, level = 0u,
          offset_left = sizeof(TreeNode::key_)+4,
          offset_right = offset_left + sizeof(size_t),
          offset_list_head = offset_right + sizeof(size_t);
@@ -116,26 +118,14 @@ void BinaryTreeOfListOnDisk::insert(const char* key, const size_t manpage) {
       tree.seekg(offset + offset_list_head);
       tree.read(reinterpret_cast<char*>(&next), sizeof(size_t));
 
-      while (next != 0) {
-        current = next;
-        tree.seekg(current);
-        tree.read(reinterpret_cast<char*>(&man_node), sizeof(size_t));
-        if (man_node == manpage) // ja existe
-          break;
-        tree.read(reinterpret_cast<char*>(&next), sizeof(size_t));
-      }
-
-      if (man_node == manpage) // ja existe
-        break;
-
       tree.seekp(0, ios::end);
-      next = tree.tellp();
+      aux = tree.tellp();
 
-      tree.seekp(current + sizeof(size_t));
-      tree.write(reinterpret_cast<char*>(&next), sizeof(size_t));
+      tree.seekp(offset + offset_list_head);
+      tree.write(reinterpret_cast<char*>(&aux), sizeof(size_t));
 
-      ListNode *lnode = new ListNode(manpage);
-      tree.seekp(next);
+      ListNode *lnode = new ListNode(manpage, next);
+      tree.seekp(aux);
       tree.write(reinterpret_cast<char*>(lnode), sizeof(ListNode));
       delete lnode;
       break;
@@ -144,7 +134,7 @@ void BinaryTreeOfListOnDisk::insert(const char* key, const size_t manpage) {
   }
   ++level; // Mais um level pro node nulo
 
-  if (next == 0 && man_node != manpage) {
+  if (next == 0) {
     tree.seekp(0, ios::end); // fim do arquivo
     next = tree.tellp();      // pega deslocamento pro filho
 
