@@ -2,22 +2,18 @@
 #ifndef STRUCTURES_SYSTEM_H
 #define STRUCTURES_SYSTEM_H
 
-#include <cstdint>  // std::size_t
-#include <stdexcept>  // C++ exceptions
-#include <algorithm>
-#include <cmath> // pow
-
-#include <iostream>
+#include <cstdint>
+#include <stdexcept>
 #include <fstream>
-#include <cstdio>  // para gets()
+#include <cstdio>
 #include <sys/stat.h>
 
 #include "./structures/linked_list.h"
-#include "./structures/linked_stack.h"
-#include "./structures/array_list.h"
+
 #include "./kd_tree_on_disk.h"
 #include "./binary_tree_of_lists_on_disk.h"
 #include "./word_handler.h"
+#include "./user_interface.h"
 
 using namespace std;
 
@@ -45,7 +41,7 @@ class System {
    BinaryTreeOfListOnDisk *secondary_tree_;  //!< Árvore secundária
    UserInterface *user_;                  //!< Interface usuário
    size_t counter_primary{0u},            //!< Contador de chaves primárias
-          counter_secondary{0u};          //!< Contador de chaves primárias
+          counter_secondary{0u};          //!< Contador de chaves secundárias
 };
 
 //! Construtor

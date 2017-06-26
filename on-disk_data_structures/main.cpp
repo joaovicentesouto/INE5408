@@ -1,23 +1,15 @@
-#include <cstdint>  // std::size_t
-#include <stdexcept>  // C++ exceptions
-#include <algorithm>
-
-#include <iostream>
-#include <fstream>
-#include <cstdio>  // para gets()
-#include <sys/stat.h>
-
-#include <typeinfo>
-#include <string>
-
-#include "./kd_tree_on_disk.h"
-#include "./word_handler.h"
-#include "./user_interface.h"
+//!  Copyright [2017] <João Vicente Souto>
 #include "./system.h"
-#include "./structures/linked_list.h"
 
 using namespace structures;
 
+//! Função main
+/*! Funcao inicial do executável
+ *
+ *  \author João Vicente Souto.
+ *  \since 20/06/17
+ *  \version 1.0
+ */
 int main(int argc, char const *argv[]) {
 
   System sys;

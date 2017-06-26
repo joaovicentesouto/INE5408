@@ -2,14 +2,10 @@
 #ifndef STRUCTURES_KD_TREE_H
 #define STRUCTURES_KD_TREE_H
 
-#include <cstdint>  // std::size_t
-#include <stdexcept>  // C++ exceptions
-#include <algorithm>
-#include <cmath> // pow
-
-#include <iostream>
+#include <cstdint>
+#include <stdexcept>
 #include <fstream>
-#include <cstdio>  // para gets()
+#include <cstdio>
 #include <sys/stat.h>
 
 #include "./structures/linked_list.h"

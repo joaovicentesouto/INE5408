@@ -2,18 +2,13 @@
 #ifndef STRUCTURES_BINARY_TREE_OF_LIST_H
 #define STRUCTURES_BINARY_TREE_OF_LIST_H
 
-#include <cstdint>  // std::size_t
-#include <stdexcept>  // C++ exceptions
-#include <algorithm>
-#include <cmath> // pow
-
-#include <iostream>
+#include <cstdint>
+#include <stdexcept>
 #include <fstream>
-#include <cstdio>  // para gets()
+#include <cstdio>
 #include <sys/stat.h>
 
 #include "./structures/linked_list.h"
-#include "./structures/linked_stack.h"
 
 using namespace std;
 
@@ -184,7 +179,7 @@ void BinaryTreeOfListOnDisk::insert(const char* key, const size_t manpage) {
 
       tree.seekg(next);
 
-    } else { // igual tenho que só percorrer a list
+    } else { // igual só inserir na list (no começo)
 
       tree.seekg(offset + offset_list_head);
       tree.read(reinterpret_cast<char*>(&next), sizeof(size_t));
@@ -243,7 +238,7 @@ LinkedList<size_t>* BinaryTreeOfListOnDisk::search(const char* wanted) const {
   LinkedList<size_t> *list = new LinkedList<size_t>();
   char node_key[60];
   int compare = 1;
-  size_t man_node= -1, offset = 0u, next = 0u, current = 0u, level = 0u,
+  size_t man_node = -1, offset = 0u, next = 0u, current = 0u, level = 0u,
          offset_left = sizeof(TreeNode::key_)+4,
          offset_right = offset_left + sizeof(size_t),
          offset_list_head = offset_right + sizeof(size_t);
@@ -275,10 +270,12 @@ LinkedList<size_t>* BinaryTreeOfListOnDisk::search(const char* wanted) const {
         current = next;
         tree.seekg(current);
         tree.read(reinterpret_cast<char*>(&man_node), sizeof(size_t));
-        list->push_back(man_node);
+        list->push_front(man_node);
 
         tree.read(reinterpret_cast<char*>(&next), sizeof(size_t));
       }
+
+      break;
     }
     ++level;
   }

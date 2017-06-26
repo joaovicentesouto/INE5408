@@ -2,19 +2,8 @@
 #ifndef STRUCTURES_USER_INTERFACE_H
 #define STRUCTURES_USER_INTERFACE_H
 
-#include <cstdint>  // std::size_t
-#include <stdexcept>  // C++ exceptions
-#include <algorithm>
-#include <cmath> // pow
-
-#include <iostream>
-#include <fstream>
-#include <cstdio>  // para gets()
-#include <sys/stat.h>
-
-#include "./structures/linked_list.h"
-#include "./structures/linked_stack.h"
-#include "./structures/array_list.h"
+#include <cstdint>
+#include <stdexcept>
 
 using namespace std;
 
