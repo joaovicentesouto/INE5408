@@ -19,61 +19,117 @@ using namespace std;
 
 namespace structures {
 
+//! Classe KDTreeOnDisk
+/*! Árvore KD sendo a chave primária o nome do arquivo e a chave
+ *  secundária o tamanho do árquivo para melhorar a distribuição.
+ *
+ *  \author João Vicente Souto.
+ *  \since 20/06/17
+ *  \version 1.0
+ */
 class KDTreeOnDisk {
 public:
-  KDTreeOnDisk();
-  ~KDTreeOnDisk();
+  KDTreeOnDisk();  // Construtor
+  ~KDTreeOnDisk();  // Destrutor
 
-  int insert(const char* primary, const size_t secondary, char* manpage);
-  //void remove(const char* first_key, const char* second_key);
+  int insert(const char* primary, const size_t secondary, char* manpage);  // Inserir
+  //void remove(const char* primary, const size_t secondary, char* manpage);
 
-  //bool contains_primary(const char* primary) const;
-  //bool contains_secondary(const char* secondary) const;
-  bool empty() const;
-  size_t size() const;
-  size_t file_size() const;
+  bool empty() const;  // Teste de vazio
+  size_t size() const;  // Tamanho da árvore
+  size_t depth() const;  // Profundidade da árvore
+  size_t file_size() const;  // Tamanho do arquivo da árvore
 
-  char* search_primary_key(const char* wanted);
-  string return_primary_key(const size_t wanted);
-  LinkedList<string>* return_primary_key(LinkedList<size_t> *wanted_list);
+  char* search_primary_key(const char* wanted);  // Procura manpage
+  string return_primary_key(const size_t wanted);  // Procura nome da mapage
+  LinkedList<string>* return_primary_key(LinkedList<size_t> *wanted_list);  // Procura nomes das mapages
   //LinkedList<string>* search_secondary_key(const size_t wanted) const;
-  //LinkedList<string>* conjunctive_search(const size_t w1, const size_t w2) const;
-  //LinkedList<string>* disjunctive_search(const size_t w1, const size_t w2) const;
 
 
 private:
+  //! Classe Node
+  /*! Node da árvore
+   *
+   *  \author João Vicente Souto.
+   *  \since 20/06/17
+   *  \version 1.0
+   */
   class Node {
   public:
+    //! Construtor
+    /*! Sem parâmetros, carrega palavras ignoradas de arquivo em disco.
+     *  \sa Node(const char* primary, const size_t secondary, char* manpage), ~Node()
+     */
     Node() {}
 
+    //! Construtor
+    /*! Com parâmetros, dados basicos de um node
+     *  \sa Node(), ~Node()
+     */
     Node(const char* primary, const size_t secondary, char* manpage) {
       strcpy(primary_, primary);
       secondary_ = secondary;
       strcpy(manpage_, manpage);
     }
 
+    //! Destrutor
+    /*! Destrutor padrão, não tem nada alocado dinâmicamente.
+     *  \sa Node(const char* primary, const size_t secondary, char* manpage), Node()
+     */
+    ~Node() {}
+
+    //! Tamanho do node
+    /*! Tamanho real do node que será escrito no arquivo
+     * \return size_t tamanho real do node
+     */
     size_t size() {
       size_t aux = sizeof(primary_) + sizeof(secondary_)
                    + sizeof(left_) + sizeof(right_) + secondary_ + 10;
       return aux;
     }
 
-    char primary_[50]{"@"};
-    size_t secondary_{0u},
-           left_{0u},
-           right_{0u};
-    char manpage_[139718]{"&"};
+    char primary_[50]{"@"};  //!< Chave primária
+    size_t secondary_{0u},  //!< Chave secundária
+           left_{0u},  //!< Node da esquerda
+           right_{0u};  //!< Node da direita
+    char manpage_[139718]{"&"};  //!< Manpage
   };
 
+  //! Classe Route
+  /*! Objeto auxiliar para percorrer a árvore
+   *
+   *  \author João Vicente Souto.
+   *  \since 20/06/17
+   *  \version 1.0
+   */
   class Route {
   public:
+    //! Construtor
+    /*! Sem parâmetros.
+     *  \sa Route(const size_t offset, const size_t level), ~Route()
+     */
     Route() {}
 
+    //! Construtor
+    /*! Com parâmetros, dados basicos da route
+     *  \sa Route(), ~Route()
+     */
     Route(const size_t offset, const size_t level) :
     offset_tree_{offset},
     level_{level}
     {}
 
+    //! Destrutor
+    /*! Destrutor padrão, não tem nada alocado dinâmicamente.
+     *  \sa Node(const char* primary, const size_t secondary, char* manpage), Node()
+     */
+    ~Route() {}
+
+    //! Sobreescrita do operador =
+    /*! Recebe um Route para copiar
+     *  \param Route copiado
+     *  \return Route this
+     */
     Route& operator=(const Route& other) {
         if (this != &other) {
             this->offset_tree_ = other.offset_tree_;
@@ -82,22 +138,37 @@ private:
         return *this;
     }
 
-    size_t offset_tree_{0u},
-           level_{0u};
+    size_t offset_tree_{0u},  //!< Deslocamento na árvore
+           level_{0u};  //!< Level do deslocamento
   };
 
-  size_t depth_{0u},
-         size_{0u};
+  size_t depth_{0u},  //!< Profundidade
+         size_{0u};  //!< Quantidade de nodes
 };
 
+//! Construtor
+/*! Sem parâmetros, limpa arquivo da arvore
+ *  \sa ~KDTreeOnDisk()
+ */
 KDTreeOnDisk::KDTreeOnDisk() {
   // Cria arquivo para a arvore ou sobreescreve um existente
   fstream tree("./primary_tree.dat", ios::in | ios::out | ios::binary | ios::trunc);
   tree.close();
 }
 
+//! Destrutor
+/*! Destrutor padrão, não tem nada alocado dinâmicamente.
+ *  \sa KDTreeOnDisk()
+ */
 KDTreeOnDisk::~KDTreeOnDisk() {}
 
+//! Insere
+/*! Recebe manpage para inserção
+ *  \param char* nome da manpage
+ *  \param size_t tamanho do arquivo
+ *  \param char* manpage
+ *  \return int deslocamento na árvore
+ */
 int KDTreeOnDisk::insert(const char* key_1,
                           const size_t key_2, char* manpage) {
   fstream tree("./primary_tree.dat", ios::in | ios::out | ios::binary);
@@ -187,6 +258,11 @@ int KDTreeOnDisk::insert(const char* key_1,
   return compare == 0u? -1 : son;
 }
 
+//! Procura manpage
+/*! Recebe nome da manpage e retorna texto do arquivo da manpage.
+ *  \param char* nome da manpage
+ *  \return char* manpage
+ */
 char* KDTreeOnDisk::search_primary_key(const char* wanted) {
   // Guardar o deslocamento e nível em uma pilha quando tiver
   // que descer por dois caminhos diferentes.
@@ -258,6 +334,11 @@ char* KDTreeOnDisk::search_primary_key(const char* wanted) {
   return nullptr; // não achou
 }
 
+//! Procura nome da manpage
+/*! Recebe o deslocamento na árvore da manpage
+ *  \param size_t deslocamento
+ *  \return string nome da manpage
+ */
 string KDTreeOnDisk::return_primary_key(const size_t wanted) {
   char node_key[50];
   ifstream tree("./primary_tree.dat", std::ios_base::app | ios::binary);
@@ -266,6 +347,11 @@ string KDTreeOnDisk::return_primary_key(const size_t wanted) {
   return string(node_key);
 }
 
+//! Procura todos os nomes das manpages passadas na lista.
+/*! Recebe lista com todos os deslocamentos
+ *  \param LinkedList<size_t> lista de deslocamento
+ *  \return LinkedList<string> lista com os nomes da lista
+ */
 LinkedList<string>* KDTreeOnDisk::return_primary_key(LinkedList<size_t> *wanted_list) {
   LinkedList<string> *list = new LinkedList<string>();
 
@@ -280,265 +366,40 @@ LinkedList<string>* KDTreeOnDisk::return_primary_key(LinkedList<size_t> *wanted_
   return list;
 }
 
+//! Teste de vazio
+/*! Retorna o teste se a árvore da lista
+ *  \return  bool teste
+ */
 bool KDTreeOnDisk::empty() const {
   return size_ == 0u;
 }
 
+//! Tamanho da árvore
+/*! Retorna a quantidade de nodes na árvore
+ *  \return size_t tamanho
+ */
 size_t KDTreeOnDisk::size() const {
   return size_;
 }
 
+//! Profundidade da árvore
+/*! Retorna a profundidade de nodes na árvore
+ *  \return size_t profundidade
+ */
+size_t KDTreeOnDisk::depth() const {
+  return depth_;
+}
+
+//! Tamanho do arquivo da árvore
+/*! Retorna o tamanho do arquivo
+ *  \return Tamanho
+ */
 size_t KDTreeOnDisk::file_size() const {
   struct stat st;
   if (stat("./primary_tree.dat", &st) != 0)
     throw std::out_of_range("Erro ao verificar tamanho do arquivo.");
   return st.st_size;
 }
-
-/*
-LinkedList<string>* KDTreeOnDisk::search_secondary_key(const char* wanted) const {
-
-  LinkedStack<Route> routes; // desvios
-  LinkedList<string>* list = new LinkedList<string>();
-
-  char primary[50], secondary[60];
-  int compare = 1;
-  size_t level = 0u, son = 0u, offset= 0u,
-         offset_left = 50+60+2,
-         offset_right = offset_left + sizeof(size_t);
-
-  ifstream tree("./primary_tree.dat", std::ios_base::app | ios::binary);
-  tree.seekg(0); // inicio do arquivo
-
-  while (tree.good() || !routes.empty()) {
-    offset = tree.tellg();
-
-    tree.seekg(offset + sizeof(primary));
-    tree.read(secondary, sizeof(secondary));
-    //cout << "Todas as chave 2: " << secondary << endl;
-    compare = strcmp(wanted, secondary);
-
-    if (compare == 0) {  // achei
-      // Pega chave primaria
-      tree.seekg(offset);
-      tree.read(primary, sizeof(primary));
-      //cout << "Busca in achada: " << primary << endl;
-      list->insert_sorted(primary);
-    }
-
-    if (level % 2 == 1) {  // dimensao y, divide árvore
-      if (compare < 0)
-        son = offset + offset_left;
-      else
-        son = offset + offset_right;
-
-      tree.seekg(son);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-
-    } else {               // dimensao x, vai pros dois lados
-      tree.seekg(offset + offset_right);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-      if (son != 0) {
-        Route way(son, level+1);
-        routes.push(way);
-      }
-
-      tree.seekg(offset + offset_left);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-    }
-
-    if (son != 0) { // próximo node é nulo
-      tree.seekg(son);  // próxima posição
-      ++level;
-    } else {
-      try {
-        Route way = routes.pop();
-        tree.seekg(way.offset_tree_);
-        level = way.level_;
-      } catch(std::out_of_range error) {
-        break;  // pilha vazia
-      }
-    }
-  }
-
-  return list;
-}
-
-LinkedList<string>* KDTreeOnDisk::conjunctive_search(const char* w1,
-                                                     const char* w2) const
-{
-  LinkedStack<Route> routes; // desvios
-  LinkedList<string>* list = new LinkedList<string>();
-
-  char primary[50], secondary[60];
-  int compare_one = 1, compare_two = 1;
-  size_t level = 0u, son = 0u, offset= 0u,
-         offset_left = 50+60+2,
-         offset_right = offset_left + sizeof(size_t);
-
-  ifstream tree("./primary_tree.dat", std::ios_base::app | ios::binary);
-  tree.seekg(0); // inicio do arquivo
-
-  while (tree.good()) {
-    offset = tree.tellg();
-
-    tree.seekg(offset + sizeof(primary));
-    tree.read(secondary, sizeof(secondary));
-    compare_one = strcmp(w1, secondary);
-    compare_two = strcmp(w2, secondary);
-
-    if (compare_one == 0 || compare_two == 0) {  // achei
-      // le offset da manpage
-      tree.seekg(offset);
-      tree.read(primary, sizeof(primary));
-      list->insert_sorted(primary);
-    }
-
-    if (level % 2 == 1 && compare_one != 0 && compare_two != 0) {  // dimensao y, divide árvore
-      if (compare_one < 0 && compare_two < 0) {
-        son = offset + offset_left;
-      } else if (compare_one > 0 && compare_two > 0) {
-        son = offset + offset_right;
-      } else {  // um == vai pros dois lados
-        tree.seekg(offset + offset_right);
-        tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-        if (son != 0) {
-          Route way(son, level+1);
-          routes.push(way);
-        }
-        son = offset + offset_left;
-      }
-
-      tree.seekg(son);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-
-    } else {               // dimensao x, vai pros dois lados
-      tree.seekg(offset + offset_right);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-      if (son != 0) {
-        Route way(son, level+1);
-        routes.push(way);
-      }
-
-      tree.seekg(offset + offset_left);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-    }
-
-    if (son != 0) { // próximo node é nulo
-      tree.seekg(son);  // próxima posição
-      ++level;
-    } else {
-      try {
-        Route way = routes.pop();
-        tree.seekg(way.offset_tree_);
-        level = way.level_;
-      } catch(std::out_of_range error) {
-        break;  // pilha vazia
-      }
-    }
-  }
-
-  return list;
-}
-
-LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,
-                                                     const char* w2) const
-{
-  LinkedStack<Route> routes; // desvios
-  LinkedList<string>* list_one = new LinkedList<string>();
-  LinkedList<string>* list_two = new LinkedList<string>();
-  LinkedList<string>* list_disj = new LinkedList<string>();
-
-  char primary[50], secondary[60];
-  int compare_one = 1, compare_two = 1;
-  size_t level = 0u, son = 0u, offset= 0u,
-         offset_left = 50+60+2,
-         offset_right = offset_left + sizeof(size_t);
-
-  ifstream tree("./primary_tree.dat", std::ios_base::app | ios::binary);
-  tree.seekg(0); // inicio do arquivo
-
-  while (tree.good()) {
-    offset = tree.tellg();
-
-    tree.seekg(offset + sizeof(primary));
-    tree.read(secondary, sizeof(secondary));
-    compare_one = strcmp(w1, secondary);
-    compare_two = strcmp(w2, secondary);
-
-    if (compare_one == 0) {  // achei
-      tree.seekg(offset);
-      tree.read(primary, sizeof(primary));
-      list_one->insert_sorted(primary);
-    } else if (compare_two == 0) {
-      // le offset da manpage
-      tree.seekg(offset);
-      tree.read(primary, sizeof(primary));
-      list_two->insert_sorted(primary);
-    }
-
-    if (level % 2 == 1 && compare_one != 0 && compare_two != 0) {  // dimensao y, divide árvore
-      if (compare_one < 0 && compare_two < 0) {
-        son = offset + offset_left;
-      } else if (compare_one > 0 && compare_two > 0) {
-        son = offset + offset_right;
-      } else {  // um == vai pros dois lados
-        tree.seekg(offset + offset_right);
-        tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-        if (son != 0) {
-          Route way(son, level+1);
-          routes.push(way);
-        }
-        son = offset + offset_left;
-      }
-
-      tree.seekg(son);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-
-    } else {               // dimensao x, vai pros dois lados
-      tree.seekg(offset + offset_right);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-      if (son != 0) {
-        Route way(son, level+1);
-        routes.push(way);
-      }
-
-      tree.seekg(offset + offset_left);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-    }
-
-    if (son != 0) { // próximo node é nulo
-      tree.seekg(son);  // próxima posição
-      ++level;
-    } else {
-      try {
-        Route way = routes.pop();
-        tree.seekg(way.offset_tree_);
-        level = way.level_;
-      } catch(std::out_of_range error) {
-        break;  // pilha vazia
-      }
-    }
-  }
-
-  bool cond = list_one->size() < list_two->size();
-  LinkedList<string>* minor_list = cond ? list_one : list_two;
-  LinkedList<string>* major_list = cond ? list_two : list_one;
-
-  string temp;
-  for (size_t i = 0; i < major_list->size(); i++) {
-    temp = major_list->at(i);
-    if (minor_list->contains(temp))
-      list_disj->insert_sorted(temp);
-  }
-
-  delete list_one;
-  delete list_two;
-
-  return list_disj;
-}
-
-*/
 
 }  //  namespace structures
 

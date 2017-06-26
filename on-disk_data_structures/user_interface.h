@@ -20,23 +20,41 @@ using namespace std;
 
 namespace structures {
 
+//! Classe UserInterface
+/*! Interface do usuário.
+ *
+ *  \author João Vicente Souto.
+ *  \since 20/06/17
+ *  \version 1.0
+ */
 class UserInterface {
  public:
-   UserInterface();
-   ~UserInterface();
+   UserInterface();  // Construtor
+   ~UserInterface();  // Destrutor
 
-   size_t choose_option();
-   string ask_word(const char* complement);
-
-   string about();
+   size_t choose_option();  // Escolhe uma opção
+   string ask_word(const char* complement);  // Pede chave
 };
 
+//! Construtor
+/*! Sem parâmetros, mensagem de boas vindas.
+ *  \sa ~UserInterface()
+ */
 UserInterface::UserInterface() {
   cout << "Bem-vindo" << endl;
 }
 
+//! Destrutor
+/*! Destrutor padrão, não tem nada alocado dinâmicamente.
+ *  \sa UserInterface()
+ */
 UserInterface::~UserInterface() {}
 
+//! Escolhe opção
+/*! Imprime opções e espera o usuário passar uma opção válida.
+ *  \return size_t opção
+ *  \sa ask_word()
+ */
 size_t UserInterface::choose_option() {
   size_t option = 100;
   string aux;
@@ -66,6 +84,12 @@ size_t UserInterface::choose_option() {
   return option;
 }
 
+//! Pede uma palavra
+/*! Imprime frase e retorna a chave que o usuário passar.
+ *  \param char* frase
+ *  \return size_t opção
+ *  \sa ask_word()
+ */
 string UserInterface::ask_word(const char* phrase) {
   string in;
   cout << phrase << endl;
