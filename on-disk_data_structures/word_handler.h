@@ -2,18 +2,12 @@
 #ifndef STRUCTURES_WORD_HANDLER_H
 #define STRUCTURES_WORD_HANDLER_H
 
-#include <cstdint>  // std::size_t
-#include <stdexcept>  // C++ exceptions
-#include <algorithm>
-#include <cmath> // pow
-
+#include <cstdint>
+#include <stdexcept>
 #include <iostream>
-#include <fstream>
-#include <cstdio>  // para gets()
-#include <sys/stat.h>
+#include <cstdio>
 
 #include "./structures/linked_list.h"
-#include "./structures/linked_stack.h"
 #include "./structures/array_list.h"
 
 using namespace std;
@@ -43,7 +37,7 @@ class WordHandler {
 
 //! Construtor
 /*! Sem parâmetros, carrega palavras ignoradas de arquivo em disco.
- *  \sa ~ArrayStack()
+ *  \sa ~WordHandler()
  */
 WordHandler::WordHandler() {
   ifstream file("./ignored_words.txt", ios::in);
@@ -67,7 +61,7 @@ WordHandler::WordHandler() {
 
 //! Destrutor
 /*! Destrutor padrão, não tem nada alocado dinâmicamente.
- *  \sa ArrayStack()
+ *  \sa WordHandler()
  */
 WordHandler::~WordHandler() {}
 
