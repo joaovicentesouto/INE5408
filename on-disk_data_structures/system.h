@@ -23,23 +23,35 @@ using namespace std;
 
 namespace structures {
 
+//! Classe System
+/*! Sistema responsável por gerenciar todas as árvore e interface
+ *  com o usuário.
+ *
+ *  \author João Vicente Souto.
+ *  \since 20/06/17
+ *  \version 1.0
+ */
 class System {
  public:
-   System();
-   ~System();
+   System();  // Construtor
+   ~System();  // Destrutor
 
-   void init(int argc, char const *argv[]);
-   void run();
+   void init(int argc, char const *argv[]);  // Iniciação
+   void run();  // Roda sistema
 
  private:
-   WordHandler *handler_;
-   KDTreeOnDisk *primary_tree_;
-   BinaryTreeOfListOnDisk *secondary_tree_;
-   UserInterface *user_;
-   size_t counter_primary{0u},
-          counter_secondary{0u};
+   WordHandler *handler_;                 //!< Tratador de palavras
+   KDTreeOnDisk *primary_tree_;           //!< Árvore primária
+   BinaryTreeOfListOnDisk *secondary_tree_;  //!< Árvore secundária
+   UserInterface *user_;                  //!< Interface usuário
+   size_t counter_primary{0u},            //!< Contador de chaves primárias
+          counter_secondary{0u};          //!< Contador de chaves primárias
 };
 
+//! Construtor
+/*! Sem parâmetros, carrega palavras ignoradas de arquivo em disco.
+ *  \sa ~System()
+ */
 System::System() {
   handler_ = new WordHandler();
   primary_tree_ = new KDTreeOnDisk();
@@ -47,6 +59,10 @@ System::System() {
   user_ = new UserInterface();
 }
 
+//! Destrutor
+/*! Destrutor padrão, desaloca memória.
+ *  \sa System()
+ */
 System::~System() {
   delete handler_;
   delete primary_tree_;
@@ -54,9 +70,15 @@ System::~System() {
   delete user_;
 }
 
-// Idéia: começar pegando os arquivos do meio do array argv e indo
-// para as extremidades para aproveitar e deixar a árvore k-d o mais
-// "balanceada" possível.
+//! Inicialização
+/*! Recebe quantidade e arquivos a serem indexados.
+ *  Idéia: começar pegando os arquivos do meio do array argv e indo
+ *  para as extremidades para aproveitar e deixar a árvore k-d o mais
+ *  "balanceada" possível.
+ *  \param int argc quantidade-1 de arquivos
+ *  \param char const *argv[] diretórios dos arquivos
+ *  \sa run()
+ */
 void System::init(int argc, char const *argv[]) {
   size_t decrement, increment;
   int offset = 0;
@@ -98,6 +120,10 @@ void System::init(int argc, char const *argv[]) {
   }
 }
 
+//! Roda sistema
+/*! Conversa com usuário e executa as opções que ele deseja.
+ *  \sa init()
+ */
 void System::run() {
   string word_one, word_two;
   char* manpage;
@@ -171,11 +197,14 @@ void System::run() {
         delete offsets;
         delete manpages;
         break;
-        break;
 
       case 4:
-        cout << "\nQuantidade de elementos primarios: " << primary_tree_->size() << endl;
-        cout << "Quantidade de elementos secundários: " << secondary_tree_->size() << endl;
+        cout << "\nÁrvore primária\nQuantidade de nodes: ";
+        cout << primary_tree_->size() << endl;
+        cout << "Profundidade: " << primary_tree_->depth() << endl;
+        cout << "\nÁrvore secundária\nQuantidade de nodes: ";
+        cout << secondary_tree_->size() << endl;
+        cout << "Profundidade: " << secondary_tree_->depth() << endl;
         break;
 
       default:

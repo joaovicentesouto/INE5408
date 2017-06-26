@@ -19,72 +19,143 @@ using namespace std;
 
 namespace structures {
 
+//! Classe BinaryTreeOfListOnDisk
+/*! Árvore binária de listas encadeadas.
+ *  Ideia: Chave secundária é o discriminante e cada node está
+ *  associado a uma lista de todos os deslocamentos na árvore
+ *  primária.
+ *
+ *  \author João Vicente Souto.
+ *  \since 20/06/17
+ *  \version 1.0
+ */
 class BinaryTreeOfListOnDisk {
 public:
-  BinaryTreeOfListOnDisk();
-  ~BinaryTreeOfListOnDisk();
+  BinaryTreeOfListOnDisk();  // Construtor
+  ~BinaryTreeOfListOnDisk();  // Destrutor
 
-  void insert(const char* key, const size_t manpage);
+  void insert(const char* key, const size_t manpage);  // Inserir
   //void remove(const char* key, const size_t manpage);
 
-  bool empty() const;
-  size_t size() const;
-  size_t file_size() const;
+  bool empty() const;  // Teste de vazio
+  size_t size() const;  // Tamanho da árvore
+  size_t depth() const;  // Profundidade da árvore
+  size_t file_size() const;  // Tamanho do arquivo da árvore
 
-  LinkedList<size_t>* search(const char* wanted) const;
-  LinkedList<size_t>* conjunctive_search(const char* w1, const char* w2) const;
-  LinkedList<size_t>* disjunctive_search(const char* w1, const char* w2) const;
-
+  LinkedList<size_t>* search(const char* wanted) const;  // Busca uma chave
+  LinkedList<size_t>* conjunctive_search(const char* w1, const char* w2) const;  // Busca conjunto de duas chaves
+  LinkedList<size_t>* disjunctive_search(const char* w1, const char* w2) const;  // Busca disjunto de duas chaves
 
 private:
+  //! Classe TreeNode
+  /*! Node da árvore
+   *
+   *  \author João Vicente Souto.
+   *  \since 20/06/17
+   *  \version 1.0
+   */
   class TreeNode {
   public:
+    //! Construtor
+    /*! Sem parâmetros
+     *  \sa TreeNode(const char* key), TreeNode(const char* key, const size_t list_head)
+     */
     TreeNode() {}
 
+    //! Construtor
+    /*! Com parâmetros, só a chave
+     *  \sa TreeNode(), TreeNode(const char* key, const size_t list_head)
+     */
     explicit TreeNode(const char* key) {
       strcpy(key_, key);
     }
 
+    //! Construtor
+    /*! Com parâmetros, chave e cabeça da lista
+     *  \sa TreeNode(const char* key), TreeNode()
+     */
     TreeNode(const char* key, const size_t list_head) {
       strcpy(key_, key);
       list_head_ = list_head;
     }
 
-    char key_[60]{"@"};
-    size_t left_{0u},
-           right_{0u},
-           list_head_{0u};
+    //! Destrutor
+    /*! Destrutor padrão, não tem nada alocado dinâmicamente.
+     */
+    ~TreeNode() {}
+
+    char key_[60]{"@"};  //!< Chave
+    size_t left_{0u},  //!< Node da esquerda
+           right_{0u},  //!< Node da direita
+           list_head_{0u};  //!< Cabeça da lista
   };
 
+  //! Classe ListNode
+  /*! Node da lista
+   *
+   *  \author João Vicente Souto.
+   *  \since 20/06/17
+   *  \version 1.0
+   */
   class ListNode {
   public:
+    //! Construtor
+    /*! Sem parâmetros
+     *  \sa ListNode(const size_t manpage), ListNode(const size_t manpage, const size_t next)
+     */
     ListNode() {}
 
-    ListNode(const size_t manpage) :
+    //! Construtor
+    /*! Com parametros, deslocamento da manpage
+     *  \sa TreeNode(), TreeNode(const char* key, const size_t list_head)
+     */
+    explicit ListNode(const size_t manpage) :
     manpage_{manpage}
     {}
 
+    //! Construtor
+    /*! Com parametros, deslocamento e próximo da lista
+     *  \sa TreeNode(const char* key), TreeNode()
+     */
     ListNode(const size_t manpage, const size_t next) :
     manpage_{manpage},
     next_{next}
     {}
 
-    size_t manpage_{0u},
-           next_{0u};
+    //! Destrutor
+    /*! Destrutor padrão, não tem nada alocado dinâmicamente.
+     */
+    ~ListNode() {}
+
+    size_t manpage_{0u},  //!< Deslocamento na árvore primária
+           next_{0u};  //!< Próximo da lista
   };
 
-  size_t depth_{0u},
-         size_{0u};
+  size_t depth_{0u},  //!< Profundidade
+         size_{0u};  //!< Quantidade de nodes
 };
 
+//! Construtor
+/*! Sem parâmetros, limpa arquivo da arvore
+ *  \sa ~BinaryTreeOfListOnDisk()
+ */
 BinaryTreeOfListOnDisk::BinaryTreeOfListOnDisk() {
   // Cria arquivo para a arvore ou sobreescreve um existente
   fstream tree("./secondary_tree.dat", ios::in | ios::out | ios::binary | ios::trunc);
   tree.close();
 }
 
+//! Destrutor
+/*! Destrutor padrão, não tem nada alocado dinâmicamente.
+ *  \sa BinaryTreeOfListOnDisk()
+ */
 BinaryTreeOfListOnDisk::~BinaryTreeOfListOnDisk() {}
 
+//! Insere
+/*! Recebe chave secundária e deslocamento na árvore primária.
+ *  \param char* palavra secundária
+ *  \param size_t deslocamento referente a manpage
+ */
 void BinaryTreeOfListOnDisk::insert(const char* key, const size_t manpage) {
 
   fstream tree("./secondary_tree.dat", ios::in | ios::out | ios::binary);
@@ -160,21 +231,11 @@ void BinaryTreeOfListOnDisk::insert(const char* key, const size_t manpage) {
   tree.close();
 }
 
-bool BinaryTreeOfListOnDisk::empty() const {
-  return size_ == 0u;
-}
-
-size_t BinaryTreeOfListOnDisk::size() const {
-  return size_;
-}
-
-size_t BinaryTreeOfListOnDisk::file_size() const {
-  struct stat st;
-  if (stat("./secondary_tree.dat", &st) != 0)
-    throw std::out_of_range("Erro ao verificar tamanho do arquivo.");
-  return st.st_size;
-}
-
+//! Busca por uma chave secundária
+/*! Busca todas as manpage que tenham esta chave secundária.
+ *  \param char* chave secundária
+ *  \return LinkedList<size_t> lista dos deslocamentos
+ */
 LinkedList<size_t>* BinaryTreeOfListOnDisk::search(const char* wanted) const {
   // Guardar o deslocamento e nível em uma pilha quando tiver
   // que descer por dois caminhos diferentes.
@@ -226,6 +287,12 @@ LinkedList<size_t>* BinaryTreeOfListOnDisk::search(const char* wanted) const {
   return list;
 }
 
+//! Busca conjuntiva
+/*! Busca todas as manpage que tenham ou das duas, ou ambas.
+ *  \param char* primeira chave secundária
+ *  \param char* segunda chave secundária
+ *  \return LinkedList<size_t> lista dos deslocamentos
+ */
 LinkedList<size_t>* BinaryTreeOfListOnDisk::conjunctive_search(
                                 const char* w1, const char* w2) const {
   LinkedList<size_t> *s1 = this->search(w1);
@@ -238,6 +305,12 @@ LinkedList<size_t>* BinaryTreeOfListOnDisk::conjunctive_search(
   return s1;
 }
 
+//! Busca disjuntiva
+/*! Busca todas as manpage que tenham ambas as chaves.
+ *  \param char* primeira chave secundária
+ *  \param char* segunda chave secundária
+ *  \return LinkedList<size_t> lista dos deslocamentos
+ */
 LinkedList<size_t>* BinaryTreeOfListOnDisk::disjunctive_search(
                                 const char* w1, const char* w2) const {
   LinkedList<size_t> *s1 = search(w1);
@@ -256,249 +329,40 @@ LinkedList<size_t>* BinaryTreeOfListOnDisk::disjunctive_search(
   return list;
 }
 
-/*LinkedList<string>* KDTreeOnDisk::search_secondary_key(const char* wanted) const {
-
-  LinkedStack<Route> routes; // desvios
-  LinkedList<string>* list = new LinkedList<string>();
-
-  char primary[50], secondary[60];
-  int compare = 1;
-  size_t level = 0u, son = 0u, offset= 0u,
-         offset_left = 50+60+2,
-         offset_right = offset_left + sizeof(size_t);
-
-  ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
-  tree.seekg(0); // inicio do arquivo
-
-  while (tree.good() || !routes.empty()) {
-    offset = tree.tellg();
-
-    tree.seekg(offset + sizeof(primary));
-    tree.read(secondary, sizeof(secondary));
-    //cout << "Todas as chave 2: " << secondary << endl;
-    compare = strcmp(wanted, secondary);
-
-    if (compare == 0) {  // achei
-      // Pega chave primaria
-      tree.seekg(offset);
-      tree.read(primary, sizeof(primary));
-      //cout << "Busca in achada: " << primary << endl;
-      list->insert_sorted(primary);
-    }
-
-    if (level % 2 == 1) {  // dimensao y, divide árvore
-      if (compare < 0)
-        son = offset + offset_left;
-      else
-        son = offset + offset_right;
-
-      tree.seekg(son);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-
-    } else {               // dimensao x, vai pros dois lados
-      tree.seekg(offset + offset_right);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-      if (son != 0) {
-        Route way(son, level+1);
-        routes.push(way);
-      }
-
-      tree.seekg(offset + offset_left);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-    }
-
-    if (son != 0) { // próximo node é nulo
-      tree.seekg(son);  // próxima posição
-      ++level;
-    } else {
-      try {
-        Route way = routes.pop();
-        tree.seekg(way.offset_tree_);
-        level = way.level_;
-      } catch(std::out_of_range error) {
-        break;  // pilha vazia
-      }
-    }
-  }
-
-  return list;
+//! Teste de vazio
+/*! Retorna o teste se a árvore da lista
+ *  \return  bool teste
+ */
+bool BinaryTreeOfListOnDisk::empty() const {
+  return size_ == 0u;
 }
 
-LinkedList<string>* KDTreeOnDisk::conjunctive_search(const char* w1,
-                                                     const char* w2) const
-{
-  LinkedStack<Route> routes; // desvios
-  LinkedList<string>* list = new LinkedList<string>();
-
-  char primary[50], secondary[60];
-  int compare_one = 1, compare_two = 1;
-  size_t level = 0u, son = 0u, offset= 0u,
-         offset_left = 50+60+2,
-         offset_right = offset_left + sizeof(size_t);
-
-  ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
-  tree.seekg(0); // inicio do arquivo
-
-  while (tree.good()) {
-    offset = tree.tellg();
-
-    tree.seekg(offset + sizeof(primary));
-    tree.read(secondary, sizeof(secondary));
-    compare_one = strcmp(w1, secondary);
-    compare_two = strcmp(w2, secondary);
-
-    if (compare_one == 0 || compare_two == 0) {  // achei
-      // le offset da manpage
-      tree.seekg(offset);
-      tree.read(primary, sizeof(primary));
-      list->insert_sorted(primary);
-    }
-
-    if (level % 2 == 1 && compare_one != 0 && compare_two != 0) {  // dimensao y, divide árvore
-      if (compare_one < 0 && compare_two < 0) {
-        son = offset + offset_left;
-      } else if (compare_one > 0 && compare_two > 0) {
-        son = offset + offset_right;
-      } else {  // um == vai pros dois lados
-        tree.seekg(offset + offset_right);
-        tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-        if (son != 0) {
-          Route way(son, level+1);
-          routes.push(way);
-        }
-        son = offset + offset_left;
-      }
-
-      tree.seekg(son);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-
-    } else {               // dimensao x, vai pros dois lados
-      tree.seekg(offset + offset_right);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-      if (son != 0) {
-        Route way(son, level+1);
-        routes.push(way);
-      }
-
-      tree.seekg(offset + offset_left);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-    }
-
-    if (son != 0) { // próximo node é nulo
-      tree.seekg(son);  // próxima posição
-      ++level;
-    } else {
-      try {
-        Route way = routes.pop();
-        tree.seekg(way.offset_tree_);
-        level = way.level_;
-      } catch(std::out_of_range error) {
-        break;  // pilha vazia
-      }
-    }
-  }
-
-  return list;
+//! Tamanho da árvore
+/*! Retorna a quantidade de nodes na árvore
+ *  \return size_t tamanho
+ */
+size_t BinaryTreeOfListOnDisk::size() const {
+  return size_;
 }
 
-LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,
-                                                     const char* w2) const
-{
-  LinkedStack<Route> routes; // desvios
-  LinkedList<string>* list_one = new LinkedList<string>();
-  LinkedList<string>* list_two = new LinkedList<string>();
-  LinkedList<string>* list_disj = new LinkedList<string>();
-
-  char primary[50], secondary[60];
-  int compare_one = 1, compare_two = 1;
-  size_t level = 0u, son = 0u, offset= 0u,
-         offset_left = 50+60+2,
-         offset_right = offset_left + sizeof(size_t);
-
-  ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
-  tree.seekg(0); // inicio do arquivo
-
-  while (tree.good()) {
-    offset = tree.tellg();
-
-    tree.seekg(offset + sizeof(primary));
-    tree.read(secondary, sizeof(secondary));
-    compare_one = strcmp(w1, secondary);
-    compare_two = strcmp(w2, secondary);
-
-    if (compare_one == 0) {  // achei
-      tree.seekg(offset);
-      tree.read(primary, sizeof(primary));
-      list_one->insert_sorted(primary);
-    } else if (compare_two == 0) {
-      // le offset da manpage
-      tree.seekg(offset);
-      tree.read(primary, sizeof(primary));
-      list_two->insert_sorted(primary);
-    }
-
-    if (level % 2 == 1 && compare_one != 0 && compare_two != 0) {  // dimensao y, divide árvore
-      if (compare_one < 0 && compare_two < 0) {
-        son = offset + offset_left;
-      } else if (compare_one > 0 && compare_two > 0) {
-        son = offset + offset_right;
-      } else {  // um == vai pros dois lados
-        tree.seekg(offset + offset_right);
-        tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-        if (son != 0) {
-          Route way(son, level+1);
-          routes.push(way);
-        }
-        son = offset + offset_left;
-      }
-
-      tree.seekg(son);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-
-    } else {               // dimensao x, vai pros dois lados
-      tree.seekg(offset + offset_right);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-      if (son != 0) {
-        Route way(son, level+1);
-        routes.push(way);
-      }
-
-      tree.seekg(offset + offset_left);
-      tree.read(reinterpret_cast<char*>(&son), sizeof(size_t));
-    }
-
-    if (son != 0) { // próximo node é nulo
-      tree.seekg(son);  // próxima posição
-      ++level;
-    } else {
-      try {
-        Route way = routes.pop();
-        tree.seekg(way.offset_tree_);
-        level = way.level_;
-      } catch(std::out_of_range error) {
-        break;  // pilha vazia
-      }
-    }
-  }
-
-  bool cond = list_one->size() < list_two->size();
-  LinkedList<string>* minor_list = cond ? list_one : list_two;
-  LinkedList<string>* major_list = cond ? list_two : list_one;
-
-  string temp;
-  for (size_t i = 0; i < major_list->size(); i++) {
-    temp = major_list->at(i);
-    if (minor_list->contains(temp))
-      list_disj->insert_sorted(temp);
-  }
-
-  delete list_one;
-  delete list_two;
-
-  return list_disj;
+//! Profundidade da árvore
+/*! Retorna a profundidade de nodes na árvore
+ *  \return size_t profundidade
+ */
+size_t BinaryTreeOfListOnDisk::depth() const {
+  return depth_;
 }
 
-*/
+//! Tamanho do arquivo da árvore
+/*! Retorna o tamanho do arquivo
+ *  \return Tamanho
+ */
+size_t BinaryTreeOfListOnDisk::file_size() const {
+  struct stat st;
+  if (stat("./secondary_tree.dat", &st) != 0)
+    throw std::out_of_range("Erro ao verificar tamanho do arquivo.");
+  return st.st_size;
+}
 
 }  //  namespace structures
 
