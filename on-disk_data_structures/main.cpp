@@ -16,9 +16,6 @@
 #include "./system.h"
 #include "./structures/linked_list.h"
 
-// Maior chave primária: 48
-// Maior chave secundária: 58
-
 using namespace structures;
 
 int main(int argc, char const *argv[]) {
@@ -26,8 +23,6 @@ int main(int argc, char const *argv[]) {
   System sys;
   sys.init(argc, argv);
   sys.run();
-
-  // mais de 800 mil nodes criados
 
   return 0;
 }
