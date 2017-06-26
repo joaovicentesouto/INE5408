@@ -33,7 +33,9 @@ public:
   size_t size() const;
   size_t file_size() const;
 
-  char* search_primary_key(const char* wanted);  //!< retorna o offset
+  char* search_primary_key(const char* wanted);
+  string return_primary_key(const size_t wanted);
+  LinkedList<string>* return_primary_key(LinkedList<size_t> *wanted_list);
   //LinkedList<string>* search_secondary_key(const size_t wanted) const;
   //LinkedList<string>* conjunctive_search(const size_t w1, const size_t w2) const;
   //LinkedList<string>* disjunctive_search(const size_t w1, const size_t w2) const;
@@ -90,7 +92,7 @@ private:
 
 KDTreeOnDisk::KDTreeOnDisk() {
   // Cria arquivo para a arvore ou sobreescreve um existente
-  fstream tree("./tree.dat", ios::in | ios::out | ios::binary | ios::trunc);
+  fstream tree("./primary_tree.dat", ios::in | ios::out | ios::binary | ios::trunc);
   tree.close();
 }
 
@@ -98,7 +100,7 @@ KDTreeOnDisk::~KDTreeOnDisk() {}
 
 int KDTreeOnDisk::insert(const char* key_1,
                           const size_t key_2, char* manpage) {
-  fstream tree("./tree.dat", ios::in | ios::out | ios::binary);
+  fstream tree("./primary_tree.dat", ios::in | ios::out | ios::binary);
 
   char node_key_1[50];
   size_t node_key_2;
@@ -185,21 +187,6 @@ int KDTreeOnDisk::insert(const char* key_1,
   return compare == 0u? -1 : son;
 }
 
-bool KDTreeOnDisk::empty() const {
-  return size_ == 0u;
-}
-
-size_t KDTreeOnDisk::size() const {
-  return size_;
-}
-
-size_t KDTreeOnDisk::file_size() const {
-  struct stat st;
-  if (stat("./tree.dat", &st) != 0)
-    throw std::out_of_range("Erro ao verificar tamanho do arquivo.");
-  return st.st_size;
-}
-
 char* KDTreeOnDisk::search_primary_key(const char* wanted) {
   // Guardar o deslocamento e nível em uma pilha quando tiver
   // que descer por dois caminhos diferentes.
@@ -213,7 +200,7 @@ char* KDTreeOnDisk::search_primary_key(const char* wanted) {
          offset_right = offset_left + sizeof(size_t),
          offset_manpage = offset_right + sizeof(size_t);
 
-  ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
+  ifstream tree("./primary_tree.dat", std::ios_base::app | ios::binary);
   tree.seekg(0); // inicio do arquivo
 
   while (tree.good()) {
@@ -271,6 +258,43 @@ char* KDTreeOnDisk::search_primary_key(const char* wanted) {
   return nullptr; // não achou
 }
 
+string KDTreeOnDisk::return_primary_key(const size_t wanted) {
+  char node_key[50];
+  ifstream tree("./primary_tree.dat", std::ios_base::app | ios::binary);
+  tree.seekg(wanted);
+  tree.read(node_key, sizeof(node_key));
+  return string(node_key);
+}
+
+LinkedList<string>* KDTreeOnDisk::return_primary_key(LinkedList<size_t> *wanted_list) {
+  LinkedList<string> *list = new LinkedList<string>();
+
+  char node_key[50];
+  ifstream tree("./primary_tree.dat", std::ios_base::app | ios::binary);
+  while (!wanted_list->empty()) {
+    tree.seekg(wanted_list->pop_front());
+    tree.read(node_key, sizeof(node_key));
+    list->insert_sorted(node_key);
+  }
+
+  return list;
+}
+
+bool KDTreeOnDisk::empty() const {
+  return size_ == 0u;
+}
+
+size_t KDTreeOnDisk::size() const {
+  return size_;
+}
+
+size_t KDTreeOnDisk::file_size() const {
+  struct stat st;
+  if (stat("./primary_tree.dat", &st) != 0)
+    throw std::out_of_range("Erro ao verificar tamanho do arquivo.");
+  return st.st_size;
+}
+
 /*
 LinkedList<string>* KDTreeOnDisk::search_secondary_key(const char* wanted) const {
 
@@ -283,7 +307,7 @@ LinkedList<string>* KDTreeOnDisk::search_secondary_key(const char* wanted) const
          offset_left = 50+60+2,
          offset_right = offset_left + sizeof(size_t);
 
-  ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
+  ifstream tree("./primary_tree.dat", std::ios_base::app | ios::binary);
   tree.seekg(0); // inicio do arquivo
 
   while (tree.good() || !routes.empty()) {
@@ -352,7 +376,7 @@ LinkedList<string>* KDTreeOnDisk::conjunctive_search(const char* w1,
          offset_left = 50+60+2,
          offset_right = offset_left + sizeof(size_t);
 
-  ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
+  ifstream tree("./primary_tree.dat", std::ios_base::app | ios::binary);
   tree.seekg(0); // inicio do arquivo
 
   while (tree.good()) {
@@ -431,7 +455,7 @@ LinkedList<string>* KDTreeOnDisk::disjunctive_search(const char* w1,
          offset_left = 50+60+2,
          offset_right = offset_left + sizeof(size_t);
 
-  ifstream tree("./tree.dat", std::ios_base::app | ios::binary);
+  ifstream tree("./primary_tree.dat", std::ios_base::app | ios::binary);
   tree.seekg(0); // inicio do arquivo
 
   while (tree.good()) {

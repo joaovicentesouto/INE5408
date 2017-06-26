@@ -27,6 +27,7 @@ z
 an
 the
 no
+such
 for
 and
 nor
@@ -34,6 +35,7 @@ but
 or
 yet
 so
+old
 aboard
 about
 above
@@ -47,12 +49,14 @@ amidst
 among
 around
 as
+Also
 aside
 at
 athwart
 atop
 barring
 because
+been
 before
 behind
 below
@@ -66,6 +70,8 @@ circa
 concerning
 despite
 down
+do
+does
 during
 except
 excluding
@@ -128,6 +134,7 @@ whose
 whichever
 whoever
 whomever
+how
 this
 these
 that
@@ -137,12 +144,15 @@ anyone
 anything
 each
 either
+every
 everybody
 everyone
 everything
 neither
 nobody
+have
 nothing
+will
 one
 somebody
 someone
@@ -153,8 +163,12 @@ many
 several
 all
 any
+has
+means
+must
 most
 none
+non
 some
 myself
 ourselves
